@@ -238,6 +238,169 @@
       </tags>
   </entry>
   <entry>
+    <title>第三篇,Spring Boot之SpringApplication</title>
+    <url>/posts/1049.html</url>
+    <content><![CDATA[<h4 id="3-Spring-Boot-功能"><a href="#3-Spring-Boot-功能" class="headerlink" title="3. Spring Boot 功能"></a>3. Spring Boot 功能</h4><p>​    这个章节将深入讨论Spring Boot的细节. 在这里可以学习使用,定制一些核心的功能. 如果还没有使用过,则可以阅读前面的内容,来获得基础知识.</p>
+<ol>
+<li><h5 id="SpringApplication"><a href="#SpringApplication" class="headerlink" title="SpringApplication"></a>SpringApplication</h5>​    <code>SpringApplication</code>类提供了一种非常方便的方式去启动Spring应用, 那就是从<code>main()</code>方法启动. 在很多情况下, 可以委派给静态方法<code>SpringApplication.run</code>.如下所示:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(MyApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+当应用启动时,可以看到输出类似下面的内容<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"> .   ____          _            __ _ _</span><br><span class="line"> /\\ / ___&#x27;_ __ _ _(_)_ __  __ _ \ \ \ \</span><br><span class="line">( ( )\___ | &#x27;_ | &#x27;_| | &#x27;_ \/ _` | \ \ \ \</span><br><span class="line"> \\/  ___)| |_)| | | | | || (_| |  ) ) ) )</span><br><span class="line">  &#x27;  |____| .__|_| |_|_| |_\__, | / / / /</span><br><span class="line"> =========|_|==============|___/=/_/_/_/</span><br><span class="line"> :: Spring Boot ::   v2.5.0</span><br><span class="line"></span><br><span class="line">2021-02-03 10:33:25.224  INFO 17321 --- [           main] o.s.b.d.s.s.SpringAppplicationExample    : Starting SpringAppplicationExample using Java 1.8.0_232 on mycomputer with PID 17321 (/apps/myjar.jar started by pwebb)</span><br><span class="line">2021-02-03 10:33:25.226  INFO 17900 --- [           main] o.s.b.d.s.s.SpringAppplicationExample    : No active profile set, falling back to default profiles: default</span><br><span class="line">2021-02-03 10:33:26.046  INFO 17321 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)</span><br><span class="line">2021-02-03 10:33:26.054  INFO 17900 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]</span><br><span class="line">2021-02-03 10:33:26.055  INFO 17900 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.41]</span><br><span class="line">2021-02-03 10:33:26.097  INFO 17900 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext</span><br><span class="line">2021-02-03 10:33:26.097  INFO 17900 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 821 ms</span><br><span class="line">2021-02-03 10:33:26.144  INFO 17900 --- [           main] s.tomcat.SampleTomcatApplication         : ServletContext initialized</span><br><span class="line">2021-02-03 10:33:26.376  INFO 17900 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path &#x27;&#x27;</span><br><span class="line">2021-02-03 10:33:26.384  INFO 17900 --- [           main] o.s.b.d.s.s.SpringAppplicationExample    : Started SampleTomcatApplication in 1.514 seconds (JVM running for 1.823)</span><br></pre></td></tr></table></figure>
+默认情况下,显示的是<code>INFO</code>的日志,包括一些相关的启动细节,比如启动应用的用户. 如果需要的日志等级不是<code>INFO</code>,可以自己设置. 使用主应用程序类包中的实现版本来确定应用程序版本. 启动信息日志可以使用<code>spring.main.log-startup-info</code>设为<code>false</code>来关闭.这也会关闭应用激活的那个profile的日志信息.<blockquote>
+<p>建议:</p>
+<p>​    在启动过程中,增加额外的日志, 可以重写<code>SpringApplication</code>的子类中的<code>logStartupInfo(boolean)</code>方法实现.</p>
+</blockquote>
+<ol>
+<li><h6 id="启动失败"><a href="#启动失败" class="headerlink" title="启动失败"></a>启动失败</h6>​    如果应用启动失败, 已经注册的<code>FailureAnalyzers</code>会提供专门的错误消息和具体措施来解决问题. 比如,  当在已经被占用的8080端口上启动应用, 如下的类似的信息将会被输出.<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">***************************</span><br><span class="line">APPLICATION FAILED TO START</span><br><span class="line">***************************</span><br><span class="line"></span><br><span class="line">Description:</span><br><span class="line"></span><br><span class="line">Embedded servlet container failed to start. Port 8080 was already in use.</span><br><span class="line"></span><br><span class="line">Action:</span><br><span class="line"></span><br><span class="line">Identify and stop the process that&#x27;s listening on port 8080 or configure this application to listen on another port.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    Spring Boot提供了很多<code>FailureAnalyzer</code>的实现类, 也可以自己添加自定的类.<br>​    如果没有<code> failure analyzer</code>能够处理异常, 你也可以选择完整的情况报告去帮助更好地理解错误. 为此, 需要开启<code>debug</code>属性,或者开启针对<code>org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLoggingListener</code>的<code>debug</code>日志.<br>​    比如, 想要使用<code>java -jar</code>运行应用, 可以像下面一样开启<code>debug</code></p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar myproject-0.0.1-SNAPSHOT.jar --debug</span></span><br></pre></td></tr></table></figure></li>
+<li><h6 id="延迟初始化"><a href="#延迟初始化" class="headerlink" title="延迟初始化"></a>延迟初始化</h6>​    <code>SpringApplication</code>允许应用延迟初始化. 当延迟初始化开启时, bean会在被需要的时候创建,而不是在启动过程中初始化. 开启延迟加载可以减少应用启动时间.在web应用程序中, 开启延迟初始化,导致很多网络相关的bean不会初始化,直到接收网络请求.<br>​    延迟初始化的一个缺点是,可能会推迟发现应用问题的时间点. 如果一个配置出错的bean被延迟初始化,那么在启动过程中不会发生问题,直到这个bean被初始化时才会暴露问题. 同时也要注意, 确保JVM有足够的内存来容纳所有的bean, 而不是只能容乃在启动阶段初始化的bean. 出于这些原因, 延迟初始化没有被默认开启, 并且建议在开启延迟加载前,对JVM的堆内存进行调整.<br>​        延迟初始化可以已编程的方式开启, 使用<code>SpringApplicationBuilder</code>的<code>lazyInitialization</code>方法来开启,或者<code>SpringApplication</code>的<code>setLazyInitialization</code>方法.或者,也可以使用<code>spring.main.lazy-initialization</code>属性来开启.如下所示:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.main.lazy-initialization</span>=<span class="string">true</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    如果想要对特定的bean关闭延迟初始化,同时对于程序的剩余部分使用延迟初始化,可以显式地使用注解设置延迟初始化属性.<code>@Lazy(false)</code>.</p>
+</blockquote>
+</li>
+<li><h6 id="自定义Banner"><a href="#自定义Banner" class="headerlink" title="自定义Banner"></a>自定义Banner</h6>​    启动时打印的标志,就是banner.可以增加<code>banner.txt</code>到classpath中,或者设置<code>spring.banner.location</code>属性指向文件,从而改变banner. 如果banner文件中有用不是UTF-8的属性, 可以设置<code>spring.banner.charset</code> 来配置编码. 除了text文件,Spring Boot也支持图片,比如<code>banner.gif</code>,<code>banner.jpg</code>,或者<code>banner.png</code>.可以将图片放到classpath中,或者配置<code>spring.banner.image.location</code>来指定文件. 图片会被转换成ASCII art然后打印所有文本banner上面.<br>在<code>banner.txt</code>文件中,可以使用下面的占位符:<table>
+<thead>
+<tr>
+<th>变量</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>${application.version}</td>
+<td>应用的版本号,在<code>MANIFEST.MF</code>文件中声明的.<code>Implementation-Version: 1.0</code>会被输出成<code>1.0</code></td>
+</tr>
+<tr>
+<td>${application.formatted-version}</td>
+<td>应用程序的版本号格式化后输出,如<code>1.0</code>会格式化成<code>(v1.0)</code></td>
+</tr>
+<tr>
+<td>${spring-boot.version}</td>
+<td>使用的Spring Boot版本号.如:<code>2.5.0</code></td>
+</tr>
+<tr>
+<td>${spring-boot.formatted-version}</td>
+<td>格式化后的Spring Boot版本号<code>(v2.5.0)</code></td>
+</tr>
+<tr>
+<td><code>$&#123;Ansi.NAME&#125;</code>或<code>$&#123;AnsiColor.NAME&#125;</code></td>
+<td>其中NAME是ANSI转义码的名称</td>
+</tr>
+<tr>
+<td>${application.title}</td>
+<td>应用的标题,在<code>MANIFEST.MF</code>中声明.比如<code>Implementation-Title: MyApp</code>,输出<code>MyApp</code></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>建议:</p>
+<p>​    如果想要以编程的方式实现的话,可以使用<code>SpringApplication.setBanner(…)</code>方法.使用<code>org.springframework.boot.Banner</code>接口并且实现自己的<code>printBanner()</code>方法.<br>可以使用<code>spring.main.banner-mode</code>来指定banner是在<code>System.out</code>(控制台)输出,还是在日志中输出,或者不输出(<code>off</code>).<br>输出的banner以单例的形式注册,名称为<code>springBootBanner</code>.<br>注意:</p>
+<p>​    <code>$&#123;application.version&#125;</code>和<code>$&#123;application.formatted-version&#125;</code>属性只有在使用Spring Boot启动器启动时可以使用. 如果使用<code>java -cp &lt;classpath&gt; &lt;mainclass&gt;</code>来运行一个没有打包的jar, 这些值都不能被使用.</p>
+<p>​    这也是为什么推荐,使用<code>java org.springframework.boot.loader.JarLauncher</code>来启动没打包的jar. 这样可以在编译classpath和启动应用前,初始化<code>application.*</code>的banner变量.</p>
+</blockquote>
+</li>
+<li><h5 id="自定义SpringApplication"><a href="#自定义SpringApplication" class="headerlink" title="自定义SpringApplication"></a>自定义SpringApplication</h5>​    如果默认的<code>SpringApplication</code>不能够满足需求, 可以自定义一个本地的实例并且进行自定义.比如关闭banner,可以这样写:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication application = <span class="keyword">new</span> SpringApplication(MyApplication.class);</span><br><span class="line">        application.setBannerMode(Banner.Mode.OFF);</span><br><span class="line">        application.run(args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    传给<code>SpringApplication</code>构造器的参数是Spring bean的配置源. 在大多数情况下, 这些都是<code>@Configuration</code>类的引用, 但是也可以是<code>@Component</code>类的直接引用.<br>​    也可以使用<code>application.properties</code>来配置<code>SpringApplication</code>.</p>
+</blockquote>
+</li>
+<li><h5 id="Fluent-Builder-API"><a href="#Fluent-Builder-API" class="headerlink" title="Fluent Builder API"></a>Fluent Builder API</h5>​    如果需要构建一个<code>ApplicationContext</code>层级结构(有父子/关系的多个上下文),或者想要使用流式 builder API,可以使用<code>SpringApplicationBuilder</code>.<br>​    <code>SpringApplicationBuilder</code>能够以链式调用多个方法,并且可以包含<code>parent</code>和<code>child</code>方法来创建层级结构.如下所示:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> SpringApplicationBuilder()</span><br><span class="line">        .sources(Parent.class)</span><br><span class="line">        .child(Application.class)</span><br><span class="line">        .bannerMode(Banner.Mode.OFF)</span><br><span class="line">        .run(args);</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    创建<code>ApplicationContext</code>层级结构的时候,有一些限制.比如, 网络模块必须包含在<code>child</code>上下文中,<code>Environment</code>被父子上下文环境同时使用.</p>
+</blockquote>
+</li>
+<li><h5 id="应用可用性"><a href="#应用可用性" class="headerlink" title="应用可用性"></a>应用可用性</h5>​    在平台上部署后，应用程序可以使用诸如<code>Kubernetes Probes</code>之类的基础结构向平台提供有关其可用性的信息。Spring Boot对常用的<code>liveness</code>和<code>readiness</code>可用性状态提供了开箱即用的支持.如果使用Spring Boot的<code>actuator</code>,这些状态将会显示为运行状况端点组.<br>​    此外, 可以在自己的bean中注入<code>ApplicationAvailability</code>来获取应用的可用性状态.<ol>
+<li><h6 id="活动状态-Liveness-Liveness-State"><a href="#活动状态-Liveness-Liveness-State" class="headerlink" title="活动状态(Liveness Liveness State)"></a>活动状态(Liveness Liveness State)</h6>​    活动状态(<code>liveness</code>)说明应用内部装填是否能够允许应用正常工作,或者依靠自身,从当前失败中恢复过来.如果<code>Liveness</code>状态被打破,意味着应用处于一种不能恢复的状态,并且<code>infrastructure </code>应该重启应用.<blockquote>
+<p>注意:</p>
+<p>​    通常来说, <code>liveness</code>状态不应该基于白雾检查,比如健康检查.如果是这种方式,那么一个失败的外部系统(数据库,web api,外部缓存)可能会触发平台上的大量重启和级联故障.<br>Spring Boot应用的内部状态主要由<code>ApplicationContext</code>表示.如果应用的上下文环境启动成功,Spring Boot认为应用处于可用状态.只要刷新上下文环境,那么就可以认为应用处于可用状态.</p>
+</blockquote>
+</li>
+<li><h6 id="就绪状态-Readiness-State"><a href="#就绪状态-Readiness-State" class="headerlink" title="就绪状态(Readiness State)"></a>就绪状态(Readiness State)</h6>​    就绪(<code>readiness</code>)表示应用是否处于可以处理流量的状态.失败的就绪状态告诉平台,现在不应将流量路由到应用. 这通常是在启动过程中,或者当<code>CommandLineRunner</code>和<code>ApplicationRunner</code>正在被处理,或者当前过于繁忙, 应用认为不应该处理额外流量.<blockquote>
+<p>建议:</p>
+<p>​    在启动过程中执行任务是,应该使用<code>CommandLineRunner</code>或者<code>ApplicationRunner</code>来执行,而不是使用Spring的生命周期的回调函数,比如<code>@PostConstruct</code></p>
+</blockquote>
+</li>
+<li><h6 id="管理应用的可用性"><a href="#管理应用的可用性" class="headerlink" title="管理应用的可用性"></a>管理应用的可用性</h6>​    应用中的组件,可以注入<code>ApplicationAvailability</code>并且调用其方法,在任何时候获取当前的可用性.大多数情况下,应用希望能够监听到状态的变化或者去更改状态.<br>​    比如,可以应用的将<code>Readiess</code>状态导出为文件,从而可以在<code>Kubernetes </code>上执行<code>exec Probe</code>去看到这个文件.<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyReadinessStateExporter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@EventListener</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStateChange</span><span class="params">(AvailabilityChangeEvent&lt;ReadinessState&gt; event)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">switch</span> (event.getState()) &#123;</span><br><span class="line">        <span class="keyword">case</span> ACCEPTING_TRAFFIC:</span><br><span class="line">            <span class="comment">// create file /tmp/healthy</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> REFUSING_TRAFFIC:</span><br><span class="line">            <span class="comment">// remove file /tmp/healthy</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+当应用崩溃,不能够恢复时,也可以更新应用的可用状态.<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyLocalCacheVerifier</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ApplicationEventPublisher eventPublisher;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyLocalCacheVerifier</span><span class="params">(ApplicationEventPublisher eventPublisher)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.eventPublisher = eventPublisher;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">checkLocalCache</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// ...</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (CacheCompletelyBrokenException ex) &#123;</span><br><span class="line">            AvailabilityChangeEvent.publish(<span class="keyword">this</span>.eventPublisher, ex, LivenessState.BROKEN);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><h5 id="应用事件和监听器"><a href="#应用事件和监听器" class="headerlink" title="应用事件和监听器"></a>应用事件和监听器</h5>​    除了常规的Spring框架时间,比如<code>ContextRefreshEvent</code>,<code>SpringApplication</code>也会发送一些其他的应用事件.<blockquote>
+<p>注意:</p>
+<p>​    有一些事件实际上在<code>ApplicationContext</code>创建前触发,所以不能够通过<code>@Bean</code>的方式来注册监听器. 可以通过<code>SpringApplication.addListeners(…)</code>或者<code>SpringApplicationBuilder.listeners(…)</code>这两个方法来注册.</p>
+<p>​    如果想要自动监听器,而不在乎应用的创建方式,可以在项目中增加一个<code>META-INF/spring.factories</code>文件,在文件中使用<code>org.springframework.context.ApplicationListener</code>的key来引用监听器.比如:</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">&gt;org.springframework.context.ApplicationListener</span>=<span class="string">com.example.project.MyListener</span></span><br></pre></td></tr></table></figure>
+<p>​    应用的时间会按照下面的顺序发送:</p>
+</blockquote>
+<ol>
+<li><code>ApplicationStartingEvent</code><br>启动 -&gt;  <code>触发当前事件</code> -&gt; 其他处理(监听器和初始化注册除外)</li>
+<li><code>ApplicationEnvironmentPreparedEvent</code><br>获知要使用的<code>Environment</code> -&gt;<br>​         <code>触发当前事件</code><br>-&gt; 上下文创建</li>
+<li><code>ApplicationContextInitializedEvent</code><br><code>ApplicationContext</code>和<code>ApplicationContextInitializers</code>初始化完成 -&gt;<br>​     <code>触发当前事件</code><br>-&gt; 载入bean</li>
+<li><code>ApplicationPreparedEvent</code><br>载入bean -&gt; <code>触发当前事件</code> -&gt;  刷新前</li>
+<li><code>ApplicationStartedEvent</code><br> 在上下文环境刷新 -&gt; <code>触发当前事件</code> -&gt; 应用或者命令行启动器调用</li>
+<li><code>AvailabilityChangeEvent</code><br><code>LivenessState.CORRECT</code>发送 -&gt; <code>触发当前事件</code><br>表明整个应用处于可用状态.</li>
+<li><code>ApplicationReadyEvent</code><br> 任何应用或者命令行执行程序启动 -&gt; <code>触发当前事件</code></li>
+<li><code>AvailabilityChangeEvent</code><br><code>ReadinessState.ACCEPTING_TRAFFIC</code>发送 -&gt; <code>触发当前事件</code><br>表明整个应用做好准备,接收服务请求.</li>
+<li><code>ApplicationFailedEvent</code><br>启动发生错误 -&gt; <code>触发当前事件</code><br>上面只有<code>SpringApplicationEvent</code>s 事件和<code>SpringApplication</code>相关.除了这些之外.下面的事件会在<code>ApplicationPreparedEvent</code>后,<code>ApplicationStartedEvent</code>前触发.</li>
+</ol>
+<ul>
+<li>当<code>WebServer </code>就绪,<code>WebServerInitializedEvent</code>发送. <code>ServletWebServerInitializedEvent</code>和<code>ReactiveWebServerInitializedEvent</code>分别是serlvet和reactive的各自变体.</li>
+<li><code>ApplicationContext</code>刷新之后, <code>ContextRefreshedEvent</code>发送.<blockquote>
+<p>建议:</p>
+<p>​    在很多时候,不需要使用应用的时间,只需要知道有这些事件.在内部, Spring Boot使用事件来处理大量的任务.</p>
+<p>注意:</p>
+<p>   事件监听器不应该运行那些可能长任务,因为它们都是运行在同一个线程中.如果要运行长任务,可以考虑使用<code>ApplicationRunner</code>或<code>CommandLineRunner</code><br>​    应用事件的发送是使用Spring Framework的事件发送机制发送的.机制的一部分保证了,发送给子上下文环境中的监听器的事件, 也会发送给祖先上下文环境的监听器.因此, 如果应用程序使用SpringApplication实例的层次结构,一个监听器或许能够接收到来自多个实例的同一种应用事件.<br>​    为了让监听器区分事件是来自自身的<code>context</code>,还是后代的<code>context</code>, 应该注入应用的上下文环境,然后比较应用上下文和事件的上下文环境.可以实现<code>ApplicationContextAware</code>接口来注入<code>context</code>,或者如果监听器是一个<code>bean</code>,可以直接使用<code>@Autowired</code>.</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><h5 id="应用环境"><a href="#应用环境" class="headerlink" title="应用环境"></a>应用环境</h5>​    <code>SpringApplication</code>代替开发者创建正确的<code>ApplicationContext</code>,决定<code>WebApplicationType</code>的算法如下:<ul>
+<li>如果出现<code>Spring MVC</code>,就使用<code>AnnotationConfigServletWebServerApplicationContext</code>.</li>
+<li>如果没出现<code>Spring MVC</code>,并且出现<code>Spring WebFlux</code>,就使用<code>AnnotationConfigReactiveWebServerApplicationContext</code></li>
+<li>否则就使用,<code>AnnotationConfigApplicationContext</code><br>​    这意味着,如果在应用中同时使用<code>Spring MVC</code>和<code>Spring WebFlux</code>的<code>client</code>, Spring MVC会被默认使用.可以使用<code>setWebApplicationType(WebApplicationType)</code>来重写.<br>​    也可以使<code>setApplicationContextClass(…)</code>来完全控制<code>ApplicationContext</code>的类型.<blockquote>
+<p>建议:</p>
+<p>​    当是用<code>SpringApplication</code>进行Junit测试时, 应该调用<code>setWebApplicationType(WebApplicationType.NONE)</code>.</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><h5 id="访问应用参数"><a href="#访问应用参数" class="headerlink" title="访问应用参数"></a>访问应用参数</h5>​    如果要访问传递给<code>SpringApplication.run(…)</code>的参数时,可以注入<code>org.springframework.boot.ApplicationArguments</code>bean.接口<code>ApplicationArguments</code>同时提供了访问原始的数组形式的参数(<code>String[]</code>),也有已经被解析的<code>option</code>和<code>non-option</code>.如下所示:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(ApplicationArguments args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> debug = args.containsOption(<span class="string">&quot;debug&quot;</span>);</span><br><span class="line">        List&lt;String&gt; files = args.getNonOptionArgs();</span><br><span class="line">        <span class="keyword">if</span> (debug) &#123;</span><br><span class="line">            System.out.println(files);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// if run with &quot;--debug logfile.txt&quot; prints [&quot;logfile.txt&quot;]</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    Spring Boot在Spring环境中也注册了<code>CommandLinePropertySource</code>,这样可以直接使用<code>@Value </code>注解来访问单例形式的应用参数.</p>
+</blockquote>
+</li>
+<li><h5 id="使用ApplicationRunner-或者CommandLineRunner"><a href="#使用ApplicationRunner-或者CommandLineRunner" class="headerlink" title="使用ApplicationRunner 或者CommandLineRunner"></a>使用ApplicationRunner 或者CommandLineRunner</h5>​    如果需要在<code>SpringApplication</code>启动后运行一些代码,可以实现<code>ApplicationRunner</code>或者<code>CommandLineRunner</code>接口.这两个接口都提供了<code>run</code>方法,这个方法在<code>SpringApplication.run(…)</code>完成之前调用.<blockquote>
+<p>注意:</p>
+<p>​    这种特别适合在应用启动之后,但是在接收流量之前运行任务.<br>​    <code>CommandLineRunner</code>以字符串数组方式访问应用程序参数, <code>ApplicationRunner</code>使用<code>ApplicationArguments</code>.下面的示例,展示的<code>CommandLineRunner</code>和<code>run</code>方法:</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyCommandLineRunner</span> <span class="keyword">implements</span> <span class="title">CommandLineRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(String... args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Do something...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+​    如果有使用了多个<code>CommandLineRunner</code>和<code>ApplicationRunner</code>bean,且必须要按照特定顺序调用.可以实现额外的<code>org.springframework.core.Ordered</code>接口,或者使用<code>org.springframework.core.annotation.Order</code>来实现指定顺序调用.</li>
+<li><h5 id="应用退出"><a href="#应用退出" class="headerlink" title="应用退出"></a>应用退出</h5>​    每个<code>SpringApplication</code>都在向JVM注册了一个关闭hook,来保证<code>ApplicationContext</code>在退出时能够正常的关闭. 所有的标准的Spring生命周期回调函数(比如<code>DisposableBean</code>接口或者<code>@PreDestroy</code>)都可以被使用.<br>​    此外,如果在调用<code>SpringApplication.exit()</code>时想要返回指定的退出状态码,bean可以实现<code>org.springframework.boot.ExitCodeGenerator</code>接口.退出状态码可以传给<code>System.exit()</code>来返回状态码.如下所示:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ExitCodeGenerator <span class="title">exitCodeGenerator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> () -&gt; <span class="number">42</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.exit(SpringApplication.exit(SpringApplication.run(MyApplication.class, args)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+​    当然,<code>ExitCodeGenerator</code>也可以被异常类实现.当发生这些异常时,Spring Boot会返回异常实现类的<code>getExitCode()</code>提供的code.</li>
+<li><h5 id="管理员功能"><a href="#管理员功能" class="headerlink" title="管理员功能"></a>管理员功能</h5>​    通过指定<code>spring.application.admin.enabled</code>属性值,可以开启应用中与管理员相关的功能.这将在平台<code>MBeanServer</code>上公开<code>SpringApplicationAdminMXBean</code>.对于任何服务包装器实现，此功能也可能很有用.<blockquote>
+<p>建议:</p>
+<p>​    如果想要知道应用运行在那个HTTP端口上,可以使用<code>local.server.port</code>来获取属性.</p>
+</blockquote>
+</li>
+<li><h5 id="跟踪应用启动"><a href="#跟踪应用启动" class="headerlink" title="跟踪应用启动"></a>跟踪应用启动</h5>​    在应用启动过程中,<code>SpringApplication</code>和<code>ApplicationContext</code>执行很多关于应用生命周期,bean生命周期,甚至处理应用事件的任务. 使用<code> ApplicationStartup</code>,Spring Framework允许使用<code>StartupStep</code>对象,来可以追踪应用启动.这些数据可以被用来做做分析,或者用来更好地理解应用启动过程.<br>​    在配置<code>SpringApplication</code>实例时,可以使用<code>ApplicationStartup</code>的一个实例比如使用<code>BufferingApplicationStartup</code>,可以如下:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication application = <span class="keyword">new</span> SpringApplication(MyApplication.class);</span><br><span class="line">        application.setApplicationStartup(<span class="keyword">new</span> BufferingApplicationStartup(<span class="number">2048</span>));</span><br><span class="line">        application.run(args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+​    <code>ApplicationStartup</code>的第一个实现,<code>FlightRecorderApplicationStartup</code>由Spring Framework提供.它将特定于Spring的启动事件添加到Java Flight Recorder会话中，旨在对应用程序进行性能分析,并将Spring上下文生命周期与JVM事件相关联(比如内存分配,垃圾回收,类加载…).只要配置过后,可以启用飞行日志来收集数据.<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">java -XX:StartFlightRecording:filename=recording.jfr,duration=10s -jar demo.jar</span><br></pre></td></tr></table></figure>
+      ​    Spring Boot带有<code>BufferingApplicationStartup</code>,这个实现是用来缓冲启动步骤并将数据发送到外部评估系统.应用可以在任何组件中调用<code>BufferingApplicationStartup</code>.此外,Spring Boot Actuator会以JSON文档的形式,输出终端的启动.</li>
+</ol>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Spring Boot</category>
+      </categories>
+      <tags>
+        <tag>Spring Boot</tag>
+        <tag>Spring Boot Feature</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>第二篇,使用Spring Boot</title>
     <url>/posts/42178.html</url>
     <content><![CDATA[<h4 id="使用Spring-Boot"><a href="#使用Spring-Boot" class="headerlink" title="使用Spring Boot"></a>使用Spring Boot</h4><p>这个章节深入研究使用Spring Boot的更多细节.包含了主题有构建系统,自动配置,如何运行程序.也会包含一些使用Spring Boot的最佳实践.虽然Spring Boot没有什么特别特殊的地方(你可以假设这只是另外一个库),但是又仍有一些建议.如果遵循这些建议,可以开发过程更容易.</p>
