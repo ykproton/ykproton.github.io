@@ -599,4 +599,438 @@ note: 这些特性不是强制的,可以选择这些特性的注解去替换掉<
         <tag>Spring Boot</tag>
       </tags>
   </entry>
+  <entry>
+    <title>第四篇,Spring Boot之外部化配置</title>
+    <url>/posts/45157.html</url>
+    <content><![CDATA[<h5 id="外部化配置"><a href="#外部化配置" class="headerlink" title="外部化配置"></a>外部化配置</h5><ol start="2">
+<li><h5 id="外部化配置-1"><a href="#外部化配置-1" class="headerlink" title="外部化配置"></a>外部化配置</h5>​    Spring Boot允许外部化配置,这样就可以让同一份代码运行在不同环境上.可以使用很多外部配置源,包括Java属性配置文件,YAML文件,环境变量和命令行参数.<br>​    属性值可以直接使用 <code>@Value</code>注入,可以通过Spring的<code>Environment</code>获取,或者通过``@ConfigurationProperties<code>绑定到结构化文件中. ​    Spring Boot使用一个非常特殊的</code>PropertySource`顺序,从而能够合理地覆盖属性值.配置按照如下顺序考虑(靠下元素的值覆盖靠上元素的值):<ol>
+<li>默认配置(由指定<code>SpringApplication.setDefaultProperties</code>的)</li>
+<li>在<code>@Configuration</code>配置类上的<code>@PropertySource</code>导入的属性.<br>要注意,这样的属性源只有在应用上下文刷新过后,才会被加入<code>Environment</code>中. 对于一些特定的属性来说,这个时间点配置的太晚了.(比如<code>logging.*</code>和<code>spring.main.*</code>都是在刷新开始前读取的)</li>
+<li>配置数据(比如<code>application.properties</code>文件)</li>
+<li>只有<code>random.*</code>属性的<code>RandomValuePropertySource</code>源</li>
+<li>系统环境变量</li>
+<li>Java系统变量(<code>System.getProperties()</code>)</li>
+<li>来自<code>java:comp/env</code>的属性</li>
+<li><code>ServletContext</code>的初始化参数</li>
+<li><code>ServletConfig</code>初始化参数</li>
+<li>来自<code>SPRING_APPLICATION_JSON</code>的属性(嵌入到环境变量或系统属性中的内联JSON)</li>
+<li>命令行参数</li>
+<li>测试中的<code>properties</code>属性</li>
+<li>测试上的<code>@TestPropertySource</code>注解</li>
+<li>开启devtools 时,<code>$HOME/.config/spring-boot</code>目录下的DevTools的全局配置.<br>配置数据文件按照如下顺序:</li>
+<li>打包在jar中的应用配置(<code>application.properties</code>和YAML变量)</li>
+<li>打包在jar中的指定profile的应用配置文件(<code>application-&#123;profile&#125;.properties</code>和YAML变量)</li>
+<li>在打包jar外的应用配置(<code>application.properties</code>和YAML变量)</li>
+<li>在打包jar外的指定profile的应用配置文件(<code>application-&#123;profile&#125;.properties</code>和YAML变量)<blockquote>
+<p>注意:</p>
+<p>建议在整个应用中,使用一种形式的配置.如果在同样的位置同时有<code>.properties</code>和<code>.yml</code>格式的文件,<code>.properties</code>的配置优先.<br>​    提供一个具体的例子,假设正在开发一个<code>@Componet</code>, 使用一个<code>name</code>属性,如下所示:</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>&#123;    <span class="meta">@Value(&quot;$&#123;name&#125;&quot;)</span>    <span class="keyword">private</span> String name;    <span class="comment">// ...&#125;</span></span><br></pre></td></tr></table></figure>
+​    在应用的classpth中(比如在jar中),有一个<code>application.properties</code>,提供了一个<code>name</code>的合理的默认值. 当运行在一个新的环境中,可以在jar的外部提供一个<code>application.properties</code>来覆盖默认的<code>name</code>.对于一次性测试,可以使用特定的命令行参数来切换(比如,<code>java -jar app.jar --name=&quot;Spring&quot;</code>)<blockquote>
+<p>建议:</p>
+<p>​    <code>env</code>和<code>configprops</code>端点在确定为什么一个属性值是特定的值得时候会很有用.可以使用这两端点去诊断不再预期内的值.</p>
+</blockquote>
+</li>
+<li><h6 id="访问命令行参数"><a href="#访问命令行参数" class="headerlink" title="访问命令行参数"></a>访问命令行参数</h6>​    默认情况下,<code>SpringApplication</code>会把所有的命令行选项参数转换成<code>property</code>并添加到Spring的<code>Environment</code>中.命令行选项参数就是是以<code>--</code>开头的,比如<code>--server.port=9000</code>. 就像之前提到的,命令行参数总是优先于文件属性源.<br>​    如果不想将命令行属性添加到<code>Environment</code>中,可以使用<code>SpringApplication.setAddCommandLineProperties(false)</code>来禁用.</li>
+<li><h5 id="JSON应用参数"><a href="#JSON应用参数" class="headerlink" title="JSON应用参数"></a>JSON应用参数</h5>​    环境变量和系统变量经常会有很多限制,这意味着有一些属性名不能使用.为了应对这种情况,<br>Spring Boot允许将属性编码成单个JSON结构.<br>​    当应用启动时,所有的<code>spring.application.json</code>或者<code>SPRING_APPLICATION_JSON</code>属性都会被解析,并且添加到<code>Environment</code>.<br>​    比如,在UN*X shell中,可以将在命令行<code>SPRING_APPLICATION_JSON</code>作为环境变量提供.如下:<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> SPRING_APPLICATION_JSON=<span class="string">&#x27;&#123;&quot;my&quot;:&#123;&quot;name&quot;:&quot;test&quot;&#125;&#125;&#x27;</span> java -jar myapp.jar</span></span><br></pre></td></tr></table></figure>
+在之前的例子中,在Spring<code>Environment</code>中以<code>my.name=test</code>结尾.使用JSON同样也可以作为系统变量提供.如下:<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -Dspring.application.json=<span class="string">&#x27;&#123;&quot;my&quot;:&#123;&quot;name&quot;:&quot;test&quot;&#125;&#125;&#x27;</span> -jar myapp.jar</span></span><br></pre></td></tr></table></figure>
+或者可以将使用命令行参数,提供JSON<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar myapp.jar --spring.application.json=<span class="string">&#x27;&#123;&quot;my&quot;:&#123;&quot;name&quot;:&quot;test&quot;&#125;&#125;&#x27;</span></span></span><br></pre></td></tr></table></figure>
+如果将应用部署到传统的应用服务器上,可以使用叫做<code>java:comp/env/spring.application.json</code>的JNDI变量<blockquote>
+<p>注意:</p>
+<p>​    尽管JSON中的<code>null</code>会被添加到属性源中,但是<code>PropertySourcesPropertyResolver</code>将<code>null</code>当做一个不存的值.这意味着在更低顺序的JSON属性源不会用<code>null</code>去覆盖已有属性.</p>
+</blockquote>
+</li>
+<li><h5 id="外部应用属性"><a href="#外部应用属性" class="headerlink" title="外部应用属性"></a>外部应用属性</h5>​    当应用启动时,Spring Boot会从以下目录中,自动找到并加载<code>application.properties</code>和<code>application.yaml</code>文件.<ol>
+<li>classpath根路径</li>
+<li>classpath下的<code>/config</code>包</li>
+<li>当前路径</li>
+<li>当年目录中的<code>/config</code>子目录</li>
+<li><code>/ config</code>子目录的直接子目录<br>以上按照优先级排序(数字小的条目覆盖前面的).来自加载文件的文档作为<code>PropertySources</code>添加到Spring的<code>Environment</code>.<br>​    如果不喜欢<code>application</code>作为配置文件名,可以使用<code>spring.config.name</code>环境属性来更改文件名.也可以使用<code>spring.config.location</code>显式应用环境属性(这是目录位置或文件路径的逗号分隔列表).下面的例子展示如何指定一个不同的名字.<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar myproject.jar --spring.config.name=myproject</span></span><br></pre></td></tr></table></figure>
+下面例子展示,如何指定两个路径:<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -jar myproject.jar --spring.config.location=\</span></span><br><span class="line"><span class="bash">    optional:classpath:/default.properties,\</span></span><br><span class="line"><span class="bash">    optional:classpath:/override.properties</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    如果这些目录是可选的,而并不要求 一定存在,那么可以使用使用<code>optional:</code>前缀.</p>
+<p>警告:</p>
+<p>​    <code>spring.config.name</code>,<code>spring.config.location</code>,<code>spring.config.additional-location</code>在很早时候就用指定载入那些文件. 这些必须被定义为环境变量属性(通常为系统环境变量,系统属性,或者命令行参数.)<br>如果<code>spring.config.location</code>包含目录(相对于文件),目录必须以<code>/</code>或者取决于系统的<code>File.separator</code>结尾. 在运行时,加载前,将会依照<code>spring.config.name</code>生成的名称来加载这些文件.  如果<code>spring.config.location</code>含有文件,那么就按照原样使用.<br>无论是直接指定还是放到目录中,文件引用必须包含文件扩展名. 最典型的开箱即用的扩展名是<code>.properties</code>,<code>.yaml</code>,<code>.yml</code>.<br>当指定了多个文件领,后面一个可以覆盖前一个的值.<br>通过<code>spring.config.location</code>配置的路径可以覆盖默认的路径.比如,<code>spring.config.location</code>配置是<code>optional:classpath:/custom-config/,optional:file:./custom-config/</code>,完整路径应该是下面这样的:</p>
+</blockquote>
+</li>
+<li><code>optional:classpath:custom-config/</code></li>
+<li><code>optional:file:./custom-config/</code><br>如果想要选择添加额外路径,而不是替换原有的,可以使用<code>spring.config.additional-location</code>. 来自其他目录的属性文件可以覆盖默认的路径.比如,如果<code>spring.config.additional-location</code>配置的值是<code>optional:classpath:/custom-config/,optional:file:./custom-config/</code>.那么完整的路径应该是下面这样:</li>
+<li><code>optional:classpath:</code></li>
+<li><code>optional:classpath:/config/</code></li>
+<li><code>optional:file:./</code></li>
+<li><code>optional:file:./config/</code></li>
+<li><code>optional:file:./config/*/</code></li>
+<li><code>optional:classpath:custom-config/</code> (additional-location)</li>
+<li><code>optional:file:./custom-config/</code> (additional-location)<br>这个搜索路径能够允许开发真,在一个配置文件中指定默认值, 然后在其他的配置文件中有选择地覆盖特定值.可以在一个默认路径中,使用<code>application.properties</code>(或者其他的通过<code>spring.config.name</code>指定的默认值)为应用提供默认值.这些默认值可以在运行时被自定义的目录中的其他配置文件覆盖.<blockquote>
+<p>注意:</p>
+<p>​    如果使用的是环境变量而不是系统变量, 大多数操作系统不允许句点分割的key,但是可以使用下划线来替代(比如使用<code>SPRING_CONFIG_NAME</code>而不是<code>spring.config.name</code>).</p>
+<p>注意:</p>
+<p>​    如果应用是运行在servlet容器或者 应用服务器上,可以使用JNDI配置(在目录<code>java:comp/env</code>)或者servlet容器初始化参数,也可以使用系统变量或者环境变量.</p>
+</blockquote>
+</li>
+<li><h6 id="可选路径"><a href="#可选路径" class="headerlink" title="可选路径"></a>可选路径</h6>默认情况下,如果指定的配置数据文件位置不存在,Spring Boot会抛出<code>ConfigDataLocationNotFoundException</code>异常,应用也不会启动.<br>如果想要指定路径,但是有不介意这个路径是否存在,可以使用<code>optional:</code>前缀.可以在<code>spring.config.location</code>和<code>spring.config.additional-location</code>中指定前缀,同样的在<code>spring.config.import</code>中也可以使用.<br>比如,在启动时,<code>spring.config.import</code>有值<code>optional:file:./myconfig.properties</code>,文件<code>myconfig.properties</code>不需要一定存在.<br>如果想要忽略所有的<code>ConfigDataLocationNotFoundExceptions</code>,并且想要继续启动应用,可以使用<code>spring.config.on-not-found</code>属性,将值设置为<code>ignore</code>. 或者使用 <code>SpringApplication.setDefaultProperties(…)</code>设置或者使用系统系统/环境边浪.</li>
+<li><h6 id="带有通配符路径"><a href="#带有通配符路径" class="headerlink" title="带有通配符路径"></a>带有通配符路径</h6>如果过一个文件路径的最后部分包含<code>*</code>符号,会被认为是一个带有通配符的路径.当载入配置时,统配符会被展开,所有的子路径都会被检查.当有多个配置源,又在一些环境中,比如Kubernetes 中,带有通配符的路径将会非常有用.<br>比如,应用中有Redis和MySQL配置,可能回想将两个部分的配置分开来.,同时要求这两个都存在于<code>application.properties</code>文件中.这样就导致了从两个两个路径挂载的,两个独立的的<code>application.properties</code>,比如<code>/config/redis/application.properties</code>,<code>/config/mysql/application.properties</code>.在这个例子中,可以使用带有同通配符的路径<code>config/*/</code>,这样的话,两个路径中的文件都会被处理.<br>默认情况下,在默认搜索路径中,Spring Boot包含了<code>config/*/</code>.这意味着,在jar的外部,<code>/config</code>的所有子目录都会被搜索.<br>在<code>spring.config.location</code>和<code>spring.config.additional-location</code>属性中使用带有通配符的路径.<blockquote>
+<p>注意:</p>
+<p>​    带有通配符的路径只能够有一个<code>*</code>.或者检索目录形式的<code>/*</code>.或者搜索文件形式的<code>*/&lt;filename&gt;</code>. 带通配符的路径将会根据文件名的绝对路径按字母顺序排序。</p>
+<p>建议:</p>
+<p>​    带有通配符的路径只能够在外部文件夹使用.在<code>classpath:</code>路径下,不能够使用.</p>
+</blockquote>
+</li>
+<li><h6 id="指定profile的文件-Profile-Specific-Files"><a href="#指定profile的文件-Profile-Specific-Files" class="headerlink" title="指定profile的文件(Profile Specific Files)"></a>指定profile的文件(Profile Specific Files)</h6>像加载应用的属性文件一样,Spring Boot也会按照<code>application-&#123;profile&#125;</code>的规约那样去加载指定profile的配置文件. 比如,如果应用想要使用YAML文件指定了一个叫做<code>prod</code>的profile,那么使用<code>application.yml</code>和<code>application-prod.yml</code>都可以.<br>指定proflie配置文件加载位置和<code>application.properties</code>相同,并且指定profile的配置会没有指定profile的配置. 入股指定了多个profile,最后被应用的会覆盖所有的.比如<code>spring.profiles.active</code>启用了<code>prod,live</code>两个profile,那么<code>application-prod.properties</code>中的值会被<code>application-live.properties</code>中对应的值覆盖.<br><code>Environment</code>有默认的profile(默认叫做<code>[default]</code>),如果没有启用profile,那么会默认使用这个profile.换句话说,没有显式激活profile,那么会使用<code>application-default</code>中的配置.<blockquote>
+<p>注意:</p>
+<p>​    配置文件只会被加载一次.如果已经直接导入(<code>spring.config.import</code>)了一个指定profile的配置文件,那么它不会再次导入.</p>
+</blockquote>
+</li>
+<li><h6 id="导入其他配置-Importing-Additional-Data"><a href="#导入其他配置-Importing-Additional-Data" class="headerlink" title="导入其他配置( Importing Additional Data)"></a>导入其他配置( Importing Additional Data)</h6>使用<code>spring.config.import</code>能够让应用导入其他位置的更多的配置数据. Spring Boot发现配置了导入之后,就会进行处理, 会立即在声明导入的下面将导入的文档直接插入.<br>比如可以在classpath中的<code>application.properties</code>的文件如下:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.application.name</span>=<span class="string">myapp</span></span><br><span class="line"><span class="meta">spring.config.import</span>=<span class="string">optional:file:./dev.properties</span></span><br></pre></td></tr></table></figure>
+这样会触发在当前目录下面导入<code>dev.properties</code>(如果文件存在的话).<code>dev.properties</code>的配置的值将会优先于触发导入的文件.在上面的例子中,<code>dev.properties</code>可以指定定义<code>spring.application.name</code>为不同的值.无论声明多少次,导入只会被执行一次.在properties / yaml文件中的单个文档中定义导入的顺序无关紧要.比如,下面的的两个例子实际是一样:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.config.import</span>=<span class="string">my.properties</span></span><br><span class="line"><span class="meta">my.property</span>=<span class="string">value</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">my.property</span>=<span class="string">value</span></span><br><span class="line"><span class="meta">spring.config.import</span>=<span class="string">my.properties</span></span><br></pre></td></tr></table></figure>
+在上面的两个例子中,<code>my.properties</code>文件将会优先于触发导入的文件.<br>使用<code>spring.config.import</code>可以指定多个路径. 路径的载入顺序和定义顺序保持一致,后导入的优先.<blockquote>
+<p>建议:</p>
+<p>​    Spring Boot包含可插拔式接口,能够支持多个不同的路径地址.默认情况下,可以导入Java配置文件,YAML和配置树.</p>
+<p>​    第三方jar包可以提供额外的功能支持(不要求文件是本地的).比如,配置文件从外部仓库中入到,类似Consul, Apache ZooKeeper 或者 Netflix Archaius..</p>
+<p>​    如果想要支持自己的路径,可以参照<code>org.springframework.boot.context.config</code>包下的<code>ConfigDataLocationResolver</code>和<code>ConfigDataLoader</code>类.</p>
+</blockquote>
+</li>
+<li><h6 id="导入无扩展名的文件-Importing-Extensionless-Files"><a href="#导入无扩展名的文件-Importing-Extensionless-Files" class="headerlink" title="导入无扩展名的文件(Importing Extensionless Files)"></a>导入无扩展名的文件(Importing Extensionless Files)</h6>有些云平台不支持在挂载文件上添加扩展名.导入这些没有扩展名的文件,需要给Spring Boot一些提示,让Spring Boot知道该如何去加载.可以将将扩展名提示放到<code>[]</code>中.<br>比如,想要将<code>/etc/config/myconfig</code>文件当做yaml导入.可以在<code>application.properties</code>中,使用下面的方式导入:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.config.import</span>=<span class="string">file:/etc/config/myconfig[.yaml]</span></span><br></pre></td></tr></table></figure></li>
+<li><h6 id="使用配置树-Using-Configuration-Trees"><a href="#使用配置树-Using-Configuration-Trees" class="headerlink" title="使用配置树( Using Configuration Trees)"></a>使用配置树( Using Configuration Trees)</h6>在一些云平台(比如 Kubernetes)运行应用时,经常需要读取平台提供的配置.如果出于上述目的使用环境变量并不是一个常用的办法,这回有一些缺点,尤其是一些值是很民管的数据,比如密码.<br>作为替代环境变量的一种可选方式,很多云平台允许将配置映射到挂载的数据卷中.例如，Kubernetes可以批量安装ConfigMap和Secrets.<br>有两种常用的卷挂载方式:<ol>
+<li>一个单独的配置文件,包含很多属性配置(一般使用YAML)</li>
+<li>多个文件被写到一个树形目录中,文件名变成key,内容变成value.<br>对于第一种方式,可以直接使用<code>spring.config.import</code>导入YAML或者properties.对于第二种方式,可以使用<code>configtree</code>前缀, 使用该前缀时,Spring Boot知道需要将所有的文件都用作成properties.<br>比如,Kubernetes 如下挂载卷:<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">etc/</span><br><span class="line">  config/</span><br><span class="line">    myapp/</span><br><span class="line">      username</span><br><span class="line">      password</span><br></pre></td></tr></table></figure>
+文件<code>username</code>的内容应该是一个配置值,<code>password</code>文件内容应该是口令.<br>可以在<code>application.properties</code>或者<code>application.yaml</code>中导入这些属性:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.config.import</span>=<span class="string">optional:configtree:/etc/config/</span></span><br></pre></td></tr></table></figure>
+然后就可以像平常一样,从<code>Environment</code>中访问或者注入<code>myapp.username</code>和<code>myapp.password</code>的值.<blockquote>
+<p>建议:</p>
+<p>​    也可以按照内容需要,将配置树的值同时绑定到<code>String</code>和<code>byte[]</code>类型.<br>如果在同一个父级目录下,有多个配置树需要导入,可以使用通配符的方式导入.以<code>/*/</code>结尾的<code>configtree:</code>路径,会导入所有的直接子目录为配置树.<br>比如,下面的卷:</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">etc/</span><br><span class="line">  config/</span><br><span class="line">    dbconfig/</span><br><span class="line">      db/</span><br><span class="line">        username</span><br><span class="line">        password</span><br><span class="line">    mqconfig/</span><br><span class="line">      mq/</span><br><span class="line">        username</span><br><span class="line">        password</span><br></pre></td></tr></table></figure>
+可以使用<code>configtree:/etc/config/*/</code>作为导入路径.<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.config.import</span>=<span class="string">optional:configtree:/etc/config/*/</span></span><br></pre></td></tr></table></figure>
+这样就会增加<code>db.username</code>,<code>db.password</code>,<code>mq.username</code>, <code>mq.password</code>属性.<blockquote>
+<p>注意:</p>
+<p>​    使用统配符导入的路径会以字符排序. 如果需要不同的排序方式,则应将每个位置列为单独的导入.<br>配置树也可以用来配置Docker的口令.当Docker群集服务被授予对口令的访问权限时，该口令将安装到容器中.比如,如果叫做<code>db.password</code>的口令别挂载到<code>/run/secrets/</code>位置上,可以使用下面的方式来讲<code>db.password</code>添加到Spring environment中.</p>
+</blockquote>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.config.import</span>=<span class="string">optional:configtree:/run/secrets/</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><h5 id="属性占位符-Property-Placeholders"><a href="#属性占位符-Property-Placeholders" class="headerlink" title="属性占位符( Property Placeholders)"></a>属性占位符( Property Placeholders)</h5><code>application.properties</code>和<code>application.yml</code>中的值在使用的时候,会被先有的<code>Environment</code>过滤,所以可以引用之前定义过得值(比如,来自系统属性). 标准的<code>$ &#123;name&#125;</code>属性-占位符语法可以在值中的任何位置使用.<br>举个例子,比如想要将下面文件的<code>app.description</code>设置为<code>MyApp is a Spring Boot application</code>:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">app.name</span>=<span class="string">MyApp</span></span><br><span class="line"><span class="meta">app.description</span>=<span class="string">$&#123;app.name&#125; is a Spring Boot application</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    您还可以使用此技术来创建现有Spring Boot属性的“简短”变体。有关详细信息，请参见howto.html操作方法。</p>
+</blockquote>
+</li>
+<li><h6 id="处理多文档文件-Working-with-Multi-Document-Files"><a href="#处理多文档文件-Working-with-Multi-Document-Files" class="headerlink" title="处理多文档文件(Working with Multi-Document Files)"></a>处理多文档文件(Working with Multi-Document Files)</h6>Spring Boot允许将一个物理文档分割成多个逻辑文档,每个逻辑文档独立添加.文档按照从上到下的顺序处理.后面的文档属性可以覆盖前面的.<br>对于<code>application.yml</code>文件,可以使用标准的YAML多个文档符号.三个连续的短横杠<code>---</code>表示是一个文档的结尾,也是另一个文档的开头.<br>比如,下面的文件,有两个逻辑文档:<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring.application.name:</span> <span class="string">MyApp</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">spring.config.activate.on-cloud-platform:</span> <span class="string">kubernetes</span></span><br><span class="line"><span class="attr">spring.application.name:</span> <span class="string">MyCloudApp</span></span><br></pre></td></tr></table></figure>
+对于<code>application.properties</code>,使用一个特殊的注释<code>#---</code>来分割文档:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">spring.application.name</span>=<span class="string">MyApp</span></span><br><span class="line"><span class="comment">#---</span></span><br><span class="line"><span class="meta">spring.config.activate.on-cloud-platform</span>=<span class="string">kubernetes</span></span><br><span class="line"><span class="meta">spring.application.name</span>=<span class="string">MyCloudApp</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    属性文件分隔符不得包含任何前导空格，并且必须恰好具有三个连字符。 分隔符之前和之后的行不得为注释。</p>
+<p>建议:</p>
+<p>​    多文档属性文件通常与激活属性（例如<code>spring.config.activate.on-profile</code>）结合使用</p>
+<p>警告:</p>
+<p>​    使用<code>@PropertySource</code>或<code>@TestPropertySource</code>批注无法加载多文档属性文件。</p>
+</blockquote>
+</li>
+<li><h6 id="激活属性-Activation-Properties"><a href="#激活属性-Activation-Properties" class="headerlink" title="激活属性(Activation Properties)"></a>激活属性(Activation Properties)</h6>有时候,根据特定的条件,激活特定的属性值很有用.比如,当特定的<code>profile</code>激活时,想要激活相关的属性.<br>使用<code>spring.config.activate.*</code>可以根据条件激活属性文档.<br>有两个激活属性可用:<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>on-profile</td>
+<td>符合<code>profile</code>表达式,才会激活文档</td>
+</tr>
+<tr>
+<td>on-cloud-platform</td>
+<td>符合<code>CloudPlatform</code>表达式,激活文档</td>
+</tr>
+<tr>
+<td>比如,下面的例子,指定了第二个文档,只有当运行在Kubernetes,并且运行环境是<code>prod</code>或者<code>staging</code>的时候才会激活.</td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">myprop</span>=<span class="string">always-set</span></span><br><span class="line"><span class="comment">#---</span></span><br><span class="line"><span class="meta">spring.config.activate.on-cloud-platform</span>=<span class="string">kubernetes</span></span><br><span class="line"><span class="meta">spring.config.activate.on-profile</span>=<span class="string">prod | staging</span></span><br><span class="line"><span class="attr">myotherprop</span>=<span class="string">sometimes-set</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><h5 id="加密属性-Encrypting-Properties"><a href="#加密属性-Encrypting-Properties" class="headerlink" title="加密属性(Encrypting Properties)"></a>加密属性(Encrypting Properties)</h5>Spring Boot没有提供任何内置的支持加密属性值的支持,但是提供了一个必要回调函数点,可以修改Spring <code>Environment</code>中的值.<code>EnvironmentPostProcessor</code>可以允许在应用启动前修改<code>Environment</code>.<br>如果想要一种安全的方式来存储凭证和密码,Spring Cloud Vault项目提供了对在HashiCorp Vault中存储外部化配置的支持.</li>
+<li><h5 id="使用YAML"><a href="#使用YAML" class="headerlink" title="使用YAML"></a>使用YAML</h5>YAML是JSON的超集,因此是一种用于指定层次结构配置数据的便捷格式.只要在类路径上具有SnakeYAML库，<code>SpringApplication</code>类就会自动支持YAML作为属性的替代方法。<blockquote>
+<p>注意:</p>
+<p>​    如果使用了”Starters”,在<code>spring-boot-starter</code>中会自动提供SnakeYAML .</p>
+</blockquote>
+<ol>
+<li><h6 id="将YAML映射到属性-Mapping-YAML-to-Properties"><a href="#将YAML映射到属性-Mapping-YAML-to-Properties" class="headerlink" title="将YAML映射到属性(Mapping YAML to Properties)"></a>将YAML映射到属性(Mapping YAML to Properties)</h6><p>需要将YAML文档从其层次结构格式转换为可以与Spring Environment一起使用的平面结构.比如下面的YAML文档:</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">environments:</span></span><br><span class="line">  <span class="attr">dev:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">https://dev.example.com</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">Developer</span> <span class="string">Setup</span></span><br><span class="line">  <span class="attr">prod:</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">https://another.example.com</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">My</span> <span class="string">Cool</span> <span class="string">App</span></span><br></pre></td></tr></table></figure>
+<p>为了能够从<code>Environment</code>中访问这些属性,需要铺平成如下格式:</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">environments.dev.url</span>=<span class="string">https://dev.example.com</span></span><br><span class="line"><span class="meta">environments.dev.name</span>=<span class="string">Developer Setup</span></span><br><span class="line"><span class="meta">environments.prod.url</span>=<span class="string">https://another.example.com</span></span><br><span class="line"><span class="meta">environments.prod.name</span>=<span class="string">My Cool App</span></span><br></pre></td></tr></table></figure>
+<p>同样的,YAML的列表也要平铺,它们用<code>[index]</code>解引用器表示为属性键.考虑下面的YAML:</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">my:</span></span><br><span class="line"> <span class="attr">servers:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">dev.example.com</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">another.example.com</span></span><br></pre></td></tr></table></figure>
+
+<p>上面会转换成下面:</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">my.servers[0]</span>=<span class="string">dev.example.com</span></span><br><span class="line"><span class="meta">my.servers[1]</span>=<span class="string">another.example.com</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>​    使用<code>[index]</code>符号的属性应该使用Spring Boot的<code>binder</code>类来绑定到Java的<code>List</code>或者<code>Set</code>.</p>
+<p>警告:</p>
+<p>​    YAML文件不能够使用<code>@PropertySource</code>和<code>@TestPropertySource</code>注解加载.所以,如果想要使用注解导入,必须使用properties文件.</p>
+</blockquote>
+</li>
+<li><h6 id="直接加载YAML-Directly-Loading-YAML"><a href="#直接加载YAML-Directly-Loading-YAML" class="headerlink" title="直接加载YAML(Directly Loading YAML)"></a>直接加载YAML(Directly Loading YAML)</h6><p>Spring Framework提供两个类来方便加载YAML文件.<code>YamlPropertiesFactoryBean</code>将YAML作为<code>Properties</code>加载.<code>YamlMapFactoryBean</code>将YAML作为<code>Map</code>记载.</p>
+<p>如果想要baYAML作为Spring <code>PropertySource</code>,也可以使用<code>YamlPropertySourceLoader</code>类.</p>
+</li>
+</ol>
+</li>
+<li><h5 id="配置随机值-Configuring-Random-Values"><a href="#配置随机值-Configuring-Random-Values" class="headerlink" title="配置随机值(Configuring Random Values)"></a>配置随机值(Configuring Random Values)</h5> 在注入随机值时(比如到口令或者测试用例中),<code>RandomValuePropertySource</code>会很有用.可以获取整型,长整型,uuid,或者字符串类型.如下所示:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">my.secret</span>=<span class="string">$&#123;random.value&#125;</span></span><br><span class="line"><span class="meta">my.number</span>=<span class="string">$&#123;random.int&#125;</span></span><br><span class="line"><span class="meta">my.bignumber</span>=<span class="string">$&#123;random.long&#125;</span></span><br><span class="line"><span class="meta">my.uuid</span>=<span class="string">$&#123;random.uuid&#125;</span></span><br><span class="line"><span class="meta">my.number-less-than-ten</span>=<span class="string">$&#123;random.int(10)&#125;</span></span><br><span class="line"><span class="meta">my.number-in-range</span>=<span class="string">$&#123;random.int[1024,65536]&#125;</span></span><br></pre></td></tr></table></figure>
+<code>random.int*</code>的语法是<code>OPEN value (,max) CLOSE</code>.<code>OPEN,CLOSE</code>是任意字符,<code>value,max</code>是整型.如果<code>max</code>提供,那么<code>value</code>是最小值,<code>max</code>是最大值(最终结果不会包含最大值).</li>
+<li><h5 id="配置系统环境属性-Configuring-System-Environment-Properties"><a href="#配置系统环境属性-Configuring-System-Environment-Properties" class="headerlink" title="配置系统环境属性(Configuring System Environment Properties)"></a>配置系统环境属性(Configuring System Environment Properties)</h5>Spring Boot支持给环境属性设置前缀.如果系统环境被多个不同配置的Spring Boot应用共享的话会有用.可以在<code>SpringApplication</code>直接设置系统环境属性.<br>比如,如果想要设置前缀是<code>input</code>,那么属性为<code>remote.timeout</code>将也会在系统环境中被解析成<code>input.remote.timeout</code>.</li>
+<li><h6 id="类型安全的配置属性-Type-safe-Configuration-Properties"><a href="#类型安全的配置属性-Type-safe-Configuration-Properties" class="headerlink" title="类型安全的配置属性(Type-safe Configuration Properties)"></a>类型安全的配置属性(Type-safe Configuration Properties)</h6>使用<code>@Value(&quot;$&#123;property&#125;&quot;)</code>来注入配置有时候会非常麻烦,尤其是有多个配置文件,或则配置数据本来就是层级结构的.Spring Boot提供了另一种办法来使用配置,那就是使用一个强类型的bean来管理和验证应用的配置.<ol>
+<li><h6 id="JavaBean属性绑定-JavaBean-properties-binding"><a href="#JavaBean属性绑定-JavaBean-properties-binding" class="headerlink" title="JavaBean属性绑定(JavaBean properties binding)"></a>JavaBean属性绑定(JavaBean properties binding)</h6>下面可声明并绑定JavaBean属性的一种方式:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my.service&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> enabled;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> InetAddress remoteAddress;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Security security = <span class="keyword">new</span> Security();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters / setters...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Security</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">private</span> List&lt;String&gt; roles = <span class="keyword">new</span> ArrayList&lt;&gt;(Collections.singleton(<span class="string">&quot;USER&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// getters / setters...</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这个POJO定义如下的属性:<ul>
+<li><code>my.service.enabled</code>,默认值为false</li>
+<li><code>my.service.remote-address</code>,可以从字符串强制转换的类型</li>
+<li><code>my.service.security.username</code>,内嵌”sercurity”对象,名字由属性名决定.特别是，返回类型根本不使用，可能是<code>SecurityProperties</code>.</li>
+<li><code>my.service.security.password</code></li>
+<li><code>my.service.security.roles</code>,有一个<code>String</code>集合,默认值是<code>USET</code><blockquote>
+<p>注意:</p>
+<p>​    在Spring Boot中,可以获得映射到<code>ConfigurationProperties</code>类的属性,这些都是通过properties,YAML,环境参数等等配置的, 这些都是公开的接口,但是这个类的getters/setters不应该被直接使用.</p>
+<p>注意:</p>
+<p>​    这种方式依赖于默认的空构造函数，并且getter和setter通常是强制性的，因为绑定是通过标准Java Beans属性描述符进行的，就像在Spring MVC中一样。在以下情况下，可以省略setter:</p>
+<ul>
+<li>Map集合,因为只要初始化过后,只需要getter,不需要setter,因为可以被绑定器修改.</li>
+<li>可以通过索引（通常使用YAML）或使用单个逗号分隔的值（属性）来访问集合和数组。 在后一种情况下，必须使用setter。 我们建议始终为此类类型添加setter。 如果初始化集合，请确保它是可变的（如上例所示）.</li>
+<li>如果一个内部POJO属性被初始化(就像<code>Security</code>属性),不要求setter.如果想要绑定器在运行中创建实例,需要设置setter.</li>
+</ul>
+<p>​    有些人会使用Lombok去自动添加getter和setter.要确保Lombok没有给类生成一个特定的构造函数,构造函数会被容器用来初始化对象.</p>
+<p>​    最后，仅考虑标准Java Bean属性，不支持对静态属性的绑定。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><h6 id="构造器绑定-Constructor-binding"><a href="#构造器绑定-Constructor-binding" class="headerlink" title="构造器绑定(Constructor binding)"></a>构造器绑定(Constructor binding)</h6>上一节中的示例可以用不可变的方式重写，如以下示例所示：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConstructorBinding</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(&quot;my.service&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// fields...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyProperties</span><span class="params">(<span class="keyword">boolean</span> enabled, InetAddress remoteAddress, Security security)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.enabled = enabled;</span><br><span class="line">        <span class="keyword">this</span>.remoteAddress = remoteAddress;</span><br><span class="line">        <span class="keyword">this</span>.security = security;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Security</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// fields...</span></span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Security</span><span class="params">(String username, String password, <span class="meta">@DefaultValue(&quot;USER&quot;)</span> List&lt;String&gt; roles)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.username = username;</span><br><span class="line">            <span class="keyword">this</span>.password = password;</span><br><span class="line">            <span class="keyword">this</span>.roles = roles;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// getters...</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+在开头部分, <code>@ConstructorBinding</code>注解用于表明,这里应该使用构造器绑定.这意味着,绑定器去找一个希望使用的有参构造器进行绑定.<br>标有<code>@ConstructorBinding</code>类的内部成员(比如<code>Security</code>)也会通过构造器绑定.<br>可以使用<code>@DefaultValue</code>来指定默认值,也会进行强制转换,将<code>String</code>转换成未知类型的属性.默认情况下,不弱没有属性被绑到<code>Security</code>,那么将会被赋予<code>null</code>.如果希望即使没有对应的属性绑定到<code>Security</code>上,返回一个不是null的实例,可以使用无参的<code>@DefaultValue</code>的注解:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyProperties</span><span class="params">(<span class="keyword">boolean</span> enabled, InetAddress remoteAddress, <span class="meta">@DefaultValue</span> Security security)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.enabled = enabled;</span><br><span class="line">    <span class="keyword">this</span>.remoteAddress = remoteAddress;</span><br><span class="line">    <span class="keyword">this</span>.security = security;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    开启构造器绑定,必须使用<code>@EnableConfigurationProperties</code>或者配置属性搜索.对于有常规的Spring机制(<code>@Component</code>)创建的bean,通过<code>@Bean</code>方式,或者带有<code>@Import</code>的bean,都可以使用构造器注入.</p>
+<p>建议:</p>
+<p>​    如果类中有多个构造器,那么可以使用<code>@ConstructorBinding</code>来指定应该使用哪一个构造器绑定.</p>
+<p>注意:</p>
+<p>​    不建议将<code>java.util.Optional</code>与<code>@ConfigurationProperties</code>一起使用，因为它主要旨在用作返回类型.因此，它不太适合配置属性注入.为了与其他类型的属性保持一致，如果声明了Optional属性并且没有任何值，则将绑定null而不是空的Optional.</p>
+</blockquote>
+</li>
+<li><h6 id="启用-ConfigurationProperties注释的类-Enabling-ConfigurationProperties-annotated-types"><a href="#启用-ConfigurationProperties注释的类-Enabling-ConfigurationProperties-annotated-types" class="headerlink" title="启用@ConfigurationProperties注释的类(Enabling @ConfigurationProperties-annotated types)"></a>启用@ConfigurationProperties注释的类(Enabling @ConfigurationProperties-annotated types)</h6>Spring Boot提供了绑定<code>@ConfigurationProperties</code>类型并将其注册为Bean的基础架构.可以逐类启用配置属性，也可以启用与组件扫描类似的方式进行配置属性扫描.<br>有时，用<code>@ConfigurationProperties</code>注释的类可能不适用于扫描，例如，如果您正在开发自己的自动配置，或者想要有条件地启用它们. 在这些情况下,请使用<code>@EnableConfigurationProperties</code>注解指定要处理的类型列表.可以在任何<code>@Configuration</code>类上完成此操作，如以下示例所示：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="meta">@EnableConfigurationProperties(SomeProperties.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+要使用配置属性扫描,将<code>@ConfigurationPropertiesScan</code>批注添加到应用程序.通常，它被添加到以<code>@SpringBootApplication</code>标注的主应用程序类中，但是可以将其添加到任何<code>@Configuration</code>类中.默认情况下,将从声明注解的类的包中进行扫描。 如果要定义要扫描的特定程序包，可以按照以下示例所示进行操作：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ConfigurationPropertiesScan(&#123; &quot;com.example.app&quot;, &quot;com.example.another&quot; &#125;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    使用配置文件扫描或通过<code>@EnableConfigurationProperties</code>注册<code>@ConfigurationProperties</code>Bean时，该Bean具有常规名称：<prefix>-<fqn>，其中<prefix>是<code>@ConfigurationProperties</code>中指定的,<fqn> 是Bean的完全限定名称。 如果注解没有提供不提供任何前缀，则仅使用Bean的完全限定名称.</p>
+<p>在例子中的bean的name是<code>com.example.app-com.example.app.SomeProperties</code><br>推荐只在处理环境时使用<code>@ConfigurationProperties</code>,特别的,不要注入context中的其他bean.对于极端情况,可以使用setter注入,或者任何由framework提供的<code>*Aware</code>的接口(比如<code>EnvironmentAware</code>,如果需要访问<code>Environment</code>).如果还是想要使用构造器注入其他的bean,配置属性的Bean必须使用<code>@Componet</code>注解和使用基于JavaBean的属性绑定.</p>
+</blockquote>
+</li>
+<li><h6 id="使用-ConfigurationProperties注解的类-Using-ConfigurationProperties-annotated-types"><a href="#使用-ConfigurationProperties注解的类-Using-ConfigurationProperties-annotated-types" class="headerlink" title="使用@ConfigurationProperties注解的类(Using @ConfigurationProperties-annotated types)"></a>使用@ConfigurationProperties注解的类(Using @ConfigurationProperties-annotated types)</h6>这种配置风格特别适合与SpringApplication外部YAML配置一起使用,如下:<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">my:</span></span><br><span class="line">    <span class="attr">service:</span></span><br><span class="line">        <span class="attr">remote-address:</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.1</span></span><br><span class="line">        <span class="attr">security:</span></span><br><span class="line">            <span class="attr">username:</span> <span class="string">admin</span></span><br><span class="line">            <span class="attr">roles:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">USER</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">ADMIN</span></span><br></pre></td></tr></table></figure>
+要使用<code>@ConfigurationProperties</code>Bean，可以像使用其他任何Bean一样注入它们，如以下示例所示：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> SomeProperties properties;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyService</span><span class="params">(SomeProperties properties)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.properties = properties;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">openConnection</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Server server = <span class="keyword">new</span> Server(<span class="keyword">this</span>.properties.getRemoteAddress());</span><br><span class="line">        server.start();</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    使用<code>@ConfigurationProperties</code>还可以让您生成元数据文件，IDE可以使用这些元数据文件为您自己的键提供自动完成功能</p>
+</blockquote>
+</li>
+<li><h6 id="第三方配置-Third-party-Configuration"><a href="#第三方配置-Third-party-Configuration" class="headerlink" title="第三方配置(Third-party Configuration)"></a>第三方配置(Third-party Configuration)</h6>除了使用<code>@ConfigurationProperties</code>注释类之外，您还可以在公共@Bean方法上使用它。 当您要将属性绑定到控件之外的第三方组件时，这样做特别有用。<br>要从Environment属性配置Bean，请将<code>@ConfigurationProperties</code>添加到其Bean注册中，如以下示例所示：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThirdPartyConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConfigurationProperties(prefix = &quot;another&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> AnotherComponent <span class="title">anotherComponent</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> AnotherComponent();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+用<code>another</code>前缀定义的任何JavaBean属性都以类似于前面的<code>SomeProperties</code>示例的方式映射到该<code>AnotherComponent</code> bean.</li>
+<li><h6 id="Relaxed-Binding-松散绑定"><a href="#Relaxed-Binding-松散绑定" class="headerlink" title="Relaxed Binding(松散绑定?)"></a>Relaxed Binding(松散绑定?)</h6>Spring Boot使用一些relax rules将<code>Environment</code>属性绑定到<code>@ConfigurationProperties</code>bean,因此，<code>Environment</code>属性名称和Bean属性名称之间不需要完全匹配.有用的常见示例包括破折号分隔的环境属性（例如，<code>context-path</code>绑定到<code>contextPath</code>）和大写的环境属性（例如<code>PORT</code>绑定到<code>port</code>）<br>作为示例，请参考以下<code>@ConfigurationProperties</code>类：<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;my.main-project.person&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPersonProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String firstName;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getFirstName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.firstName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFirstName</span><span class="params">(String firstName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.firstName = firstName;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+使用前面的代码，可以全部使用以下属性名称：<table>
+<thead>
+<tr>
+<th>属性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>my.main-project.person.first-name</code></td>
+<td>短横线形式,建议在.properties和.yml文件中使用。</td>
+</tr>
+<tr>
+<td><code>my.main-project.person.firstName</code></td>
+<td>标准驼峰命名</td>
+</tr>
+<tr>
+<td><code>y.main-project.person.first_name</code></td>
+<td>下划线表示法，是.properties和.yml文件中使用的另一种格式。</td>
+</tr>
+<tr>
+<td><code>MY_MAINPROJECT_PERSON_FIRSTNAME</code></td>
+<td>大写格式，在使用系统环境变量时建议使用。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>注意:</p>
+<p>​    注解使用的前缀的值<code>prefix</code>必须是短横杠线的形式(全部都是小写,并使用<code>-</code>分隔,比如<code>my.main-project.person</code>).</p>
+</blockquote>
+每个配置源的松散绑定规则<table>
+<thead>
+<tr>
+<th>属性源</th>
+<th>简单类型</th>
+<th>List类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Properties</td>
+<td>驼峰,短横线,下划线</td>
+<td>使用<code>[]</code>或者用逗号分隔</td>
+</tr>
+<tr>
+<td>YAML</td>
+<td>驼峰,短横线,下划线</td>
+<td>YAML列表语法或者逗号分隔</td>
+</tr>
+<tr>
+<td>环境变量</td>
+<td>下划线作为定界符的大写格式</td>
+<td>下划线括起来的数值</td>
+</tr>
+<tr>
+<td>系统属性</td>
+<td>驼峰,短横线,下划线</td>
+<td>使用<code>[]</code>或者用逗号分隔</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>建议:</p>
+<p>​    如果可以的话,推荐属性应该以小写短横线形式,比如<code>my.person.first-name=Rod</code></p>
+</blockquote>
+<ul>
+<li><p>绑定Map(Binding Maps)</p>
+<p>绑定到Map属性时,可能需要使用特殊的括号符号，以便保留原始key.如果key没有被<code>[]</code>包围，则所有非字母数字字符<code>-</code>或<code>.</code> 被删除。</p>
+<p>例如，考虑将以下属性绑定到<code>Map &lt;String，String&gt;</code>：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">my.map.[/key1]</span>=<span class="string">value1</span></span><br><span class="line"><span class="meta">my.map.[/key2]</span>=<span class="string">value2</span></span><br><span class="line"><span class="meta">my.map./key3</span>=<span class="string">value3</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>​    对于YAML文件，方括号必须用引号引起来，以便正确解析key。</p>
+</blockquote>
+<p>上面的<code>/ key1</code>，<code>/ key2</code>和<code>key3</code>属性作为Map中的key绑定到Map上.<code>key3</code>的斜杠会被从key中移除,以为它没有被<code>[]</code>包裹.</p>
+<p>如果<code>key</code>中包含一个<code>.</code>,那么就需要使用方括号来包裹,此时正在绑定一个非标量的值.比如,绑定<code>a.b=c</code>到<code>Map&lt;String, Object&gt;</code>上,在Map中会添加<code>&#123;&quot;a&quot;=&#123;&quot;b&quot;=&quot;c&quot;&#125;&#125;</code>. 但是如果绑定<code>[a.b]=c</code>,那么<code>&#123;&quot;a.b&quot;=&quot;c&quot;&#125;</code>将会被添加到Map中.</p>
+</li>
+<li><p>从环境变量绑定(Binding from Environment Variables)</p>
+<p>很多操作系统严格限制环境变量的变量名.比如Linux的shell变量只能包含字符(<code>a</code> to <code>z</code> or <code>A</code> to <code>Z</code>), 数字(<code>0</code> to <code>9</code>) ,或者使用下划线的字符(<code>_</code>).按照规范,Unix 的shell变量应该使用大写形式变量名.</p>
+<p>Spring Boot的relaxed绑定规则在设计的时候,就尽可能的与这些命名约束想兼容.</p>
+<p>要将规范形式的属性名称转换为环境变量名称,可以遵循以下规则：</p>
+<ul>
+<li>使用下划线(<code>_</code>)替换点(<code>.</code>)</li>
+<li>移除短横线(<code>-</code>)</li>
+<li>转换成大写.</li>
+</ul>
+<p>比如,配置属性<code>spring.main.log-startup-info</code>转换成环境变量形式应该是<code>SPRING_MAIN_LOGSTARTUPINFO</code>.</p>
+<p>环境变量也可以用来绑定到对象list中.为了绑定<code>List</code>,变量名中的元素号应该使用下划线包围.</p>
+<p>比如,配置属性<code>my.service[0].other</code>,应该使用<code>MY_SERVICE_0_OTHER</code>变量名.</p>
+</li>
+</ul>
+</li>
+<li><h6 id="合并复杂类型-Merging-Complex-Types"><a href="#合并复杂类型-Merging-Complex-Types" class="headerlink" title="合并复杂类型(Merging Complex Types)"></a>合并复杂类型(Merging Complex Types)</h6>如果在多个位置配置了list，则通过替换整个list来进行覆盖。<br>比如,假设有一个<code>MyPojo</code>对象,有<code>name</code>和<code>description</code>两个属性,属性的默认值位<code>null</code>.下面的例子展示了<code>MyProperties</code>中的<code>MyPojo</code>的list.<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> List&lt;MyPojo&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;MyPojo&gt; <span class="title">getList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.list;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+考虑下面的配置:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">my.list[0].name</span>=<span class="string">my name</span></span><br><span class="line"><span class="meta">my.list[0].description</span>=<span class="string">my description</span></span><br><span class="line"><span class="comment">#---</span></span><br><span class="line"><span class="meta">spring.config.activate.on-profile</span>=<span class="string">dev</span></span><br><span class="line"><span class="meta">my.list[0].name</span>=<span class="string">my another name</span></span><br></pre></td></tr></table></figure>
+如果<code>dev</code>的profile没有被启用,那么 <code>MyProperties.list</code> 只有一个<code>MyPojo</code>,就像上面定义的那样.如果<code>dev</code>的profile启用,那么<code>list</code>中还是只有一个元素(name是<code>my another name</code>,description是<code>null</code>).这个配置没有增加第二个<code>MyPojo</code>到list中,也没有融合元素.<br>当<code>List</code>在多个profile中指定时,只有优先级最高的那个会被使用.考虑下面的例子:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">my.list[0].name</span>=<span class="string">my name</span></span><br><span class="line"><span class="meta">my.list[0].description</span>=<span class="string">my description</span></span><br><span class="line"><span class="meta">my.list[1].name</span>=<span class="string">another name</span></span><br><span class="line"><span class="meta">my.list[1].description</span>=<span class="string">another description</span></span><br><span class="line"><span class="comment">#---</span></span><br><span class="line"><span class="meta">spring.config.activate.on-profile</span>=<span class="string">dev</span></span><br><span class="line"><span class="meta">my.list[0].name</span>=<span class="string">my another name</span></span><br></pre></td></tr></table></figure>
+在之前的例子中,如果<code>dev</code>profile启用,那么<code>MyProperties.list</code>只有一个<code>MyPojo</code>元素(name是<code>my another name</code>,description 是<code>null</code>).比如YAML,逗号分隔列表和YAML列表均可用于完全覆盖列表的内容.<br>对于<code>Map</code>属性,可以从多个数据源绑定值.但是,对于在多个源的同一个属性,只会使用优先级最高的那个.下面的例子展示了<code>MyProperties</code>中的<code>Map&lt;String, MyPojo&gt;</code>:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, MyPojo&gt; map = <span class="keyword">new</span> LinkedHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Map&lt;String, MyPojo&gt; <span class="title">getMap</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.map;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+考虑接下来的配置文件:<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="meta">my.map.key1.name</span>=<span class="string">my name 1</span></span><br><span class="line"><span class="meta">my.map.key1.description</span>=<span class="string">my description 1</span></span><br><span class="line"><span class="comment">#---</span></span><br><span class="line"><span class="meta">spring.config.activate.on-profile</span>=<span class="string">dev</span></span><br><span class="line"><span class="meta">my.map.key1.name</span>=<span class="string">dev name 1</span></span><br><span class="line"><span class="meta">my.map.key2.name</span>=<span class="string">dev name 2</span></span><br><span class="line"><span class="meta">my.map.key2.description</span>=<span class="string">dev description 2</span></span><br></pre></td></tr></table></figure>
+如果<code>dev</code>profile没有激活,<code>MyProperties.map</code>只包含一个元素<code>key1</code>(name是<code>my name 1</code>,description是 <code>my description 1</code>).如果<code>dev</code>profile启用,那么<code>map</code>将会包含两个元素<code>key1</code>(name为<code>dev name 1</code>,description为<code>my description 1</code>), <code>key2</code>(name为<code>dev name 2</code>和description 为<code>dev description 2</code>).<blockquote>
+<p>注意:</p>
+<p>​    前面的合并规则不仅适用于文件，还适用于所有属性源中的属性。</p>
+</blockquote>
+</li>
+<li><h6 id="属性转换-Properties-Conversion"><a href="#属性转换-Properties-Conversion" class="headerlink" title="属性转换(Properties Conversion)"></a>属性转换(Properties Conversion)</h6>当属性绑定到 <code>@ConfigurationProperties</code> bean上时,Spring Boot会将外部应用属性配置强制类型转换到正确的类型.如果想要自定义转换的话,可以提供一个<code>ConversionService</code>bean(bean的name为<code>conversionService</code>),或者自定义的属性编辑器(通过<code>CustomEditorConfigurer</code>),或者一个自定的<code>Converters</code>(使用<code>@ConfigurationPropertiesBinding</code>注解标注的bean).<blockquote>
+<p>注意:</p>
+<p>​    由于在应用程序生命周期中非常早就请求了此bean,因此请确保限制<code>ConversionService</code>使用的依赖项.通常, 您需要的任何依赖项可能在创建时未完全初始化.如果没有配置的key要强制类型转换,可能需要重命名自定义的<code>ConversionService</code>,只需要使用<code>@ConfigurationPropertiesBinding</code>.自定义转换器.</p>
+</blockquote>
+<h6 id="转换时间-Converting-Durations"><a href="#转换时间-Converting-Durations" class="headerlink" title="转换时间(Converting Durations)"></a>转换时间(Converting Durations)</h6>Spring Boot为表达持续时间提供了专门的支持。 如果使用<code>java.time.Duration</code>属性，则应用程序属性中的以下格式可用：<ul>
+<li>常规的<code>Long</code>表示形式（使用毫秒作为默认单位，除非已指定<code>@DurationUnit</code>）</li>
+<li><code>java.time.Duration</code>使用的标准ISO-8601格式</li>
+<li>数值和时间单位相结合的,更易读的格式（例如10s表示10秒）<br>考虑下面的例子:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DurationUnit(ChronoUnit.SECONDS)</span></span><br><span class="line">    <span class="keyword">private</span> Duration sessionTimeout = Duration.ofSeconds(<span class="number">30</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Duration readTimeout = Duration.ofMillis(<span class="number">1000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters / setters...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+表示一个30s的回话,<code>30</code>,<code>PT30S</code>,<code>30s</code>都是相同的. 使用<code>500</code>,<code>PT0.5S</code>或者<code>500ms</code>的任何一种形式,都可以指定超时时间为500ms.<br>也可以使用任何受支持的时间单位,如下:</li>
+<li><code>ns</code> 纳秒</li>
+<li><code>us</code> 微秒</li>
+<li><code>ms</code>  毫秒</li>
+<li><code>s</code>    秒</li>
+<li><code>m</code>    分钟</li>
+<li><code>h</code>    小时</li>
+<li><code>d</code>    天<br>默认的时间单位是毫秒,可以使用<code>@DurationUnit</code>修改.正如上面的例子那样.<br>如果选择的是构造器绑定, 属性也可以使用.如下所示<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my&quot;)</span></span><br><span class="line"><span class="meta">@ConstructorBinding</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// fields...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyProperties</span><span class="params">(<span class="meta">@DurationUnit(ChronoUnit.SECONDS)</span> <span class="meta">@DefaultValue(&quot;30s&quot;)</span> Duration sessionTimeout,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="meta">@DefaultValue(&quot;1000ms&quot;)</span> Duration readTimeout)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.sessionTimeout = sessionTimeout;</span><br><span class="line">        <span class="keyword">this</span>.readTimeout = readTimeout;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    如果要升级<code>Long</code>属性，不是字节单位,要确保指定单位（使用<code>@DurationUnit</code>）。 这样做可以提供透明的升级路径，同时支持更丰富的格式。</p>
+</blockquote>
+<h6 id="转换日期-Converting-periods"><a href="#转换日期-Converting-periods" class="headerlink" title="转换日期(Converting periods)"></a>转换日期(Converting periods)</h6>除了时间之外,Spring Boot也使用了<code>java.time.Period</code>类型.下面是可以在<code>application.properties</code>中使用的格式:</li>
+<li>常规的int表示形式（使用天作为默认单位，除非已指定<code>@PeriodUnit</code>）</li>
+<li><code>java.time.Period</code>使用的标准ISO-8601格式</li>
+<li>数值和单位组合的更简单格式（例如<code>1y3d</code>表示1年零3天）<br>在简单格式中,支持下面的单位:</li>
+<li><code>y</code> 年</li>
+<li><code>m</code> 月</li>
+<li><code>w</code> 日</li>
+<li><code>d</code> 天<blockquote>
+<p>注意:</p>
+<p><code>java.time.Period</code>类型从不实际存储星期数，是表示7天的简写.</p>
+</blockquote>
+<h6 id="转换数据大小-Converting-Data-Sizes"><a href="#转换数据大小-Converting-Data-Sizes" class="headerlink" title="转换数据大小(Converting Data Sizes)"></a>转换数据大小(Converting Data Sizes)</h6>Spring Framework有个<code>DataSize</code>数值类型,用来字节来表示大小.如果想要有个<code>DataSize</code>属性,在应用配置中,可以使用下面的格式:</li>
+<li>常规的Long表示形式（除非已指定<code>@DataSizeUnit</code>，否则使用字节作为默认单位）</li>
+<li>数值和单位组成的更可读的格式(例如10MB表示10兆字节).<br>考虑下面的例子:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DataSizeUnit(DataUnit.MEGABYTES)</span></span><br><span class="line">    <span class="keyword">private</span> DataSize bufferSize = DataSize.ofMegabytes(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> DataSize sizeThreshold = DataSize.ofBytes(<span class="number">512</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters/setters...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+使用<code>10</code>或者<code>10M</code>来指定<code>bufferSize</code>为10兆字节都是一样的效果.可以使用<code>256</code>或者<code>256B</code>来指定<code>sizeThreshold</code>为256字节.<br>可以使用如下支持的单位:</li>
+<li><code>B</code> for bytes</li>
+<li><code>KB</code> for kilobytes</li>
+<li><code>MB</code> for megabytes</li>
+<li><code>GB</code> for gigabytes</li>
+<li><code>TB</code> for terabytes<br>默认的单位是字节,可以使用<code>@DataSizeUnit</code>来修改,就像上面的例子.<br>如果是选择构造器绑定,也可使用同样的属性.如下所示:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my&quot;)</span></span><br><span class="line"><span class="meta">@ConstructorBinding</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// fields...</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyProperties</span><span class="params">(<span class="meta">@DataSizeUnit(DataUnit.MEGABYTES)</span> <span class="meta">@DefaultValue(&quot;2MB&quot;)</span> DataSize bufferSize,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="meta">@DefaultValue(&quot;512B&quot;)</span> DataSize sizeThreshold)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bufferSize = bufferSize;</span><br><span class="line">        <span class="keyword">this</span>.sizeThreshold = sizeThreshold;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    如果要升级Long属性，如果原来的单位不是字节,确保定义单位（使用<code>@DataSizeUnit</code>）。 这样做可以提供透明的升级路径，同时支持更丰富的格式。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><h6 id="ConfigurationProperties校验-Validation"><a href="#ConfigurationProperties校验-Validation" class="headerlink" title="@ConfigurationProperties校验(Validation)"></a><code>@ConfigurationProperties</code>校验(Validation)</h6>当使用了<code>@Validated</code>注解,Spring Boot会尝试检验<code>@ConfigurationProperties</code>标注的类.可以在配置类上直接使用<code>JSR-303 javax.validation</code>约束注解.为此，确保您的类路径上有兼容的JSR-303实现，然后将约束注解添加到字段中，如以下示例所示:<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my.service&quot;)</span></span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotNull</span></span><br><span class="line">    <span class="keyword">private</span> InetAddress remoteAddress;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters/setters...</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    可以在标有 <code>@Bean</code>的创建配置属性的方法上,添加<code>@Validated</code>,来触发校验.<br>为确保始终为嵌套属性触发验证，即使未找到任何属性，也必须使用<code>@Valid</code>注解相关的字段.下面的示例基于前面的<code>MyProperties</code>示例：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties(&quot;my.service&quot;)</span></span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyProperties</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotNull</span></span><br><span class="line">    <span class="keyword">private</span> InetAddress remoteAddress;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Valid</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Security security = <span class="keyword">new</span> Security();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// getters/setters...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Security</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@NotEmpty</span></span><br><span class="line">        <span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// getters/setters...</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+可以添加一个叫做<code>configurationPropertiesValidator</code>的bean,来添加一个自定义的<code>Validator</code>.<code>@Bean</code>方法必须声明为静态方法.配置属性的validator在应用生命周期的很早期就被创建,将<code>@Bean</code>方法声明为静态方法是为了创建bean的时候,不需要去初始化<code>@Configuration</code>类.这样做避免了由早期实例化引起的任何问题.<blockquote>
+<p>建议:</p>
+<p>​    <code>spring-boot-actuator</code>模块包含一个端点，该端点公开了所有<code>@ConfigurationProperties</code> Bean.用浏览器访问<code>/actuator/configprops</code>或则使用同样的JMX端点.</p>
+</blockquote>
+</li>
+<li><h6 id="对比-ConfigurationProperties-与-Value"><a href="#对比-ConfigurationProperties-与-Value" class="headerlink" title="对比@ConfigurationProperties 与. @Value"></a>对比<code>@ConfigurationProperties</code> 与. <code>@Value</code></h6><code>@Value</code>注解是容器的一个核心功能,但是不能提供具有类型安全的属性配置.下面的表哥总结了<code>@ConfigurationProperties</code>和<code>@Value</code>支持的功能:<table>
+<thead>
+<tr>
+<th>功能</th>
+<th><strong>@ConfigurationProperties</strong></th>
+<th><strong>@Value</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Relaxed绑定</td>
+<td>支持</td>
+<td>部分支持</td>
+</tr>
+<tr>
+<td>元数据支持</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td><code>SpEL</code>表达式</td>
+<td>不支持</td>
+<td>支持</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>注意:</p>
+<p>​    如果确实想要使用<code>@Value</code>,建议使用规范形式（例如，kebab-case只使用小写字母）来引用属性名. 这将允许Spring Boot使用与Relaxed绑定<code>@ConfigurationProperties</code>时相同的逻辑.比如,<code>@Value(&quot;&#123;demo.item-price&#125;&quot;)</code>会选择<code>demo.item-price</code>,和<code>application.properties</code>文件中的<code>demo.itemPrice</code>格式,和系统环境中的<code>DEMO_ITEMPRICE</code>.如果使用的是<code>@Value(&quot;&#123;demo.itemPrice&#125;&quot;)</code>, <code>demo.item-price</code>和<code>DEMO_ITEMPRICE</code>不会使用.<br>如果相位自己的组件配置属性key,推荐使用<code>@ConfigurationProperties</code>将他们按组编入的POJO中.这样做,可以在bean中注入一个结构化,类型安全的队形.<br>在解析这些文件并填充环境时，不会处理来自应用程序属性文件的<code>SpEL</code>表达式。但是在<code>@Value</code>中使用<code>SpEL</code>.如果应用程序属性文件中属性的值是<code>SpEL</code>表达式，则在通过@Value进行使用时将对其进行评估.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Spring Boot</category>
+      </categories>
+      <tags>
+        <tag>Spring Boot</tag>
+        <tag>Spring Boot Feature</tag>
+      </tags>
+  </entry>
 </search>
