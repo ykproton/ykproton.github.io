@@ -1,0 +1,536 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="使用NoSQL技术( Working with NoSQL Technologies)Spring Data提供了其他项目来帮助访问各种NoSQL 技术,包括:  MongoDB Neo4J Elasticsearch Redis GemFire 或者 Geode Cassandra Couchbase LDAPSpring Boot为Redis,MongoDB,Neo4j,Solr,Elasti">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第十四篇,Spring Boot之使用NoSQL技术">
+<meta property="og:url" content="http://example.com/posts/11539.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="使用NoSQL技术( Working with NoSQL Technologies)Spring Data提供了其他项目来帮助访问各种NoSQL 技术,包括:  MongoDB Neo4J Elasticsearch Redis GemFire 或者 Geode Cassandra Couchbase LDAPSpring Boot为Redis,MongoDB,Neo4j,Solr,Elasti">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-04T04:26:57.000Z">
+<meta property="article:modified_time" content="2021-06-04T05:06:38.181Z">
+<meta property="article:author" content="chenyk">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/11539.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;11539.html&quot;,&quot;path&quot;:&quot;posts&#x2F;11539.html&quot;,&quot;title&quot;:&quot;第十四篇,Spring Boot之使用NoSQL技术&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>第十四篇,Spring Boot之使用NoSQL技术 | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8NoSQL%E6%8A%80%E6%9C%AF-Working-with-NoSQL-Technologies"><span class="nav-number">1.</span> <span class="nav-text">使用NoSQL技术( Working with NoSQL Technologies)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Redis"><span class="nav-number">1.1.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5Redis-Connecting-to-Redis"><span class="nav-number">1.2.</span> <span class="nav-text">连接Redis(Connecting to Redis)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#MongoDB"><span class="nav-number">1.3.</span> <span class="nav-text">MongoDB</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0MongoDB-Connecting-to-a-MongoDB-Database"><span class="nav-number">1.4.</span> <span class="nav-text">连接到MongoDB(Connecting to a MongoDB Database)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#MongoTemplate"><span class="nav-number">1.5.</span> <span class="nav-text">MongoTemplate</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-MongoDB-Repositories"><span class="nav-number">1.6.</span> <span class="nav-text">Spring Data MongoDB Repositories</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8FMongo"><span class="nav-number">1.7.</span> <span class="nav-text">嵌入式Mongo</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Neo4j"><span class="nav-number">1.8.</span> <span class="nav-text">Neo4j</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0Neo4j%E6%95%B0%E6%8D%AE%E5%BA%93-Connecting-to-a-Neo4j-Database"><span class="nav-number">1.9.</span> <span class="nav-text">连接到Neo4j数据库(Connecting to a Neo4j Database)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-Neo4j-Repositories"><span class="nav-number">1.10.</span> <span class="nav-text">Spring Data Neo4j Repositories</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Solr"><span class="nav-number">1.11.</span> <span class="nav-text">Solr</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0Solr"><span class="nav-number">1.12.</span> <span class="nav-text">连接到Solr</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Elasticsearch"><span class="nav-number">1.13.</span> <span class="nav-text">Elasticsearch</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-REST-%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5%E5%88%B0-Elasticsearch-Connecting-to-Elasticsearch-using-REST-clients"><span class="nav-number">1.14.</span> <span class="nav-text">使用 REST 客户端连接到 Elasticsearch(Connecting to Elasticsearch using REST clients)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%93%8D%E5%BA%94%E5%BC%8FREST%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%BF%9E%E6%8E%A5%E5%88%B0Elasticsearch-Connecting-to-Elasticsearch-using-Reactive-REST-clients"><span class="nav-number">1.15.</span> <span class="nav-text">使用响应式REST客户端连接到Elasticsearch(Connecting to Elasticsearch using Reactive REST clients)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Spring-Data-%E8%BF%9E%E6%8E%A5%E5%88%B0-Elasticsearch-Connecting-to-Elasticsearch-by-Using-Spring-Data"><span class="nav-number">1.16.</span> <span class="nav-text">使用 Spring Data 连接到 Elasticsearch(Connecting to Elasticsearch by Using Spring Data)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-Elasticsearch-%E5%AD%98%E5%82%A8%E5%BA%93-Spring-Data-Elasticsearch-Repositories"><span class="nav-number">1.17.</span> <span class="nav-text">Spring Data Elasticsearch 存储库(Spring Data Elasticsearch Repositories)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Cassandra"><span class="nav-number">1.18.</span> <span class="nav-text">Cassandra</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0Cassandra-Connecting-to-Cassandra"><span class="nav-number">1.19.</span> <span class="nav-text">连接到Cassandra(Connecting to Cassandra)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-Cassandra-Repositories"><span class="nav-number">1.20.</span> <span class="nav-text">Spring Data Cassandra Repositories</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Couchbase"><span class="nav-number">1.21.</span> <span class="nav-text">Couchbase</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0Couchbase-Connecting-to-Couchbase"><span class="nav-number">1.22.</span> <span class="nav-text">连接到Couchbase(Connecting to Couchbase)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-Couchbase-Repositories"><span class="nav-number">1.23.</span> <span class="nav-text">Spring Data Couchbase Repositories</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#LDAP"><span class="nav-number">1.24.</span> <span class="nav-text">LDAP</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0-LDAP-%E6%9C%8D%E5%8A%A1%E5%99%A8-Connecting-to-an-LDAP-Server"><span class="nav-number">1.25.</span> <span class="nav-text">连接到 LDAP 服务器 (Connecting to an LDAP Server)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-LDAP-Repositories"><span class="nav-number">1.26.</span> <span class="nav-text">Spring Data LDAP Repositories</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%86%85%E5%AD%98-LDAP-%E6%9C%8D%E5%8A%A1%E5%99%A8-Embedded-In-memory-LDAP-Server"><span class="nav-number">1.27.</span> <span class="nav-text">嵌入式内存 LDAP 服务器(Embedded In-memory LDAP Server)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#InfluxDB"><span class="nav-number">1.28.</span> <span class="nav-text">InfluxDB</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0-InfluxDB-Connecting-to-InfluxDB"><span class="nav-number">1.29.</span> <span class="nav-text">连接到 InfluxDB(Connecting to InfluxDB)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/11539.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          第十四篇,Spring Boot之使用NoSQL技术
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-04 12:26:57 / 修改时间：13:06:38" itemprop="dateCreated datePublished" datetime="2021-06-04T12:26:57+08:00">2021-06-04</time>
+    </span>
+
+  
+    <span id="/posts/11539.html" class="post-meta-item leancloud_visitors" data-flag-title="第十四篇,Spring Boot之使用NoSQL技术" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>15k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>14 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="使用NoSQL技术-Working-with-NoSQL-Technologies"><a href="#使用NoSQL技术-Working-with-NoSQL-Technologies" class="headerlink" title="使用NoSQL技术( Working with NoSQL Technologies)"></a>使用NoSQL技术( Working with NoSQL Technologies)</h5><p>Spring Data提供了其他项目来帮助访问各种NoSQL 技术,包括:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-mongodb">MongoDB</a></li>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-neo4j">Neo4J</a></li>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-elasticsearch">Elasticsearch</a></li>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-redis">Redis</a></li>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-gemfire">GemFire</a> 或者 <a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-geode">Geode</a></li>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-cassandra">Cassandra</a></li>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-couchbase">Couchbase</a></li>
+<li><a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-ldap">LDAP</a><br>Spring Boot为Redis,MongoDB,Neo4j,Solr,Elasticsearch,Cassandra,Couchbase,LDAP 和 InfluxDB 提供自动配置. 可以使用其他NoSQL项目,但必须自己配置它们.请参阅<code>spring.io/projects/spring-data</code>中的相应参考文档.</li>
+</ul>
+<ol>
+<li><h6 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h6><p>Redis 是一个缓存,消息代理和功能丰富的键值存储. Spring Boot 为 Lettuce 和 Jedis 客户端库以及由Spring Data Redis 提供的在他们之上的抽象提供了基本的自动配置.<br>有一个<code>spring-boot-starter-data-redis</code> “Starter” 可以方便地配置各个依赖项.默认情况下,使用<a target="_blank" rel="noopener" href="https://github.com/lettuce-io/lettuce-core/">Lettuce</a>. 该启动器处理传统和反应式应用程序.</p>
+<blockquote>
+<p>建议:</p>
+<p>​    Spring Boot还提供了一个<code>spring-boot-starter-data-redis-reactive</code> “Starter”,用来和其他的具有响应式支持的存储保持一致.</p>
+</blockquote>
+<ol>
+<li><h6 id="连接Redis-Connecting-to-Redis"><a href="#连接Redis-Connecting-to-Redis" class="headerlink" title="连接Redis(Connecting to Redis)"></a>连接Redis(Connecting to Redis)</h6>可以像注入任何其他Spring Bean一样注入自动配置的<code>RedisConnectionFactory</code>,<code>StringRedisTemplate</code>或 vanilla <code>RedisTemplate</code>实例.默认情况下,实例会尝试连接到<code>localhost:6379</code>的 Redis 服务器. 以下列表显示了此类 bean 的示例:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> StringRedisTemplate template;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(StringRedisTemplate template)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.template = template;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    可以注册任意数量的,实现<code>LettuceClientConfigurationBuilderCustomizer </code>的bean来实现更高级的自定义.如果使用 Jedis,<code>JedisClientConfigurationBuilderCustomizer</code>也是可用的.<br>如果添加自己的任何自动配置类型的<code>@Bean</code>,它将替换默认值(<code>RedisTemplate</code>除外,当排除基于bean名称,<code>redisTemplate</code>而不是其类型时).默认情况下,如果 <code>commons-pool2</code>在类路径上,将获得一个池化连接工厂.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><h6 id="MongoDB"><a href="#MongoDB" class="headerlink" title="MongoDB"></a>MongoDB</h6><p>MongoDB是一个开源的NoSQL文档数据库,它使用类似 JSON 的模式而不是传统的基于表的关系数据.Spring Boot为使用MongoDB提供了多种便利,包括<code>spring-boot-starter-data-mongodb</code>和<code>spring-boot-starter-data-mongodb-reactive</code> “Starters”.</p>
+<ol>
+<li><h6 id="连接到MongoDB-Connecting-to-a-MongoDB-Database"><a href="#连接到MongoDB-Connecting-to-a-MongoDB-Database" class="headerlink" title="连接到MongoDB(Connecting to a MongoDB Database)"></a>连接到MongoDB(Connecting to a MongoDB Database)</h6>要访问MongoDB数据库,可以注入自动配置的<code>org.springframework.data.mongodb.MongoDatabaseFactory</code>.默认情况下,实例会尝试连接到<code>mongodb://localhost/test</code>的MongoDB服务器.以下示例显示了如何连接到MongoDB数据库:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> MongoDatabaseFactory mongo;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(MongoDatabaseFactory mongo)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.mongo = mongo;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+如果定义了<code>MongoClient</code>,它将用于合适的 <code>MongoDatabaseFactory</code>进行自动配置.<br>自动配置的<code>MongoClient</code>,是使用<code>MongoClientSettings</code>bean.如果定义了自己的<code>MongoClientSettings</code>,则无需修改即可使用,<code>spring.data.mongodb</code>属性会被自动忽略.否则<code>MongoClientSettings</code>将被自动配置,并将应用 <code>spring.data.mongodb</code>属性.在任一情况下,都可以声明一个或多个 <code>MongoClientSettingsBuilderCustomizer</code>bean来调整<code>MongoClientSettings</code>配置.每个都会被<code>MongoClientSettings.Builder</code>按顺序调用,<code>MongoClientSettings.Builder</code>是用来构建<code>MongoClientSettings</code>的.<br>您可以设置<code>spring.data.mongodb.uri</code>属性来更改URL并配置其他设置,例如<em>replica set</em>,如以下示例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.data.mongodb.uri</span>=<span class="string">mongodb://user:secret@mongo1.example.com:12345,mongo2.example.com:23456/test</span></span><br></pre></td></tr></tbody></table></figure>
+或者,您可以使用离散属性指定连接详细信息. 例如,您可以在 <code>application.properties</code>中声明以下设置:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.data.mongodb.host</span>=<span class="string">mongoserver.example.com</span></span><br><span class="line"><span class="meta">spring.data.mongodb.port</span>=<span class="string">27017</span></span><br><span class="line"><span class="meta">spring.data.mongodb.database</span>=<span class="string">test</span></span><br><span class="line"><span class="meta">spring.data.mongodb.username</span>=<span class="string">user</span></span><br><span class="line"><span class="meta">spring.data.mongodb.password</span>=<span class="string">secret</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    如果没有指定<code>spring.data.mongodb.port</code>,则使用默认值 <code>27017</code>. 可以从前面显示的示例中删除此行.</p>
+<p>建议:</p>
+<p>​    如果不使用Spring Data MongoDB,则可以注入<code>MongoClient</code> bean 而不是使用<code>MongoDatabaseFactory</code>.如果想完全控制MongoDB的连接建立,可以声明自己的<code>MongoDatabaseFactory</code>或<code>MongoClient</code>bean.</p>
+<p>注意:</p>
+<p>​    如果您使用的是响应式驱动程序,则SSL需要 Netty.如果 Netty 可用并且要使用的工厂尚未被自定义,则自动配置会自动配置此工厂.</p>
+</blockquote>
+</li>
+<li><h6 id="MongoTemplate"><a href="#MongoTemplate" class="headerlink" title="MongoTemplate"></a>MongoTemplate</h6>Spring Data MongoDB提供了一个<code>MongoTemplate</code>类,它的设计与 Spring 的<code>JdbcTemplate</code>非常相似.和<code>JdbcTemplate</code>一样,Spring Boot自动配置了一个 bean供开发者注入模板,如下<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> MongoTemplate mongoTemplate;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(MongoTemplate mongoTemplate)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.mongoTemplate = mongoTemplate;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="Spring-Data-MongoDB-Repositories"><a href="#Spring-Data-MongoDB-Repositories" class="headerlink" title="Spring Data MongoDB Repositories"></a>Spring Data MongoDB Repositories</h6>Spring Data 包括对 MongoDB 的存储库支持.与前面讨论的 JPA 存储库一样,基本理念是根据方法名称自动构造查询.<br>事实上,Spring Data JPA 和 Spring Data MongoDB 共享同样的公共基础架构.可以使用JPA示例,并假设<code>City</code>现在是MongoDB数据类,而不是JPA <code>@Entity</code>,它的工作方式相同,如以下示例所示:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CityRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">City</span>, <span class="title">Long</span>&gt; </span>{</span><br><span class="line"></span><br><span class="line"> <span class="function">Page&lt;City&gt; <span class="title">findAll</span><span class="params">(Pageable pageable)</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="function">City <span class="title">findByNameAndStateAllIgnoringCase</span><span class="params">(String name, String state)</span></span>;</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>​    您可以使用<code>@EntityScan</code>注解自定义文档扫描位置.</p>
+<p>建议:</p>
+<p>​    有关 Spring Data MongoDB 的完整详细信息,包括其丰富的对象映射技术,请参阅其<a target="_blank" rel="noopener" href="https://spring.io/projects/spring-data-mongodb">reference documentation</a>.</p>
+</blockquote>
+</li>
+<li><h6 id="嵌入式Mongo"><a href="#嵌入式Mongo" class="headerlink" title="嵌入式Mongo"></a>嵌入式Mongo</h6>Spring Boot 为嵌入式 Mongo 提供了自动配置. 要在 Spring Boot 应用程序中使用它,请添加 <code>de.flapdoodle.embed:de.flapdoodle.embed.mongo</code> 依赖<br>可以通过设置<code>spring.data.mongodb.port</code>属性来配置 Mongo 监听端口.要使用随机分配的空闲端口,请使用值 0. <code>MongoAutoConfiguration</code>创建的<code>MongoClient</code>使用随机分配的端口进行自动配置.<blockquote>
+<p>注意:</p>
+<p>​    如果不配置自定义端口,嵌入式Mongo支持默认使用随机端口(而不是 27017).<br>如果类路径上有 SLF4J,Mongo 生成的输出会自动路由到名为 <code>org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongo</code> 的logger上.<br>可以声明自己的<code>IMongodConfig</code>和<code>IRuntimeConfig</code> bean 来配置Mongo实例和日志路由.可以通过<code>DownloadConfigBuilderCustomizer</code>bean来自定义下载配置.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><h6 id="Neo4j"><a href="#Neo4j" class="headerlink" title="Neo4j"></a>Neo4j</h6><p>Neo4j 是一个开源的 NoSQL 图数据库,它由first class relationships连接的,具有丰富数据模型,比传统的 RDBMS方案更适合连接大数据. Spring Boot 为使用 Neo4j 提供了多种便利,包括 <code>spring-boot-starter-data-neo4j</code> “Starter”.</p>
+<ol>
+<li><h6 id="连接到Neo4j数据库-Connecting-to-a-Neo4j-Database"><a href="#连接到Neo4j数据库-Connecting-to-a-Neo4j-Database" class="headerlink" title="连接到Neo4j数据库(Connecting to a Neo4j Database)"></a>连接到Neo4j数据库(Connecting to a Neo4j Database)</h6>要访问 Neo4j 服务器,可以注入一个自动配置的 <code>org.neo4j.driver.Driver</code>.默认情况下,实例尝试使用 Bolt 协议连接到 <code>localhost:7687</code> 的 Neo4j 服务器.以下示例显示了如何注入 Neo4j 驱动程序,该驱动程序可让访问 <code>Session</code>:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> Driver driver;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(Driver driver)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.driver = driver;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+可以使用<code>spring.neo4j.*</code>属性配置驱动程序的各个部分. 以下示例显示了如何配置uri和凭据:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.neo4j.uri</span>=<span class="string">bolt://my-server:7687</span></span><br><span class="line"><span class="meta">spring.neo4j.authentication.username</span>=<span class="string">neo4j</span></span><br><span class="line"><span class="meta">spring.neo4j.authentication.password</span>=<span class="string">secret</span></span><br></pre></td></tr></tbody></table></figure>
+自动配置的驱动是使用<code>ConfigBuilder</code>来创建的.要调整配置,应该要声明一个或多个 <code>ConfigBuilderCustomizer</code>bean.每个将按顺序调用被<code>ConfigBuilder</code>调用,<code>ConfigBuilder</code>是用于构建驱动程序的 .</li>
+<li><h6 id="Spring-Data-Neo4j-Repositories"><a href="#Spring-Data-Neo4j-Repositories" class="headerlink" title="Spring Data Neo4j Repositories"></a>Spring Data Neo4j Repositories</h6>Spring Data 包括对 Neo4j 的存储库支持. 有关 Spring Data Neo4j 的完整详细信息,请参阅<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/neo4j/docs/6.1.1/reference/html/">参考文档</a>.<br>就像许多其他 Spring Data 模块一样,Spring Data Neo4j 与 Spring Data JPA 共享公共基础设施.可以采用前面的 JPA 示例,并将<code>City</code>定义为 Spring Data Neo4j <code>@Node</code> 而不是 JPA <code>@Entity</code>,并且存储库抽象以相同的方式工作,如下面的示例所示:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CityRepository</span> <span class="keyword">extends</span> <span class="title">Neo4jRepository</span>&lt;<span class="title">City</span>, <span class="title">Long</span>&gt; </span>{</span><br><span class="line"></span><br><span class="line"> <span class="function">Optional&lt;City&gt; <span class="title">findOneByNameAndState</span><span class="params">(String name, String state)</span></span>;</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<code>spring-boot-starter-data-neo4j</code> “Starter”开启存储库支持以及事务管理.Spring Boot 支持经典和响应式 Neo4j 存储库,使用 <code>Neo4jTemplate</code> 或 <code>ReactiveNeo4jTemplate</code> bean.当Project Reactor在类路径上可用时,响应式风格也会被自动配置.<br>可以通过在<code>@Configuration</code> bean上使用<code>@EnableNeo4jRepositories</code>和<code>@EntityScan</code>来自定义存储库和实体的路径.<blockquote>
+<p>注意:</p>
+<p>​    在使用响应式风格的应用程序中,<code>ReactiveTransactionManager</code>不是自动配置的.要启用事务管理,必须在配置中定义以下 bean:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line">&gt;<span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyNeo4jConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Bean</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> ReactiveNeo4jTransactionManager <span class="title">reactiveTransactionManager</span><span class="params">(Driver driver,</span></span></span><br><span class="line"><span class="params"><span class="function">         ReactiveDatabaseSelectionProvider databaseNameProvider)</span> </span>{</span><br><span class="line">     <span class="keyword">return</span> <span class="keyword">new</span> ReactiveNeo4jTransactionManager(driver, databaseNameProvider);</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line">&gt;}</span><br></pre></td></tr></tbody></table></figure></blockquote>
+</li>
+</ol>
+</li>
+<li><h6 id="Solr"><a href="#Solr" class="headerlink" title="Solr"></a>Solr</h6><p>Apache Solr是一个搜索引擎. Spring Boot 为 Solr 5 客户端库提供基本的自动配置.</p>
+<ol>
+<li><h6 id="连接到Solr"><a href="#连接到Solr" class="headerlink" title="连接到Solr"></a>连接到Solr</h6>可以像注入任何其他 Spring bean 一样注入自动配置的 <code>SolrClient</code> 实例.默认情况下,实例会尝试连接到位于 localhost:8983/solr 的服务器. 以下示例显示了如何注入 Solr bean:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> SolrClient solr;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(SolrClient solr)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.solr = solr;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+如果添加自己的<code>SolrClient</code>类型的<code>@Bean</code>,它将替换默认值.</li>
+</ol>
+</li>
+<li><h6 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h6><p>Elasticsearch 是一个开源,分布式,RESTful 搜索和分析引擎.Spring Boot 为 Elasticsearch 提供了基本的自动配置.<br>Spring Boot 支持多种客户端:</p>
+<ul>
+<li>官方 Java”Low Level”和”High Level”REST 客户端</li>
+<li>Spring Data Elasticsearch 提供的<code>ReactiveElasticsearchClient</code><br>Spring Boot 提供了一个专用的”Starter”,<code>spring-boot-starter-data-elasticsearch</code></li>
+</ul>
+<ol>
+<li><h6 id="使用-REST-客户端连接到-Elasticsearch-Connecting-to-Elasticsearch-using-REST-clients"><a href="#使用-REST-客户端连接到-Elasticsearch-Connecting-to-Elasticsearch-using-REST-clients" class="headerlink" title="使用 REST 客户端连接到 Elasticsearch(Connecting to Elasticsearch using REST clients)"></a>使用 REST 客户端连接到 Elasticsearch(Connecting to Elasticsearch using REST clients)</h6>Elasticsearch 提供了两个不同的 REST 客户端,您可以使用它们来查询集群:”Low Level”客户端和”High Level”客户端.Spring Boot 提供对”High Level”客户端的支持,该客户端随<code>org.elasticsearch.client:elasticsearch-rest-high-level-client</code>一起提供.<br>如果classpath中存在依赖时,Spring Boot 将自动配置并注册一个 <code>RestHighLevelClient</code> bean,默认情况下该 bean 以<code>localhost:9200</code>为targets.可以进一步调整<code>RestHighLevelClient</code>的配置方式,如下例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.elasticsearch.rest.uris</span>=<span class="string">https://search.example.com:9200</span></span><br><span class="line"><span class="meta">spring.elasticsearch.rest.read-timeout</span>=<span class="string">10s</span></span><br><span class="line"><span class="meta">spring.elasticsearch.rest.username</span>=<span class="string">user</span></span><br><span class="line"><span class="meta">spring.elasticsearch.rest.password</span>=<span class="string">secret</span></span><br></pre></td></tr></tbody></table></figure>
+您还可以注册任意数量实现<code>RestClientBuilderCustomizer</code>的 bean,来进行更高级的自定义.要完全控制注册,请定义一个<code>RestClientBuilder</code> bean.<blockquote>
+<p>建议:</p>
+<p>​    如果应用程序需要访问”Low Level” <code>RestClient</code>,可以在自动配置的<code>RestHighLevelClient</code>上调用 <code>client.getLowLevelClient()</code> 来获取它.</p>
+</blockquote>
+另外,如果<code>elasticsearch-rest-client-sniffer</code>在类路径上,则自动配置的<code>Sniffer</code>会从当前正在运行的Elasticsearch集群中自动发现节点并将其设置为<code>RestHighLevelClient</code> Bean.可以进一步调整 <code>Sniffer</code> 的配置方式,如以下示例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.elasticsearch.rest.sniffer.interval</span>=<span class="string">10m</span></span><br><span class="line"><span class="meta">spring.elasticsearch.rest.sniffer.delay-after-failure</span>=<span class="string">30s</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="使用响应式REST客户端连接到Elasticsearch-Connecting-to-Elasticsearch-using-Reactive-REST-clients"><a href="#使用响应式REST客户端连接到Elasticsearch-Connecting-to-Elasticsearch-using-Reactive-REST-clients" class="headerlink" title="使用响应式REST客户端连接到Elasticsearch(Connecting to Elasticsearch using Reactive REST clients)"></a>使用响应式REST客户端连接到Elasticsearch(Connecting to Elasticsearch using Reactive REST clients)</h6>Spring Data Elasticsearch 提供 <code>ReactiveElasticsearchClient</code> 以响应式方式来查询 Elasticsearch 实例.它建立在 WebFlux 的<code>WebClient</code>之上,因此 <code>spring-boot-starter-elasticsearch</code>和<code>spring-boot-starter-webflux</code>依赖项对于启用此支持很有用.<br>默认情况下,Spring Boot 会自动配置并注册一个<code>ReactiveElasticsearchClient</code>  bean,它以 <code>localhost:9200</code> 为目标.可以进一步调整它的配置方式,如以下示例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.data.elasticsearch.client.reactive.endpoints</span>=<span class="string">search.example.com:9200</span></span><br><span class="line"><span class="meta">spring.data.elasticsearch.client.reactive.use-ssl</span>=<span class="string">true</span></span><br><span class="line"><span class="meta">spring.data.elasticsearch.client.reactive.socket-timeout</span>=<span class="string">10s</span></span><br><span class="line"><span class="meta">spring.data.elasticsearch.client.reactive.username</span>=<span class="string">user</span></span><br><span class="line"><span class="meta">spring.data.elasticsearch.client.reactive.password</span>=<span class="string">secret</span></span><br></pre></td></tr></tbody></table></figure>
+如果提供的配置属性不够,并且想完全控制客户端配置,则可以注册自定义<code>ClientConfiguration</code>bean.</li>
+<li><h6 id="使用-Spring-Data-连接到-Elasticsearch-Connecting-to-Elasticsearch-by-Using-Spring-Data"><a href="#使用-Spring-Data-连接到-Elasticsearch-Connecting-to-Elasticsearch-by-Using-Spring-Data" class="headerlink" title="使用 Spring Data 连接到 Elasticsearch(Connecting to Elasticsearch by Using Spring Data)"></a>使用 Spring Data 连接到 Elasticsearch(Connecting to Elasticsearch by Using Spring Data)</h6>要连接到 Elasticsearch,必须定义一个 <code>RestHighLevelClient</code> bean,由 Spring Boot 自动配置或由应用程序手动提供(参见前面的部分).有了这个配置,一个 <code>ElasticsearchRestTemplate</code>可以像任何其他 Spring bean 一样注入,如下面的例子所示:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> ElasticsearchRestTemplate template;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(ElasticsearchRestTemplate template)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.template = template;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+当存在<code>spring-data-elasticsearch</code>和使用<code>WebClient</code>(通常是<code>spring-boot-starter-webflux</code>)所需的依赖项的情况下,Spring Boot 还可以将<code>ReactiveElasticsearchClient</code>和<code>ReactiveElasticsearchTemplate</code>自动配置为 bean.它们是与其他REST 客户端相等同的响应式客户端.</li>
+<li><h6 id="Spring-Data-Elasticsearch-存储库-Spring-Data-Elasticsearch-Repositories"><a href="#Spring-Data-Elasticsearch-存储库-Spring-Data-Elasticsearch-Repositories" class="headerlink" title="Spring Data Elasticsearch 存储库(Spring Data Elasticsearch Repositories)"></a>Spring Data Elasticsearch 存储库(Spring Data Elasticsearch Repositories)</h6>Spring Data 包括对 Elasticsearch 的存储库支持.与前面讨论的 JPA 存储库一样,基本原则是根据方法名称自动构造查询.<br>实际上,Spring Data JPA 和 Spring Data Elasticsearch 共享相同的公共基础架构.. 可以以前面的JPA示例为例,并假设<code>City</code>现在是Elasticsearch <code>@Document</code>类,而不是JPA <code>@Entity</code>,它的工作方式相同.<blockquote>
+<p>建议:</p>
+<p>​    有关 Spring Data Elasticsearch 的完整详细信息,请参阅<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/">参考文档</a>.</p>
+</blockquote>
+Spring Boot 支持经典和响应式 Elasticsearch 存储库,使用 <code>ElasticsearchRestTemplate</code> 或 <code>ReactiveElasticsearchTemplate</code> bean.根据存在所需的依赖项,这些bean很由 Spring Boot 自动配置的.<br>如果您希望使用自己的模板来支持 Elasticsearch 存储库,可以添加自己的 <code>ElasticsearchRestTemplate</code>或<code>ElasticsearchOperations</code>@Bean,只要它被命名为<code>"elasticsearchTemplate"</code>. 这个方式同样适用于<code>ReactiveElasticsearchTemplate</code>和<code>ReactiveElasticsearchOperations</code>,bean 名称为<code>"reactiveElasticsearchTemplate"</code>.<br>可以选择使用以下属性禁用存储库支持:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.data.elasticsearch.repositories.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li><h6 id="Cassandra"><a href="#Cassandra" class="headerlink" title="Cassandra"></a>Cassandra</h6><p>Cassandra 是一个开源的分布式数据库管理系统,旨在处理跨许多商用服务器的大量数据.Spring Boot 为 Cassandra 和 Spring Data Cassandra 的基于Cassandra 的抽象提供了自动配置.有一个<code>spring-boot-starter-data-cassandra</code> “Starter” 可以方便地收集依赖项.</p>
+<ol>
+<li><h6 id="连接到Cassandra-Connecting-to-Cassandra"><a href="#连接到Cassandra-Connecting-to-Cassandra" class="headerlink" title="连接到Cassandra(Connecting to Cassandra)"></a>连接到Cassandra(Connecting to Cassandra)</h6>可以像使用任何其他 Spring Bean 一样注入自动配置的<code>CassandraTemplate</code>或Cassandra <code>CqlSession</code> 实例. <code>spring.data.cassandra.*</code>属性可用于自定义连接.<br>通常,提供<code>keyspace-name</code> 和 <code>contact-points</code> 以及本地数据中心名称,如以下示例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.data.cassandra.keyspace-name</span>=<span class="string">mykeyspace</span></span><br><span class="line"><span class="meta">spring.data.cassandra.contact-points</span>=<span class="string">cassandrahost1:9042,cassandrahost2:9042</span></span><br><span class="line"><span class="meta">spring.data.cassandra.local-datacenter</span>=<span class="string">datacenter1</span></span><br></pre></td></tr></tbody></table></figure>
+如果所有联系点的端口都相同,则可以使用快捷方式并仅指定主机名,如下例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.data.cassandra.keyspace-name</span>=<span class="string">mykeyspace</span></span><br><span class="line"><span class="meta">spring.data.cassandra.contact-points</span>=<span class="string">cassandrahost1,cassandrahost2</span></span><br><span class="line"><span class="meta">spring.data.cassandra.local-datacenter</span>=<span class="string">datacenter1</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    这两个例子相同,端口默认为<code>9042</code>.如果需要配置端口,使用<code>spring.data.cassandra.port</code>.</p>
+<p>建议:</p>
+<p>​    Cassandra 驱动程序有自己的配置基础infrastructure,它在classpath的根路径加载一个<code>application.conf</code>.</p>
+<p>​    Spring Boot 默认不会查找这样的文件,但可以使用 <code>spring.data.cassandra.config</code> 加载.如果一个属性同时存在于 <code>spring.data.cassandra.*</code> 和配置文件中,则 <code>spring.data.cassandra.*</code> 中的值优先.</p>
+<p>​    对于更高级的自定义驱动程序,可以注册任意数量的实现 <code>DriverConfigLoaderBuilderCustomizer</code>的 bean.可以使用类型为 <code>CqlSessionBuilder</code> Customizer 的 bean 自定义 <code>CqlSession</code>.</p>
+<p>注意:</p>
+<p>​    如果您使用<code>CqlSessionBuilder</code>创建多<code>CqlSession bean</code>,要记住builder是可变的,因此请确保为每个会话注入一个新副本.</p>
+</blockquote>
+以下代码清单显示了如何注入 Cassandra bean:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> CassandraTemplate template;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(CassandraTemplate template)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.template = template;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+如果添加自己的 <code>CassandraTemplate</code> 类型的 <code>@Bean</code>,它将替换默认值.</li>
+<li><h6 id="Spring-Data-Cassandra-Repositories"><a href="#Spring-Data-Cassandra-Repositories" class="headerlink" title="Spring Data Cassandra Repositories"></a>Spring Data Cassandra Repositories</h6>Spring Data 包括对 Cassandra 的基本存储库支持.目前,这比前面讨论的 JPA 存储库更受限制,需要使用<code>@Query</code>注释查找器方法.<blockquote>
+<p>建议:</p>
+<p>​    有关 Spring Data Cassandra 的完整详细信息,请参阅<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/cassandra/docs/">reference documentation</a>.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><h6 id="Couchbase"><a href="#Couchbase" class="headerlink" title="Couchbase"></a>Couchbase</h6><p>Couchbase 是一个开源,分布式,多模型 NoSQL 面向文档的数据库,针对交互式应用程序进行了优化.Spring Boot 为 Couchbase 和 Spring Data Couchbase 提供的抽象提供了自动配置.有 <code>spring-boot-starter-data-couchbase</code>和<code>spring-boot-starter-data-couchbase-reactive</code>“Starters” 可以很方便地添加依赖.</p>
+<ol>
+<li><h6 id="连接到Couchbase-Connecting-to-Couchbase"><a href="#连接到Couchbase-Connecting-to-Couchbase" class="headerlink" title="连接到Couchbase(Connecting to Couchbase)"></a>连接到Couchbase(Connecting to Couchbase)</h6>你可以通过添加 Couchbase SDK 和一些配置来获得一个<code>Cluster</code>.<code>spring.couchbase.*</code>属性可以用来自定义连接.通常来说,连接字符串,用户名和密码,会如下例所示提供:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.couchbase.connection-string</span>=<span class="string">couchbase://192.168.1.123</span></span><br><span class="line"><span class="meta">spring.couchbase.username</span>=<span class="string">user</span></span><br><span class="line"><span class="meta">spring.couchbase.password</span>=<span class="string">secret</span></span><br></pre></td></tr></tbody></table></figure>
+也可以自定义一些 <code>ClusterEnvironment</code> 设置.例如,以下配置更改用于打开新<code>Bucket</code>的超时并启用 SSL 支持:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.couchbase.env.timeouts.connect</span>=<span class="string">3s</span></span><br><span class="line"><span class="meta">spring.couchbase.env.ssl.key-store</span>=<span class="string">/location/of/keystore.jks</span></span><br><span class="line"><span class="meta">spring.couchbase.env.ssl.key-store-password</span>=<span class="string">secret</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    检查 <code>spring.couchbase.env.*</code> 属性以获取更多详细信息. 要进行更多控制,可以使用一个或多个<code>ClusterEnvironmentBuilderCustomizer</code> bean.</p>
+</blockquote>
+</li>
+<li><h6 id="Spring-Data-Couchbase-Repositories"><a href="#Spring-Data-Couchbase-Repositories" class="headerlink" title="Spring Data Couchbase Repositories"></a>Spring Data Couchbase Repositories</h6>Spring Data 包括对 Couchbase 的存储库支持. 有关 Spring Data Couchbase 的完整详细信息,请参阅<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/couchbase/docs/4.2.1/reference/html/">reference documentation</a>.<br>可以像使用任何其他 Spring Bean一样注入自动配置的 <code>CouchbaseTemplate</code> 实例,前提是 <code>CouchbaseClientFactory</code> bean 可用.当使用集群是可能会发生这种情况,如上所述,并且指定存储桶名称:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.data.couchbase.bucket-name</span>=<span class="string">my-bucket</span></span><br></pre></td></tr></tbody></table></figure>
+以下示例显示了如何注入<code>CouchbaseTemplate</code>bean:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> CouchbaseTemplate template;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(CouchbaseTemplate template)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.template = template;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+可以在自己的配置中定义一些 bean 来覆盖自动配置提供的那些 bean:<ul>
+<li>名为 <code>couchbaseMappingContext</code> 的 <code>CouchbaseMappingContext</code> <code>@Bean</code></li>
+<li>名为 <code>couchbaseCustomConversions</code> 的 <code>CustomConversions</code> <code>@Bean</code></li>
+<li>名为 <code>couchbaseTemplate</code> 的 <code>CouchbaseTemplate</code> <code>@Bean</code><br>为了避免在自己的配置中硬编码这些名称,可以重用 Spring Data Couchbase 提供的 <code>BeanNames</code>. 例如,可以自定义要使用的转换器,如下所示:</li>
+</ul>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyCouchbaseConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Bean(BeanNames.COUCHBASE_CUSTOM_CONVERSIONS)</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> CouchbaseCustomConversions <span class="title">myCustomConversions</span><span class="params">()</span> </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> CouchbaseCustomConversions(Arrays.asList(<span class="keyword">new</span> MyConverter()));</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li><h6 id="LDAP"><a href="#LDAP" class="headerlink" title="LDAP"></a>LDAP</h6><p>LDAP(轻型目录访问协议)是一种开放的,供应商中立的行业标准应用协议,用于通过 IP 网络访问和维护分布式目录信息服务.Spring Boot 为任何兼容的 LDAP 服务器提供自动配置,并支持来自 UnboundID 的嵌入式内存 LDAP 服务器.<br>LDAP 抽象由 Spring Data LDAP 提供.<code>spring-boot-starter-data-ldap</code> “Starter” 可以很方便地添加依赖项.</p>
+<ol>
+<li><h6 id="连接到-LDAP-服务器-Connecting-to-an-LDAP-Server"><a href="#连接到-LDAP-服务器-Connecting-to-an-LDAP-Server" class="headerlink" title="连接到 LDAP 服务器 (Connecting to an LDAP Server)"></a>连接到 LDAP 服务器 (Connecting to an LDAP Server)</h6>要连接到 LDAP 服务器,确保声明<code>spring-boot-starter-data-ldap</code> “Starter”或 <code>spring-ldap-core</code>的依赖,然后在 application.properties 中声明服务器的 URL,如下所示 下面的例子:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.ldap.urls</span>=<span class="string">ldap://myserver:1235</span></span><br><span class="line"><span class="meta">spring.ldap.username</span>=<span class="string">admin</span></span><br><span class="line"><span class="meta">spring.ldap.password</span>=<span class="string">secret</span></span><br></pre></td></tr></tbody></table></figure>
+如果需要自定义连接设置,可以使用 <code>spring.ldap.base</code> 和 <code>spring.ldap.base-environment</code> 属性.<br><code>LdapContextSource</code>是根据这些设置自动配置的. 如果 <code>DirContextAuthenticationStrategy</code> bean 可用,则它与自动配置的 <code>LdapContextSource</code> 相关联.如果需要自定义它,例如使用 <code>PooledContextSource</code>,仍然可以注入自动配置的 <code>LdapContextSource</code>.确保将自定义的 <code>ContextSource</code> 标记为 <code>@Primary</code>,从而让自动配置的 <code>LdapTemplate</code> 使用.</li>
+<li><h6 id="Spring-Data-LDAP-Repositories"><a href="#Spring-Data-LDAP-Repositories" class="headerlink" title="Spring Data LDAP Repositories"></a>Spring Data LDAP Repositories</h6>Spring Data 支持 LDAP 的存储库. 有关 Spring Data LDAP 的完整详细信息,参阅<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/ldap/docs/1.0.x/reference/html/">reference documentation</a>.<br>可以像使用任何其他 Spring Bean 一样注入自动配置的 <code>LdapTemplate</code> 实例,如下例所示:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> LdapTemplate template;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(LdapTemplate template)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.template = template;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="嵌入式内存-LDAP-服务器-Embedded-In-memory-LDAP-Server"><a href="#嵌入式内存-LDAP-服务器-Embedded-In-memory-LDAP-Server" class="headerlink" title="嵌入式内存 LDAP 服务器(Embedded In-memory LDAP Server)"></a>嵌入式内存 LDAP 服务器(Embedded In-memory LDAP Server)</h6>出于测试目的,Spring Boot 支持从 UnboundID 自动配置内存中的 LDAP 服务器.配置服务器,添加依赖 <code>com.unboundid:unboundid-ldapsdk</code>, 并声明一个 <code>spring.ldap.embedded.base-dn</code> 属性,如下:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.ldap.embedded.base-dn</span>=<span class="string">dc=spring,dc=io</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    可以定义多个 base-dn 值,但是,由于专有名称通常包含逗号,因此必须使用正确的表示法定义它们.</p>
+<p>在yaml文件中,您可以使用yaml列表表示法. 在属性文件中,必须包含索引作为属性名称的一部分:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.ldap.embedded.base-dn[0]</span>=<span class="string">dc=spring,dc=io</span></span><br><span class="line"><span class="meta">spring.ldap.embedded.base-dn[1]</span>=<span class="string">dc=pivotal,dc=io</span></span><br></pre></td></tr></tbody></table></figure>
+<p>默认情况下,服务器在随机端口上启动并触发常规 LDAP 支持. 无需指定 <code>spring.ldap.urls</code> 属性.<br>如果classpath上有 <code>schema.ldif</code> 文件,它将用于初始化服务器. 如果要从不同的资源中加载初始化脚本,也可以使用 <code>spring.ldap.embedded.ldif</code> 属性.<br>默认情况下,标准schema被用来验证 <code>LDIF</code> 文件. 可以通过设置 <code>spring.ldap.embedded.validation.enabled</code> 属性来完全关闭验证.如果有自定义属性,可以使用 <code>spring.ldap.embedded.validation.schema</code> 来定义自定义属性类型或对象类.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li><h6 id="InfluxDB"><a href="#InfluxDB" class="headerlink" title="InfluxDB"></a>InfluxDB</h6><p>InfluxDB 是一个开源时间序列数据库,针对操作监控,应用程序指标,物联网传感器数据和实时分析等领域的时间序列数据的快速,高可用性存储和检索进行了优化.</p>
+<ol>
+<li><h6 id="连接到-InfluxDB-Connecting-to-InfluxDB"><a href="#连接到-InfluxDB-Connecting-to-InfluxDB" class="headerlink" title="连接到 InfluxDB(Connecting to InfluxDB)"></a>连接到 InfluxDB(Connecting to InfluxDB)</h6>Spring Boot 会自动配置一个 <code>InfluxDB</code> 实例,前提是 <code>influxdb-java</code> 客户端在classpath上并且设置了数据库的 URL,如下例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.influx.url</span>=<span class="string">https://172.0.0.1:8086</span></span><br></pre></td></tr></tbody></table></figure>
+如果连接到 InfluxDB 需要用户和密码,可以相应地设置 <code>spring.influx.user</code> 和 <code>spring.influx.password</code> 属性.<br>InfluxDB 依赖 OkHttp. 如果需要调整 <code>InfluxDB</code> 背后使用的 http 客户端,可以注册一个 <code>InfluxDbOkHttpClientBuilderProvider</code> bean.<br>如果需要对配置进行更多控制,请考虑注册一个 <code>InfluxDbCustomizer</code> bean.</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/58530.html" rel="prev" title="第十三篇,Spring Boot之使用SQL数据库">
+                  <i class="fa fa-chevron-left"></i> 第十三篇,Spring Boot之使用SQL数据库
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/54951.html" rel="next" title="第十五篇,Spring Boot之缓存">
+                  第十五篇,Spring Boot之缓存 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">174k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;11539.html&quot;}</script></body></html>

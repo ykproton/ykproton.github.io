@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="3.16 使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient) 使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)如果classpath上有 Spring WebFlux,也可以选择使用 WebClient 来调用远程 REST 服务.与 RestTem">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第十八篇,Spring Boot之使用 WebClient 调用 REST 服务">
+<meta property="og:url" content="http://example.com/posts/64077.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="3.16 使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient) 使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)如果classpath上有 Spring WebFlux,也可以选择使用 WebClient 来调用远程 REST 服务.与 RestTem">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-04T04:56:00.000Z">
+<meta property="article:modified_time" content="2021-06-04T05:05:42.077Z">
+<meta property="article:author" content="chenyk">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot Feature">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/64077.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;64077.html&quot;,&quot;path&quot;:&quot;posts&#x2F;64077.html&quot;,&quot;title&quot;:&quot;第十八篇,Spring Boot之使用 WebClient 调用 REST 服务&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>第十八篇,Spring Boot之使用 WebClient 调用 REST 服务 | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-16-%E4%BD%BF%E7%94%A8-WebClient-%E8%B0%83%E7%94%A8-REST-%E6%9C%8D%E5%8A%A1-Calling-REST-Services-with-WebClient"><span class="nav-number">1.</span> <span class="nav-text">3.16 使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-WebClient-%E8%B0%83%E7%94%A8-REST-%E6%9C%8D%E5%8A%A1-Calling-REST-Services-with-WebClient"><span class="nav-number">1.1.</span> <span class="nav-text">使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#WebClient-%E8%BF%90%E8%A1%8C%E6%97%B6-WebClient-Runtime"><span class="nav-number">1.2.</span> <span class="nav-text">WebClient 运行时 (WebClient Runtime)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89WebClient-WebClient-Customization"><span class="nav-number">1.3.</span> <span class="nav-text">自定义WebClient (WebClient Customization)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/64077.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          第十八篇,Spring Boot之使用 WebClient 调用 REST 服务
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-04 12:56:00 / 修改时间：13:05:42" itemprop="dateCreated datePublished" datetime="2021-06-04T12:56:00+08:00">2021-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/64077.html" class="post-meta-item leancloud_visitors" data-flag-title="第十八篇,Spring Boot之使用 WebClient 调用 REST 服务" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="3-16-使用-WebClient-调用-REST-服务-Calling-REST-Services-with-WebClient"><a href="#3-16-使用-WebClient-调用-REST-服务-Calling-REST-Services-with-WebClient" class="headerlink" title="3.16 使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)"></a>3.16 使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)</h5><ol start="16">
+<li><h6 id="使用-WebClient-调用-REST-服务-Calling-REST-Services-with-WebClient"><a href="#使用-WebClient-调用-REST-服务-Calling-REST-Services-with-WebClient" class="headerlink" title="使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)"></a>使用 WebClient 调用 REST 服务 (Calling REST Services with WebClient)</h6><p>如果classpath上有 Spring WebFlux,也可以选择使用 <code>WebClient</code> 来调用远程 REST 服务.与 <code>RestTemplate</code> 相比,这个客户端更加函数式,并且是完全响应式的.可以在 Spring Framework 文档的专门部分中了解有关 WebClient 的更多信息.</p>
+<p>Spring Boot 为创建并预配置了一个 <code>WebClient.Builder</code>. 强烈建议将其注入到组件中并使用它来创建 <code>WebClient</code> 实例.Spring Boot 正在配置该构建器以共享 HTTP 资源,以与服务器相同的方式反映编解码器设置(请参阅 WebFlux HTTP 编解码器自动配置 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.developing-web-applications.spring-webflux.httpcodecs">WebFlux HTTP codecs auto-configuration</a>)等等.</p>
+<p>以下代码显示了一个典型示例:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyService</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> WebClient webClient;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyService</span><span class="params">(WebClient.Builder webClientBuilder)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.webClient = webClientBuilder.baseUrl(<span class="string">"https://example.org"</span>).build();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Details&gt; <span class="title">someRestCall</span><span class="params">(String name)</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.webClient.get().uri(<span class="string">"/{name}/details"</span>, name).retrieve().bodyToMono(Details.class);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li><h6 id="WebClient-运行时-WebClient-Runtime"><a href="#WebClient-运行时-WebClient-Runtime" class="headerlink" title="WebClient 运行时 (WebClient Runtime)"></a>WebClient 运行时 (WebClient Runtime)</h6><p>Spring Boot 将自动检测使用哪个 <code>ClientHttpConnector</code> 来驱动 <code>WebClient</code>,具体取决于应用程序classpath上可用的库.目前,支持 Reactor Netty 和 Jetty RS 客户端.<code>spring-boot-starter-webflux</code> “starter” 默认依赖于 <code>io.projectreactor.netty:reactor-netty</code>,它带来了服务端和客户端的实现.如果您选择使用 Jetty 作为响应式服务器,则应添加对 Jetty Reactive HTTP 客户端库的依赖 <code>org.eclipse.jetty:jetty-reactive-httpclient</code>.服务器和客户端使用相同的技术有其优势,因为它会自动在客户端和服务器之间共享 HTTP 资源.</p>
+<p>开发人员可以通过提供自定义的 <code>ReactorResourceFactory</code> 或 <code>JettyResourceFactory</code> bean 来覆盖 Jetty 和 Reactor Netty 的资源配置 - 这将应用于客户端和服务器.</p>
+<p>如果希望覆盖客户端该选择,可以定义自己的 <code>ClientHttpConnector</code> bean 并完全控制客户端配置.</p>
+<p>可以在 Spring Framework 参考文档中了解有关 <code>WebClient</code> 配置选项的更多信息(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/5.3.7/reference/html/web-reactive.html#webflux-client-builder"><code>WebClient</code> configuration options in the Spring Framework reference documentation</a>).</p>
+</li>
+<li><h6 id="自定义WebClient-WebClient-Customization"><a href="#自定义WebClient-WebClient-Customization" class="headerlink" title="自定义WebClient (WebClient Customization)"></a>自定义WebClient (WebClient Customization)</h6><p> 自定义<code>WebClient</code>有三种方法,具体取决于希望自定义应用的范围.</p>
+<p>为了尽可能缩小任何自定义的范围,注入自动配置的 <code>WebClient.Builder</code>,然后根据需要调用其方法.<code>WebClient.Builder</code> 实例是有状态的:Builder上的任何更改都会反映在随后使用它创建的所有客户端中.如果想用同一个构建器创建多个客户端,也可以考虑使用 <code>WebClient.Builder other = builder.clone();</code> 克隆构建器.</p>
+<p>要对所有 <code>WebClient.Builder</code> 实例进行应用范围的,额外的自定义,可以声明 <code>WebClientCustomizer</code> bean 并在注入点本地更改 <code>WebClient.Builder</code>.</p>
+<p>最后,可以回退到原始 API, 使用 <code>WebClient.create()</code>. 在这种情况下,不会应用自动配置或 <code>WebClientCustomizer</code>.</p>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Boot-Feature/" rel="tag"># Spring Boot Feature</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/54638.html" rel="prev" title="第十七篇,Spring Boot之使用 RestTemplate 调用 REST 服务">
+                  <i class="fa fa-chevron-left"></i> 第十七篇,Spring Boot之使用 RestTemplate 调用 REST 服务
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/45647.html" rel="next" title="第十九篇,Spring Boot之校验">
+                  第十九篇,Spring Boot之校验 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">174k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;64077.html&quot;}</script></body></html>

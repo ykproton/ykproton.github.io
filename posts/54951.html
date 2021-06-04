@@ -1,0 +1,508 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="13 缓存(Caching) 缓存(Caching)Spring Framework 支持透明地向应用程序添加缓存. 在其核心,抽象上,对方法使用缓存,从而根据缓存中可用的信息,减少执行次数.缓存逻辑是透明化应用的,对调用者没有任何干扰. 只要通过@EnableCaching 注释启用缓存支持,Spring Boot 就会自动配置缓存基础结构.  注意: ​    查看 Spring Framew">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第十五篇,Spring Boot之缓存">
+<meta property="og:url" content="http://example.com/posts/54951.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="13 缓存(Caching) 缓存(Caching)Spring Framework 支持透明地向应用程序添加缓存. 在其核心,抽象上,对方法使用缓存,从而根据缓存中可用的信息,减少执行次数.缓存逻辑是透明化应用的,对调用者没有任何干扰. 只要通过@EnableCaching 注释启用缓存支持,Spring Boot 就会自动配置缓存基础结构.  注意: ​    查看 Spring Framew">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-04T04:45:00.000Z">
+<meta property="article:modified_time" content="2021-06-04T05:06:22.595Z">
+<meta property="article:author" content="chenyk">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot Feature">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/54951.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;54951.html&quot;,&quot;path&quot;:&quot;posts&#x2F;54951.html&quot;,&quot;title&quot;:&quot;第十五篇,Spring Boot之缓存&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>第十五篇,Spring Boot之缓存 | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#13-%E7%BC%93%E5%AD%98-Caching"><span class="nav-number">1.</span> <span class="nav-text">13 缓存(Caching)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%BC%93%E5%AD%98-Caching"><span class="nav-number">2.</span> <span class="nav-text">缓存(Caching)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E7%BC%93%E5%AD%98Provider-Supported-Cache-Providers"><span class="nav-number">2.1.</span> <span class="nav-text">支持的缓存Provider(Supported Cache Providers)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%80%9A%E7%94%A8-Generic"><span class="nav-number">2.2.</span> <span class="nav-text">通用(Generic)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#JCache-JSR-107"><span class="nav-number">2.3.</span> <span class="nav-text">JCache (JSR-107)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#EhCache-2-x"><span class="nav-number">2.4.</span> <span class="nav-text">EhCache 2.x</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Hazelcast"><span class="nav-number">2.5.</span> <span class="nav-text">Hazelcast</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Infinispan"><span class="nav-number">2.6.</span> <span class="nav-text">Infinispan</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Couchbase"><span class="nav-number">2.7.</span> <span class="nav-text">Couchbase</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Redis"><span class="nav-number">2.8.</span> <span class="nav-text">Redis</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Caffeine"><span class="nav-number">2.9.</span> <span class="nav-text">Caffeine</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Simple"><span class="nav-number">2.10.</span> <span class="nav-text">Simple</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#None"><span class="nav-number">2.11.</span> <span class="nav-text">None</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/54951.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          第十五篇,Spring Boot之缓存
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-04 12:45:00 / 修改时间：13:06:22" itemprop="dateCreated datePublished" datetime="2021-06-04T12:45:00+08:00">2021-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/54951.html" class="post-meta-item leancloud_visitors" data-flag-title="第十五篇,Spring Boot之缓存" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="13-缓存-Caching"><a href="#13-缓存-Caching" class="headerlink" title="13 缓存(Caching)"></a>13 缓存(Caching)</h5><ol start="13">
+<li><h5 id="缓存-Caching"><a href="#缓存-Caching" class="headerlink" title="缓存(Caching)"></a>缓存(Caching)</h5><p>Spring Framework 支持透明地向应用程序添加缓存. 在其核心,抽象上,对方法使用缓存,从而根据缓存中可用的信息,减少执行次数.缓存逻辑是透明化应用的,对调用者没有任何干扰. 只要通过<code>@EnableCaching</code> 注释启用缓存支持,Spring Boot 就会自动配置缓存基础结构.</p>
+<blockquote>
+<p>注意:</p>
+<p>​    查看 Spring Framework 参考的相关部分(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/5.3.7/reference/html/integration.html#cache">relevant section</a>)以获取更多详细信息.</p>
+</blockquote>
+<p>简而言之,要将缓存添加到服务的操作中,在其方法中添加相关的注解,如以下示例所示:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMathService</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Cacheable("piDecimals")</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">computePiDecimal</span><span class="params">(<span class="keyword">int</span> precision)</span> </span>{</span><br><span class="line">        ...</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>此示例演示了对潜在代价高昂的操作使用缓存.在调用 <code>computePiDecimal</code> 之前,抽象会在 <code>piDecimals</code> 缓存中查找与 <code>i</code> 参数匹配的条目. 如果找到一个条目,缓存中的内容会立即返回给调用者,并且不会调用该方法. 否则,调用该方法,并在返回值之前更新缓存.</p>
+<blockquote>
+<p>警告:</p>
+<p>​    还可以透明地使用标准 JSR-107 (JCache) 注释(例如 <code>@CacheResult</code>). 但是,强烈建议不要混合搭配 Spring Cache 和 JCache 注释.</p>
+</blockquote>
+<p>如果不添加任何特定的缓存库,Spring Boot 会自动配置一个在内存中使用concurrent  Map的简单provider.当需要缓存时(例如前面示例中的 <code>piDecimals</code>),provider会创建它.不建议将 simple provider 用于生产用途,但它非常适合入门并帮助了解这些功能.当决定要使用的缓存provider时,务必阅读其文档以了解如何配置应用所用的缓存.几乎所有provider都要求在应用中显式配置使用的每个缓存. 有些提供了一种自定义由 <code>spring.cache.cache-names</code> 属性定义的默认缓存的方法.  </p>
+<blockquote>
+<p>建议:</p>
+<p>​    还可以从缓存中透明地更新或驱逐数据(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/5.3.7/reference/html/integration.html#cache-annotations-put">update</a> or <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/5.3.7/reference/html/integration.html#cache-annotations-evict">evict</a>).</p>
+</blockquote>
+<ol>
+<li><h6 id="支持的缓存Provider-Supported-Cache-Providers"><a href="#支持的缓存Provider-Supported-Cache-Providers" class="headerlink" title="支持的缓存Provider(Supported Cache Providers)"></a>支持的缓存Provider(Supported Cache Providers)</h6><p>缓存抽象不提供实际存储,并且依赖于 <code>org.springframework.cache.Cache</code> 和 <code>org.springframework.cache.CacheManager</code> 接口具体化的抽象.</p>
+<p>如果尚未定义 <code>CacheManager</code> 类型的 bean 或名为 <code>cacheResolver</code> 的 <code>CacheResolver</code>(参阅 <code>CachingConfigurer</code>),Spring Boot 会尝试检测以下提供程序(按指示的顺序):</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.generic">Generic</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.jcache">JCache (JSR-107)</a> (EhCache 3, Hazelcast, Infinispan, 和其他)</li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.ehcache2">EhCache 2.x</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.hazelcast">Hazelcast</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.infinispan">Infinispan</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.couchbase">Couchbase</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.redis">Redis</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.caffeine">Caffeine</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.simple">Simple</a></li>
+</ol>
+<blockquote>
+<p>建议:</p>
+<p>​    也可以通过设置 <code>spring.cache.type</code> 属性来<strong>强制</strong>特定的cache provider.如果需要在某些环境(例如测试)中完全禁用缓存(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.caching.provider.none">disable caching altogether</a>),请使用此属性.</p>
+<p>建议:</p>
+<p>​    使用 <code>spring-boot-starter-cache</code> “Starter” 快速添加基本缓存依赖.starter 引入了 <code>spring-context-support</code>.如果手动添加依赖项,则必须包含 <code>spring-context-support</code> 才能使用 JCache,EhCache 2.x 或 Caffeine 支持.</p>
+</blockquote>
+<p>如果 <code>CacheManager</code> 是由 Spring Boot 自动配置的,可以在它完全初始化之前通过公开实现 <code>CacheManagerCustomizer</code> 接口的 bean 进一步调整其配置.以下示例设置了一个标志,表示应将<code>null</code>传递给底层映射:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyCacheManagerConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CacheManagerCustomizer&lt;ConcurrentMapCacheManager&gt; <span class="title">cacheManagerCustomizer</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> (cacheManager) -&gt; cacheManager.setAllowNullValues(<span class="keyword">false</span>);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>​    在前面的示例中,需要一个自动配置的 <code>ConcurrentMapCacheManager</code>. 如果不是这种情况(提供了自己的配置或自动配置了不同的缓存provider),则根本不会调用自定义程序. 可以根据需要,使用任意数量的customizers,也可以使用 <code>@Order</code> 或 <code>Ordered</code> 对它们进行排序.</p>
+</blockquote>
+<ol>
+<li><h6 id="通用-Generic"><a href="#通用-Generic" class="headerlink" title="通用(Generic)"></a>通用(Generic)</h6><p>如果上下文<em><strong>至少</strong></em>定义了一个 <code>org.springframework.cache.Cache</code> bean,则使用通用缓存.创建了一个包装所有该类型 bean 的 <code>CacheManager</code>.</p>
+</li>
+<li><h6 id="JCache-JSR-107"><a href="#JCache-JSR-107" class="headerlink" title="JCache (JSR-107)"></a>JCache (JSR-107)</h6><p>JCache 通过classpath存在的 <code>javax.cache.spi.CachingProvider</code> 进行引导(即classpath上存在符合 JSR-107 的缓存库),而 <code>JCacheCacheManager</code> 由 <code>spring-boot-starter-cache</code> 提供 “Starter”.各种兼容库都可用,Spring Boot 为 Ehcache3,Hazelcast 和 Infinispan 提供依赖管理.也可以添加任何其他兼容的库.</p>
+<p>可能会出现多个provider,在这种情况下,必须显式指定provider.即使 JSR-107 标准没有强制使用标准化的方式来指定配置文件的位置,Spring Boot 也会尽量设置缓存和实现细节,如下面的例子所示:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Only necessary if more than one provider is present</span></span><br><span class="line"><span class="meta">spring.cache.jcache.provider</span>=<span class="string">com.example.MyCachingProvider</span></span><br><span class="line"><span class="meta">spring.cache.jcache.config</span>=<span class="string">classpath:example.xml</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>​    当缓存库同时提供本地实现和 JSR-107支持时,Spring Boot 首选JSR-107 支持,以便在切换到不同的 JSR-107 实现时可以使用相同的功能.</p>
+<p>建议:</p>
+<p>​    Spring Boot 支持 Hazelcast.如果有一个<code>HazelcastInstance</code>可用,则它也会自动为 <code>CacheManager</code> 重用,除非指定了<code>spring.cache.jcache.config</code>属性</p>
+</blockquote>
+<p>有两种方式来自定义底层的<code>javax.cache.cacheManager</code>:</p>
+<ul>
+<li>可以通过设置 <code>spring.cache.cache-names</code> 属性在启动时创建缓存. 如果自定义了<code>javax.cache.configuration.Configuration</code> bean,则用于自定义属性.</li>
+<li>使用 <code>CacheManager</code>的引用来调用<code>org.springframework.boot.autoconfigure.cache.JCacheManagerCustomizer</code> bean 从而进行完全自定义.</li>
+</ul>
+<blockquote>
+<p>建议:</p>
+<p>​    如果定义了标准 <code>javax.cache.CacheManager</code> bean,会在<code>org.springframework.cache.CacheManager</code>实现(抽象所期望的)中自动包装,. 不会对其应用进一步的自定义.</p>
+</blockquote>
+</li>
+<li><h6 id="EhCache-2-x"><a href="#EhCache-2-x" class="headerlink" title="EhCache 2.x"></a>EhCache 2.x</h6><p>如果可以在classpath的根目录找到名为<code>ehcache.xml</code>的文件,则使用 EhCache 2.x. 如果找到 EhCache 2.x,则使用 <code>spring-boot-starter-cache</code> “Starter” 提供的 <code>EhCacheCacheManager</code> 来引导缓存管理器.也可以提供备用配置文件,如以下示例所示:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cache.ehcache.config</span>=<span class="string">classpath:config/another-config.xml</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="Hazelcast"><a href="#Hazelcast" class="headerlink" title="Hazelcast"></a>Hazelcast</h6><p>Spring Boot 支持 Hazelcast. 如果 <code>HazelcastInstance</code> 已自动配置,则它会自动包装在 <code>CacheManager</code> 中.</p>
+</li>
+<li><h6 id="Infinispan"><a href="#Infinispan" class="headerlink" title="Infinispan"></a>Infinispan</h6><p>Infinispan 没有默认配置文件位置,因此必须显式指定. 否则,使用默认引导程序:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cache.infinispan.config</span>=<span class="string">infinispan.xml</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>可以通过设置<code>spring.cache.cache-names</code>属性在启动时创建缓存.如果自定义了 <code>ConfigurationBuilder</code> bean,它将用于自定义缓存.</p>
+<blockquote>
+<p>建议:</p>
+<p>​    Spring Boot 对 Infinispan 的支持仅限于嵌入式模式,并且非常基础.如果想要更多的选择,应该使用官方的 Infinispan Spring Boot starter. 有关更多详细信息,请参阅 Infinispan(<a target="_blank" rel="noopener" href="https://github.com/infinispan/infinispan-spring-boot">Infinispan’s documentation</a>) 的文档.</p>
+</blockquote>
+</li>
+<li><h6 id="Couchbase"><a href="#Couchbase" class="headerlink" title="Couchbase"></a>Couchbase</h6><p>如果 Spring Data Couchbase 可用并且配置了 Couchbase,则<code>CouchbaseCacheManager</code>会自动配置.可以通过设置<code>spring.cache.cache-names</code>属性在启动时创建额外的缓存,并且可以使用 <code>spring.cache.couchbase.*</code> 属性配置缓存默认值.例如,以下配置创建 <code>cache1</code> 和 <code>cache2</code> 缓存,条目过期时间为 10 分钟:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cache.cache-names</span>=<span class="string">cache1,cache2</span></span><br><span class="line"><span class="meta">spring.cache.couchbase.expiration</span>=<span class="string">10m</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果需要对配置进行更多控制,请考虑注册 <code>CouchbaseCacheManagerBuilderCustomizer</code> bean.以下示例显示了为 <code>cache1</code> 和 <code>cache2</code> 配置特定条目到期时间的customizer:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyCouchbaseCacheManagerConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> CouchbaseCacheManagerBuilderCustomizer <span class="title">myCouchbaseCacheManagerBuilderCustomizer</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> (builder) -&gt; builder</span><br><span class="line">                .withCacheConfiguration(<span class="string">"cache1"</span>, CouchbaseCacheConfiguration</span><br><span class="line">                        .defaultCacheConfig().entryExpiry(Duration.ofSeconds(<span class="number">10</span>)))</span><br><span class="line">                .withCacheConfiguration(<span class="string">"cache2"</span>, CouchbaseCacheConfiguration</span><br><span class="line">                        .defaultCacheConfig().entryExpiry(Duration.ofMinutes(<span class="number">1</span>)));</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h6><p>如果 Redis 可用并已配置,则自动配置 <code>RedisCacheManager</code>. 如果想要在启动时添加额外缓存, 可以设置<code>spring.cache.cache-names</code>属性,并且可以使用 <code>spring.cache.redis.*</code> 属性配置缓存默认值.例如,以下配置创建 <code>cache1</code> 和 <code>cache2</code> 缓存,生存时间为 10 分钟:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cache.cache-names</span>=<span class="string">cache1,cache2</span></span><br><span class="line"><span class="meta">spring.cache.redis.time-to-live</span>=<span class="string">10m</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>​    默认情况下,添加了一个key前缀,这样,如果两个单独的缓存使用相同的key,Redis 不会有重叠的键,也不会返回无效值.如果创建自己的 <code>RedisCacheManager</code>,我们强烈建议您启用此设置.</p>
+<p>建议:</p>
+<p>​    可以通过添加自己的 <code>RedisCacheConfiguration</code> <code>@Bean</code> 来完全控制默认配置.如果自定义默认序列化策略,这会很有.</p>
+</blockquote>
+<p>如果需要对配置进行更多控制,可以考虑注册一个 <code>RedisCacheManagerBuilderCustomizer</code> bean.以下示例显示了为 <code>cache1</code> 和 <code>cache2</code> 配置特定生存时间的customizer:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyRedisCacheManagerConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedisCacheManagerBuilderCustomizer <span class="title">myRedisCacheManagerBuilderCustomizer</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> (builder) -&gt; builder</span><br><span class="line">                .withCacheConfiguration(<span class="string">"cache1"</span>, RedisCacheConfiguration</span><br><span class="line">                        .defaultCacheConfig().entryTtl(Duration.ofSeconds(<span class="number">10</span>)))</span><br><span class="line">                .withCacheConfiguration(<span class="string">"cache2"</span>, RedisCacheConfiguration</span><br><span class="line">                        .defaultCacheConfig().entryTtl(Duration.ofMinutes(<span class="number">1</span>)));</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="Caffeine"><a href="#Caffeine" class="headerlink" title="Caffeine"></a>Caffeine</h6><p>Caffeine 是对 Guava 缓存的 Java 8 重写,取代了对 Guava 的支持.如果存在 Caffeine,则会自动配置 <code>CaffeineCacheManager</code>(由 <code>spring-boot-starter-cache</code> “Starter”提供). 可以通过设置 <code>spring.cache.cache-names</code> 属性, 在启动时创建缓存,并且可以通过以下之一(按指示的顺序)进行自定义:</p>
+<ol>
+<li>使用 <code>spring.cache.caffeine.spec</code> 定义的缓存规范</li>
+<li>定义 <code>com.github.benmanes.caffeine.cache.CaffeineSpec</code> bean</li>
+<li>定义 <code>com.github.benmanes.caffeine.cache.Caffeine</code> bean</li>
+</ol>
+<p>例如,以下配置创建 <code>cache1</code> 和 <code>cache2</code> 缓存,最大大小为 500,生存时间为 10 分钟:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cache.cache-names</span>=<span class="string">cache1,cache2</span></span><br><span class="line"><span class="meta">spring.cache.caffeine.spec</span>=<span class="string">maximumSize=500,expireAfterAccess=600s</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果定义了 <code>com.github.benmanes.caffeine.cache.CacheLoader</code> bean,它会自动关联到 <code>CaffeineCacheManager</code>. 由于 <code>CacheLoader</code> 将与缓存管理器管理的<em><strong>所有</strong></em>缓存相关联,因此必须将其定义为 <code>CacheLoader&lt;Object, Object&gt;</code>. 自动配置忽略任何其他通用类型.</p>
+</li>
+<li><h6 id="Simple"><a href="#Simple" class="headerlink" title="Simple"></a>Simple</h6><p>如果找不到其他providers,则指定 <code>ConcurrentHashMap</code> 作为缓存存储.如果应用程序中不存在缓存库,则这是默认设置.默认情况下,会根据需要创建缓存,但可以通过设置 <code>cache-names</code> 属性来限制可用缓存的列表.例如,如果只想要 <code>cache1</code> 和 <code>cache2</code> 缓存,设置 <code>cache-names</code> 属性如下:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cache.cache-names</span>=<span class="string">cache1,cache2</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果这样做,并且应用使用了未列出的缓存,那么在使用缓存而缓存不存在时,会运行时失败,但不会在启动时失败.如果使用未声明的缓存,这类似于”真实”缓存providers的行为方式.</p>
+</li>
+<li><h6 id="None"><a href="#None" class="headerlink" title="None"></a>None</h6><p>当配置中存在 <code>@EnableCaching</code> 时,也需要合适的缓存配置.如果需要在某些环境中完全禁用缓存,可以将缓存类型强制为 <code>none</code> 以使用无操作实现,如下例所示:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.cache.type</span>=<span class="string">none</span></span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Boot-Feature/" rel="tag"># Spring Boot Feature</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/11539.html" rel="prev" title="第十四篇,Spring Boot之使用NoSQL技术">
+                  <i class="fa fa-chevron-left"></i> 第十四篇,Spring Boot之使用NoSQL技术
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/10287.html" rel="next" title="第十六篇,Spring Boot之Message">
+                  第十六篇,Spring Boot之Message <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">174k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;54951.html&quot;}</script></body></html>

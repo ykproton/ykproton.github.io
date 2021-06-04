@@ -1,0 +1,415 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="3.19 使用 JTA 的分布式事务(Distributed Transactions with JTA) 使用 JTA 的分布式事务(Distributed Transactions with JTA)Spring Boot 通过使用 Atomikos 嵌入式事务管理器支持跨多个 XA 资源的分布式 JTA 事务.部署到合适的 Java EE 应用服务器时, JTA 事务也受支持. 当检测到 J">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第二十一篇,Spring Boot之使用 JTA 的分布式事务">
+<meta property="og:url" content="http://example.com/posts/16277.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="3.19 使用 JTA 的分布式事务(Distributed Transactions with JTA) 使用 JTA 的分布式事务(Distributed Transactions with JTA)Spring Boot 通过使用 Atomikos 嵌入式事务管理器支持跨多个 XA 资源的分布式 JTA 事务.部署到合适的 Java EE 应用服务器时, JTA 事务也受支持. 当检测到 J">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-04T05:00:00.000Z">
+<meta property="article:modified_time" content="2021-06-04T05:00:33.933Z">
+<meta property="article:author" content="chenyk">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot Feature">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/16277.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;16277.html&quot;,&quot;path&quot;:&quot;posts&#x2F;16277.html&quot;,&quot;title&quot;:&quot;第二十一篇,Spring Boot之使用 JTA 的分布式事务&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>第二十一篇,Spring Boot之使用 JTA 的分布式事务 | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-19-%E4%BD%BF%E7%94%A8-JTA-%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1-Distributed-Transactions-with-JTA"><span class="nav-number">1.</span> <span class="nav-text">3.19 使用 JTA 的分布式事务(Distributed Transactions with JTA)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-JTA-%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1-Distributed-Transactions-with-JTA"><span class="nav-number">1.1.</span> <span class="nav-text">使用 JTA 的分布式事务(Distributed Transactions with JTA)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Atomikos%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E5%99%A8-Using-an-Atomikos-Transaction-Manager"><span class="nav-number">1.2.</span> <span class="nav-text">使用Atomikos事务管理器(Using an Atomikos Transaction Manager)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Java-EE-%E6%89%98%E7%AE%A1%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E5%99%A8-Using-a-Java-EE-Managed-Transaction-Manager"><span class="nav-number">1.3.</span> <span class="nav-text">使用 Java EE 托管事务管理器 (Using a Java EE Managed Transaction Manager)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B7%B7%E5%90%88-XA-%E5%92%8C%E9%9D%9E-XA-JMS-%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.4.</span> <span class="nav-text">混合 XA 和非 XA JMS 连接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E6%9B%BF%E4%BB%A3%E5%B5%8C%E5%85%A5%E5%BC%8F%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E5%99%A8-Supporting-an-Alternative-Embedded-Transaction-Manager"><span class="nav-number">1.5.</span> <span class="nav-text">支持替代嵌入式事务管理器 (Supporting an Alternative Embedded Transaction Manager)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/16277.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          第二十一篇,Spring Boot之使用 JTA 的分布式事务
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-04 13:00:00 / 修改时间：13:00:33" itemprop="dateCreated datePublished" datetime="2021-06-04T13:00:00+08:00">2021-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/16277.html" class="post-meta-item leancloud_visitors" data-flag-title="第二十一篇,Spring Boot之使用 JTA 的分布式事务" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="3-19-使用-JTA-的分布式事务-Distributed-Transactions-with-JTA"><a href="#3-19-使用-JTA-的分布式事务-Distributed-Transactions-with-JTA" class="headerlink" title="3.19 使用 JTA 的分布式事务(Distributed Transactions with JTA)"></a>3.19 使用 JTA 的分布式事务(Distributed Transactions with JTA)</h5><ol start="19">
+<li><h6 id="使用-JTA-的分布式事务-Distributed-Transactions-with-JTA"><a href="#使用-JTA-的分布式事务-Distributed-Transactions-with-JTA" class="headerlink" title="使用 JTA 的分布式事务(Distributed Transactions with JTA)"></a>使用 JTA 的分布式事务(Distributed Transactions with JTA)</h6><p>Spring Boot 通过使用 Atomikos 嵌入式事务管理器支持跨多个 XA 资源的分布式 JTA 事务.部署到合适的 Java EE 应用服务器时, JTA 事务也受支持.</p>
+<p>当检测到 JTA 环境时,Spring 的<code> JtaTransactionManager</code> 将用于管理事务.自动配置的 JMS,数据源和 JPA bean 会被升级以支持 XA 事务.可以使用标准的 Spring 习惯用法,例如 <code>@Transactional</code>,来参与分布式事务. 如果在 JTA 环境中并且仍想使用本地事务,则可以将 <code>spring.jta.enabled</code> 属性设置为 <code>false</code> 以禁用 JTA 自动配置.</p>
+<ol>
+<li><h6 id="使用Atomikos事务管理器-Using-an-Atomikos-Transaction-Manager"><a href="#使用Atomikos事务管理器-Using-an-Atomikos-Transaction-Manager" class="headerlink" title="使用Atomikos事务管理器(Using an Atomikos Transaction Manager)"></a>使用Atomikos事务管理器(Using an Atomikos Transaction Manager)</h6><p>Atomikos 是一个流行的开源事务管理器,可以嵌入到 Spring Boot 应用程序中.可以使用 <code>spring-boot-starter-jta-atomikos</code> starter来拉取 Atomikos 库.Spring Boot 自动配置 Atomikos 并将适当的<code>depends-on</code>应用于 Spring bean 以实现正确的启动和关闭顺序.</p>
+<p>默认情况下,Atomikos 事务日志被写入应用主目录(应用程序 jar 文件所在的目录)中的<code>transaction-logs</code>目录.可以通过在 <code>application.properties</code> 文件中设置 <code>spring.jta.log-dir</code> 属性来自定义此目录的位置.以 <code>spring.jta.atomikos.properties</code> 开头的属性也可用于自定义 Atomikos <code>UserTransactionServiceImp</code>.有关完整的详细信息,请参阅 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/api/org/springframework/boot/jta/atomikos/AtomikosProperties.html"><code>AtomikosProperties</code> Javadoc</a> .</p>
+<blockquote>
+<p>注意:</p>
+<p>​    为了保证多个事务管理器可以安全地协调同一个资源管理器,每个 Atomikos 实例必须配置一个唯一的 ID.默认情况下,此 ID 是运行 Atomikos 的机器的 IP 地址.为了保证生产环境中的唯一性,应该为应用程序的每个实例配置 <code>spring.jta.transaction-manager-id</code> 属性配置不同的值.</p>
+</blockquote>
+</li>
+<li><h6 id="使用-Java-EE-托管事务管理器-Using-a-Java-EE-Managed-Transaction-Manager"><a href="#使用-Java-EE-托管事务管理器-Using-a-Java-EE-Managed-Transaction-Manager" class="headerlink" title="使用 Java EE 托管事务管理器 (Using a Java EE Managed Transaction Manager)"></a>使用 Java EE 托管事务管理器 (Using a Java EE Managed Transaction Manager)</h6><p>如果将 Spring Boot 应用打包为 <code>war</code> 或 <code>ear</code> 文件并将其部署到 Java EE 应用服务器,则可以使用应用服务器的内置事务管理器.Spring Boot 尝试通过查看常见的 JNDI 位置(<code>java:comp/UserTransaction</code>,<code>java:comp/TransactionManager</code> 等)来自动配置事务管理器.如果使用应用服务器提供的事务服务,通常还希望确保所有资源都由服务器管理并通过 JNDI 公开.Spring Boot 尝试通过在 JNDI 路径(<code>java:/JmsXA</code> 或 <code>java:/XAConnectionFactory</code>)中查找 <code>ConnectionFactory</code> 来自动配置 JMS,可以使用 <code>spring.datasource.jndi-name</code> 属性来配置数据源.</p>
+</li>
+<li><h6 id="混合-XA-和非-XA-JMS-连接"><a href="#混合-XA-和非-XA-JMS-连接" class="headerlink" title="混合 XA 和非 XA JMS 连接"></a>混合 XA 和非 XA JMS 连接</h6><p>使用 JTA 时,主要的 JMS <code>ConnectionFactory</code> bean 是 XA-aware 并参与分布式事务.可以注入到 bean 中,而无需使用任何 <code>@Qualifier</code>.</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(ConnectionFactory connectionFactory)</span> </span>{</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在某些情况下,可能希望使用非 XA的<code>ConnectionFactory</code> 来处理一些 JMS 消息.例如, JMS 处理逻辑可能需要时间比 XA 超时时间更长.</p>
+<p>如果要使用非 XA <code>ConnectionFactory</code>,可以使用 <code>nonXaJmsConnectionFactory</code> bean:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(<span class="meta">@Qualifier("nonXaJmsConnectionFactory")</span> ConnectionFactory connectionFactory)</span> </span>{</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>为了一致性, <code>jmsConnectionFactory</code> bean还被使用 bean 别名 <code>xaJmsConnectionFactory </code>提供.</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(<span class="meta">@Qualifier("xaJmsConnectionFactory")</span> ConnectionFactory connectionFactory)</span> </span>{</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="支持替代嵌入式事务管理器-Supporting-an-Alternative-Embedded-Transaction-Manager"><a href="#支持替代嵌入式事务管理器-Supporting-an-Alternative-Embedded-Transaction-Manager" class="headerlink" title="支持替代嵌入式事务管理器 (Supporting an Alternative Embedded Transaction Manager)"></a>支持替代嵌入式事务管理器 (Supporting an Alternative Embedded Transaction Manager)</h6><p><code>XAConnectionFactoryWrapper</code> 和 <code>XADataSourceWrapper</code> 接口可用于支持替代的嵌入式事务管理器.接口负责包装 <code>XAConnectionFactory</code> 和 <code>XADataSource</code> bean 并将它们公开为常规的<code>ConnectionFactory</code> 和 <code>DataSource</code> bean,它们透明地注册到分布式事务中.数据源和 JMS 自动配置使用 JTA 变体,前提是在 <code>ApplicationContext</code> 中注册了 <code>JtaTransactionManager</code> bean 和适当的 XA 包装 bean.</p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/jta/atomikos/AtomikosXAConnectionFactoryWrapper.java">AtomikosXAConnectionFactoryWrapper</a> 和 <a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/jta/atomikos/AtomikosXADataSourceWrapper.java">AtomikosXADataSourceWrapper</a> 提供了如何编写 XA 包装器的例子.</p>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Boot-Feature/" rel="tag"># Spring Boot Feature</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/34767.html" rel="prev" title="第二十篇,Spring Boot之发送邮件">
+                  <i class="fa fa-chevron-left"></i> 第二十篇,Spring Boot之发送邮件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/55600.html" rel="next" title="第二十二篇,Spring Boot之Hazelcast">
+                  第二十二篇,Spring Boot之Hazelcast <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">174k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;16277.html&quot;}</script></body></html>

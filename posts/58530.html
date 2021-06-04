@@ -1,0 +1,543 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="使用SQL数据库Spring Framework 为使用 SQL 数据库提供了大量支持,从使用 JdbcTemplate 的直接 JDBC 访问到完整的”对象关系映射”技术,如 Hibernate.Spring Data 提供了新级别的个功能功能:直接从接口创建 Repository 实现,并根据约定,使用方法名来生成查询.  配置数据源( Configure a DataSource)Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第十三篇,Spring Boot之使用SQL数据库">
+<meta property="og:url" content="http://example.com/posts/58530.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="使用SQL数据库Spring Framework 为使用 SQL 数据库提供了大量支持,从使用 JdbcTemplate 的直接 JDBC 访问到完整的”对象关系映射”技术,如 Hibernate.Spring Data 提供了新级别的个功能功能:直接从接口创建 Repository 实现,并根据约定,使用方法名来生成查询.  配置数据源( Configure a DataSource)Java">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-03T03:23:00.000Z">
+<meta property="article:modified_time" content="2021-06-03T03:40:08.655Z">
+<meta property="article:author" content="chenyk">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot Feature">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/58530.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;58530.html&quot;,&quot;path&quot;:&quot;posts&#x2F;58530.html&quot;,&quot;title&quot;:&quot;第十三篇,Spring Boot之使用SQL数据库&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>第十三篇,Spring Boot之使用SQL数据库 | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8SQL%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.</span> <span class="nav-text">使用SQL数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E6%BA%90-Configure-a-DataSource"><span class="nav-number">1.1.</span> <span class="nav-text">配置数据源( Configure a DataSource)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AF%B9%E5%B5%8C%E5%85%A5%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E6%94%AF%E6%8C%81-Embedded-Database-Support"><span class="nav-number">1.2.</span> <span class="nav-text">对嵌入式数据库支持(Embedded Database Support)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E6%95%B0%E6%8D%AE%E5%BA%93-Connection-to-a-Production-Database"><span class="nav-number">1.3.</span> <span class="nav-text">连接生产环境数据库(Connection to a Production Database)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE-DataSource-Configuration"><span class="nav-number">1.4.</span> <span class="nav-text">数据源配置(DataSource Configuration)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%B1%A0-Supported-Connection-Pools"><span class="nav-number">1.5.</span> <span class="nav-text">支持的连接池(Supported Connection Pools)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%88%B0JNDI%E6%95%B0%E6%8D%AE%E6%BA%90-Connection-to-a-JNDI-DataSource"><span class="nav-number">1.6.</span> <span class="nav-text">连接到JNDI数据源(Connection to a JNDI DataSource)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8JdbcTemplate-Using-JdbcTemplate"><span class="nav-number">1.7.</span> <span class="nav-text">使用JdbcTemplate(Using JdbcTemplate)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#JPA%E5%92%8CSpring-Data-JPA-JPA-and-Spring-Data-JPA"><span class="nav-number">1.8.</span> <span class="nav-text">JPA和Spring Data JPA( JPA and Spring Data JPA)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Entity-Classes"><span class="nav-number">1.9.</span> <span class="nav-text">Entity Classes</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-JPA-Repositories"><span class="nav-number">1.10.</span> <span class="nav-text">Spring Data JPA Repositories</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4-JPA-%E6%95%B0%E6%8D%AE%E5%BA%93-Creating-and-Dropping-JPA-Databases"><span class="nav-number">1.11.</span> <span class="nav-text">创建和删除 JPA 数据库(Creating and Dropping JPA Databases)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%9C%A8%E8%A7%86%E5%9B%BE%E4%B8%AD%E6%89%93%E5%BC%80-EntityManager-Open-EntityManager-in-View"><span class="nav-number">1.12.</span> <span class="nav-text">在视图中打开 EntityManager(Open EntityManager in View)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-JDBC"><span class="nav-number">1.13.</span> <span class="nav-text">Spring Data JDBC</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8H2%E7%9A%84Web%E6%8E%A7%E5%88%B6%E5%8F%B0-Using-H2%E2%80%99s-Web-Console"><span class="nav-number">1.14.</span> <span class="nav-text">使用H2的Web控制台(Using H2’s Web Console)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9-H2-%E6%8E%A7%E5%88%B6%E5%8F%B0%E7%9A%84%E8%B7%AF%E5%BE%84-Changing-the-H2-Console%E2%80%99s-Path"><span class="nav-number">1.15.</span> <span class="nav-text">更改 H2 控制台的路径(Changing the H2 Console’s Path)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8jOOQ-Using-jOOQ"><span class="nav-number">1.16.</span> <span class="nav-text">使用jOOQ(Using jOOQ)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90-Code-Generation"><span class="nav-number">1.17.</span> <span class="nav-text">代码生成(Code Generation)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8DSLContext-Using-DSLContext"><span class="nav-number">1.18.</span> <span class="nav-text">使用DSLContext(Using DSLContext)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#jOOQ-SQL%E6%96%B9%E8%A8%80-jOOQ-SQL-Dialect"><span class="nav-number">1.19.</span> <span class="nav-text">jOOQ SQL方言(jOOQ SQL Dialect)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89jOOQ-Customizing-jOOQ"><span class="nav-number">1.20.</span> <span class="nav-text">自定义jOOQ(Customizing jOOQ)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8R2DBC-Using-R2DBC"><span class="nav-number">1.21.</span> <span class="nav-text">使用R2DBC(Using R2DBC)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AF%B9%E5%86%85%E5%B5%8C%E5%BC%8F%E6%95%B0%E6%8D%AE%E7%9A%84%E6%94%AF%E6%8C%81-Embedded-Database-Support"><span class="nav-number">1.22.</span> <span class="nav-text">对内嵌式数据的支持(Embedded Database Support)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%A2%E6%88%B7%E7%AB%AF-Using-DatabaseClient"><span class="nav-number">1.23.</span> <span class="nav-text">使用数据库客户端(Using DatabaseClient)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Spring-Data-R2DBC-Repositories"><span class="nav-number">1.24.</span> <span class="nav-text">Spring Data R2DBC Repositories</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/58530.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          第十三篇,Spring Boot之使用SQL数据库
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-03 11:23:00 / 修改时间：11:40:08" itemprop="dateCreated datePublished" datetime="2021-06-03T11:23:00+08:00">2021-06-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/58530.html" class="post-meta-item leancloud_visitors" data-flag-title="第十三篇,Spring Boot之使用SQL数据库" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="使用SQL数据库"><a href="#使用SQL数据库" class="headerlink" title="使用SQL数据库"></a>使用SQL数据库</h5><p>Spring Framework 为使用 SQL 数据库提供了大量支持,从使用 JdbcTemplate 的直接 JDBC 访问到完整的”对象关系映射”技术,如 Hibernate.Spring Data 提供了新级别的个功能功能:直接从接口创建 <code>Repository </code>实现,并根据约定,使用方法名来生成查询.</p>
+<ol>
+<li><h6 id="配置数据源-Configure-a-DataSource"><a href="#配置数据源-Configure-a-DataSource" class="headerlink" title="配置数据源( Configure a DataSource)"></a>配置数据源( Configure a DataSource)</h6>Java 的<code>javax.sql.DataSource</code>接口提供了可以和数据库建立连接的标准方法. 传统上,”数据源”使用<code>URL</code>和一些凭据来建立数据库连接.<blockquote>
+<p>建议:</p>
+<p>​    有关更高级的示例,请参阅”<code>How to</code>“部分,通常是为了完全控制数据源的配置.</p>
+</blockquote>
+<ol>
+<li><h6 id="对嵌入式数据库支持-Embedded-Database-Support"><a href="#对嵌入式数据库支持-Embedded-Database-Support" class="headerlink" title="对嵌入式数据库支持(Embedded Database Support)"></a>对嵌入式数据库支持(Embedded Database Support)</h6>使用内嵌内存数据库来开发应用更加方便.显然,内存数据库不提供持久化功能.在应用程序启动时需要填充数据库,并在应用程序结束时丢弃数据.<blockquote>
+<p>建议:</p>
+<p>​    “<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/howto.html#howto.data-initialization">section on how to initialize a database</a>“部分包括有关如何初始化数据库的部分.</p>
+</blockquote>
+Spring Boot支持内嵌的H2,HSQL和Derby数据库的自动配置.无需提供任何连接URL.只需添加嵌入式数据库依赖.如果编译路径内有多个嵌入式数据库,可以使用<code>spring.datasource.embedded-database-connection</code>来指定选择哪一个.将该属性设置为<code>none</code> 会禁用嵌入式数据库的自动配置.<blockquote>
+<p>注意:</p>
+<p>​    如果测试中使用这个功能,可以注意到,无论使用了多少个应用context,测试部分只会使用同一个数据库. 如果想要每个context都有各自的嵌入式数据库,则应将<code>spring.datasource.generate-unique-name</code> 设置为<code>true</code>.</p>
+</blockquote>
+例如,典型的 POM 依赖如下:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line"> &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line"> &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line"> &lt;groupId&gt;org.hsqldb&lt;/groupId&gt;</span><br><span class="line"> &lt;artifactId&gt;hsqldb&lt;/artifactId&gt;</span><br><span class="line"> &lt;scope&gt;runtime&lt;/scope&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    您需要使用<code>spring-jdbc</code>才能够自动配置嵌入式数据库.在这个例子中,它是通过<code>spring-boot-starter-data-jpa</code>传递拉取的.</p>
+<p>建议:</p>
+<p>​    如果出于某种原因,确实需要为嵌入式数据库配置URL,确保禁用数据库的自动关闭.如果使用 H2,则应使用<code>DB_CLOSE_ON_EXIT=FALSE</code>来执行此操作. 如果使用 HSQLDB,则应确保不使用<code>shutdown=true</code>. 禁用数据库的自动关闭可以让 Spring Boot 控制何时关闭数据库,从而确保在不再需要访问数据库时,关闭数据库.</p>
+</blockquote>
+</li>
+<li><h6 id="连接生产环境数据库-Connection-to-a-Production-Database"><a href="#连接生产环境数据库-Connection-to-a-Production-Database" class="headerlink" title="连接生产环境数据库(Connection to a Production Database)"></a>连接生产环境数据库(Connection to a Production Database)</h6>还可以使用池化<code>DataSource</code>来对生产环境数据库的连接进行自动配置.</li>
+<li><h6 id="数据源配置-DataSource-Configuration"><a href="#数据源配置-DataSource-Configuration" class="headerlink" title="数据源配置(DataSource Configuration)"></a>数据源配置(DataSource Configuration)</h6>数据源配置由外部配置属性<code>spring.datasource.*</code>进行配置.例如,可以在<code>application.properties</code>中声明以下部分:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.datasource.url</span>=<span class="string">jdbc:mysql://localhost/test</span></span><br><span class="line"><span class="meta">spring.datasource.username</span>=<span class="string">dbuser</span></span><br><span class="line"><span class="meta">spring.datasource.password</span>=<span class="string">dbpass</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    应该配置<code>spring.datasource.url</code>属性来指定URL. 否则,Spring Boot 会尝试自动配置嵌入式数据库.</p>
+<p>建议:</p>
+<p>​    Spring Boot 可以从URL推导出大多数数据库的 JDBC 驱动类.如果需要指定特定的类,可以使用<code>spring.datasource.driver-class-name</code>属性.</p>
+<p>注意:</p>
+<p>​    对于要创建的池化<code>DataSource</code>,需要验证<code>Driver</code>类是否可用,所以在任何动作前都会检查<code>Driver</code>.换句话说,可以设置<code>spring.datasource.driver-class-name=com.mysql.jdbc.Driver</code>,则该类会被加载.</p>
+</blockquote>
+有关更多支持的选项,请参阅  <a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/jdbc/DataSourceProperties.java"><code>DataSourceProperties</code></a>.无论实际的<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.sql.datasource.connection-pool">implementation</a>.如何,这些都是标准选项.还可以通过使用各自的前缀(<code>spring.datasource.hikari.*</code>,<code>spring.datasource.tomcat.*</code>,<code>spring.datasource.dbcp2.*</code> 和 <code>spring.datasource.oracleucp.*</code>)来调整各自实现的设置 ).有关更多详细信息,请参阅相关连接池实现的文档.<br>例如,如果您使用 Tomcat 连接池,您可以自定义许多附加设置,如下例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.datasource.tomcat.max-wait</span>=<span class="string">10000</span></span><br><span class="line"><span class="meta">spring.datasource.tomcat.max-active</span>=<span class="string">50</span></span><br><span class="line"><span class="meta">spring.datasource.tomcat.test-on-borrow</span>=<span class="string">true</span></span><br></pre></td></tr></tbody></table></figure>
+如果没有可用连接,在抛出异常前,会让连接池等待10000ms;将最大连接数限制为 50 ms;在从连接池中获取连接前验证连接.</li>
+<li><h6 id="支持的连接池-Supported-Connection-Pools"><a href="#支持的连接池-Supported-Connection-Pools" class="headerlink" title="支持的连接池(Supported Connection Pools)"></a>支持的连接池(Supported Connection Pools)</h6>Spring Boot 使用以下算法来选择具体实现:<ol>
+<li>首选HikariCP,因为它的高性能和高并发性. 如果 HikariCP 可用,则总是选用它.</li>
+<li>否则,如果 Tomcat 池化<code>DataSource</code>可用,就使用它.</li>
+<li>否则,如果 Commons DBCP2 可用,就使用它.</li>
+<li>如果 HikariCP,Tomcat 和 DBCP2 都不可用,而 Oracle UCP 可用,就使用它.<blockquote>
+<p>注意:</p>
+<p>   如果你使用<code>spring-boot-starter-jdbc</code>或<code>spring-boot-starter-data-jpa</code> “starters”,你会自动获得<code>HikariCP</code>的依赖.</p>
+</blockquote>
+</li>
+</ol>
+可以使用<code>spring.datasource.type</code>属性来绕过算法,使用指定连接池. 在 Tomcat运行应用程序时,这一点尤其重要,因为默认情况下提供了<code>tomcat-jdbc</code>.<br>其他的连接池可以手动配置,使用<code>DataSourceBuilder</code>.如果自定义的<code>DataSource</code>bean,则不会发生自动配置.<code>DataSourceBuilder</code>支持以下连接池:<ul>
+<li>HikariCP</li>
+<li>Tomcat池化<code>Datasource</code></li>
+<li>Commons DBCP2</li>
+<li>Oracle UCP &amp; <code>OracleDataSource</code></li>
+<li>Spring Framework的<code>SimpleDriverDataSource</code></li>
+<li>H2<code>JdbcDataSource</code></li>
+<li>PostgreSQL的<code>PGSimpleDataSource</code></li>
+</ul>
+</li>
+<li><h6 id="连接到JNDI数据源-Connection-to-a-JNDI-DataSource"><a href="#连接到JNDI数据源-Connection-to-a-JNDI-DataSource" class="headerlink" title="连接到JNDI数据源(Connection to a JNDI DataSource)"></a>连接到JNDI数据源(Connection to a JNDI DataSource)</h6>如果要将Spring Boot应用部署到应用程序服务器上,可能会想要使用应用服务器内置功能和使用JNDI访问的方式来配置和管理数据源.<br>spring.datasource.jndi-name 属性可以用来替代<code>spring.datasource.url</code>,<code>spring.datasource.username</code>和<code>spring.datasource.password</code> 属性,来访问特定  位置的JNDI提供的数据源.例如,<code>application.properties</code>中的以下部分显示了如何访问 JBoss AS 定义的<code>DataSource</code>:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.datasource.jndi-name</span>=<span class="string">java:jboss/datasources/customers</span></span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li><h6 id="使用JdbcTemplate-Using-JdbcTemplate"><a href="#使用JdbcTemplate-Using-JdbcTemplate" class="headerlink" title="使用JdbcTemplate(Using JdbcTemplate)"></a>使用JdbcTemplate(Using JdbcTemplate)</h6>Spring 的 <code>JdbcTemplate</code> 和 <code>NamedParameterJdbcTemplate</code> 类是自动配置的,你可以直接将它们<code>@Autowire</code> 到自己的 bean 中,如下所示:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> JdbcTemplate jdbcTemplate;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(JdbcTemplate jdbcTemplate)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.jdbcTemplate = jdbcTemplate;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doSomething</span><span class="params">()</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.jdbcTemplate ...</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+您可以使用<code>spring.jdbc.template.*</code>属性来自定义模板的属性,如下例所示:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.jdbc.template.max-rows</span>=<span class="string">500</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    <code>NamedParameterJdbcTemplate</code>在背后重用 <code>JdbcTemplate</code>实例.如果定义了多个 <code>JdbcTemplate</code>并且不存在主要候选者,则<code>NamedParameterJdbcTemplate</code>不会自动配置.</p>
+</blockquote>
+</li>
+<li><h6 id="JPA和Spring-Data-JPA-JPA-and-Spring-Data-JPA"><a href="#JPA和Spring-Data-JPA-JPA-and-Spring-Data-JPA" class="headerlink" title="JPA和Spring Data JPA( JPA and Spring Data JPA)"></a>JPA和Spring Data JPA( JPA and Spring Data JPA)</h6>Java Persistence API 是一种标准技术,可让将对象”映射”到关系数据库.<code>spring-boot-starter-data-jpa</code>POM提供了一种快速入门的方法. 它提供以下关键依赖项:<ul>
+<li>Hibernate:最流行的 JPA 实现之一.</li>
+<li>Spring Data JPA:帮助您实现基于 JPA 的repository.</li>
+<li>Spring ORM:来自 Spring框架的支持核心ORM </li>
+</ul>
+<ol>
+<li><h6 id="Entity-Classes"><a href="#Entity-Classes" class="headerlink" title="Entity Classes"></a>Entity Classes</h6>传统上,JPA”Entity”类在<code>persistence.xml</code>文件中指定.在Spring Boot中,此文件不是必需的,而是使用”Entity Scanning”.默认情况下,检索主配置类(用<code>@EnableAutoConfiguration</code>或<code>@SpringBootApplication</code>标注的)下的所有包.<br>任何用<code>@Entity</code>,<code>@Embeddable</code>或<code>@MappedSuperclass</code>标注的类都会被考虑. 典型的实体类如下示例:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">City</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Id</span></span><br><span class="line"> <span class="meta">@GeneratedValue</span></span><br><span class="line"> <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Column(nullable = false)</span></span><br><span class="line"> <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Column(nullable = false)</span></span><br><span class="line"> <span class="keyword">private</span> String state;</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ... additional members, often include @OneToMany mappings</span></span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">protected</span> <span class="title">City</span><span class="params">()</span> </span>{</span><br><span class="line">  <span class="comment">// no-args constructor required by JPA spec</span></span><br><span class="line">  <span class="comment">// this one is protected since it shouldn't be used directly</span></span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">City</span><span class="params">(String name, String state)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.name = name;</span><br><span class="line">  <span class="keyword">this</span>.state = state;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.name;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> String <span class="title">getState</span><span class="params">()</span> </span>{</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">this</span>.state;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ... etc</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    您可以使用<code>@EntityScan</code>注解自定义实体扫描位置. 参阅”how-to”.</p>
+</blockquote>
+</li>
+<li><h6 id="Spring-Data-JPA-Repositories"><a href="#Spring-Data-JPA-Repositories" class="headerlink" title="Spring Data JPA Repositories"></a>Spring Data JPA Repositories</h6>Spring Data JPA repositories是可以用来定义来访问数据的接口.JPA查询是根据方法名自动创建的.例如,<code>CityRepository</code>接口可能会声明一个<code>findAllByState(String state) </code>方法来查找给定状态下的所有城市.<br>对于更复杂的查询,可以使用 Spring Data <code>Query</code> 注解来标注方法.<br>Spring Data repositories通常从<code>Repository</code>或<code>CrudRepository</code>接口扩展来的.如果使用自动配置,则从包含您的主配置类(用<code>@EnableAutoConfiguration</code>或<code>@SpringBootApplication</code>标注的那个)的包中搜索repositories.<br>以下示例显示了典型的Spring Data存储库接口定义:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CityRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">City</span>, <span class="title">Long</span>&gt; </span>{</span><br><span class="line"></span><br><span class="line"> <span class="function">Page&lt;City&gt; <span class="title">findAll</span><span class="params">(Pageable pageable)</span></span>;</span><br><span class="line"></span><br><span class="line"> <span class="function">City <span class="title">findByNameAndStateAllIgnoringCase</span><span class="params">(String name, String state)</span></span>;</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+Spring Data JPA 存储库支持三种不同的引导模式:默认,延迟和懒加载:<br>要启用deferred或lazy启动模式,将<code>spring.data.jpa.repositories.bootstrap-mode</code>属性分别设置为<code>deferred</code>或<code>lazy</code>.当使用deferred或lazy引导时,自动配置的 <code>EntityManagerFactoryBuilder</code>会使用context的<code>AsyncTaskExecutor</code>(如果有)作为引导执行程序.如果存在多个,将使用名为<code>applicationTaskExecutor</code>的一个.<blockquote>
+<p>注意:</p>
+<p>​    使用deferred或lazy启动时时,确保对JPA的任何访问都应该在应用context引导阶段再进行.可以使用<code>SmartInitializingSingleton</code>来调用任何需要 JPA的初始化.对于作为Spring bean形式创建的 JPA 组件(例如转换器),会使用<code>ObjectProvider</code>来延迟对依赖项的解析(如果有的话).</p>
+<p>建议:</p>
+<p>​    上面说的仅仅触及 Spring Data JPA 的皮毛. 有关完整的详细信息,参阅 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/jdbc/docs/2.2.1/reference/html/">Spring Data JPA reference documentation</a>.</p>
+</blockquote>
+</li>
+<li><h6 id="创建和删除-JPA-数据库-Creating-and-Dropping-JPA-Databases"><a href="#创建和删除-JPA-数据库-Creating-and-Dropping-JPA-Databases" class="headerlink" title="创建和删除 JPA 数据库(Creating and Dropping JPA Databases)"></a>创建和删除 JPA 数据库(Creating and Dropping JPA Databases)</h6>默认情况下,只有在您使用嵌入式数据库(H2,HSQL 或 Derby)时才会自动创建 JPA 数据库.您可以使用<code>spring.jpa.*</code>属性显式配置 JPA 设置.例如,要创建和删除表,您可以在 application.properties 中添加以下行:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.jpa.hibernate.ddl-auto</span>=<span class="string">create-drop</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    Hibernate 自己的内部属性名称(如果您碰巧记得更好的话)是 <code>hibernate.hbm2ddl.auto</code>.可以使用<code>spring.jpa.properties.*</code>以及其他 Hibernate的自有属性(在将添加到实体管理器之前去除前缀)来设置.以下行显示了为 Hibernate 设置 JPA 属性的示例:</p>
+</blockquote>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.jpa.properties.hibernate[globally_quoted_identifiers]</span>=<span class="string">true</span></span><br></pre></td></tr></tbody></table></figure>
+
+前面示的例子中,将<code>hibernate.globally_quoted_identifiers</code>属性的<code>true</code>值传递给 Hibernate 实体管理器.<br>默认情况下,DDL 执行(或验证)被推迟到<code>ApplicationContext</code>已经启动后.还有一个<code>spring.jpa.generate-ddl</code>标志位,但如果 Hibernate 自动配置处于活动状态,则不会使用它,因为<code>ddl-auto</code>设置更细粒度.</li>
+<li><h6 id="在视图中打开-EntityManager-Open-EntityManager-in-View"><a href="#在视图中打开-EntityManager-Open-EntityManager-in-View" class="headerlink" title="在视图中打开 EntityManager(Open EntityManager in View)"></a>在视图中打开 EntityManager(Open EntityManager in View)</h6>如果您正在运行 Web 应用程序,Spring Boot 默认注册 <code>OpenEntityManagerInViewInterceptor</code>来使用”在视图中打开 EntityManager”模式,从而允许在 Web 视图中延迟加载.如果不想要这种行为,可以在 <code>application.properties</code>中将<code>spring.jpa.open-in-view</code>设置为<code>false</code>.</li>
+</ol>
+</li>
+<li><h6 id="Spring-Data-JDBC"><a href="#Spring-Data-JDBC" class="headerlink" title="Spring Data JDBC"></a>Spring Data JDBC</h6>Spring Data 包括对JDBC 的存储库支持,并将自动为<code>CrudRepository</code>上的方法生成 SQL.对于更高级的查询,提供了<code>@Query</code>注解.<br>当在classpath上有依赖项时,Spring Boot将自动配置 Spring Data 的 JDBC 存储库.可以通过对一个<code>spring-boot-starter-data-jdbc</code>依赖,将所有的依赖添加到的工程中.如有必要,您可以通过向应用添加<code>@EnableJdbcRepositories</code>注解或<code> JdbcConfiguration</code>子类来完全控制 Spring Data JDBC 的配置.</li>
+<li><h6 id="使用H2的Web控制台-Using-H2’s-Web-Console"><a href="#使用H2的Web控制台-Using-H2’s-Web-Console" class="headerlink" title="使用H2的Web控制台(Using H2’s Web Console)"></a>使用H2的Web控制台(Using H2’s Web Console)</h6>H2 数据库提供了一个基于浏览器的控制台,Spring Boot 可以自动配置.当满足以下条件时,控制台会自动配置:<ul>
+<li>正在开发一个基于servlet的Web应用程序.</li>
+<li><code>com.h2database:h2</code>在类路径上.</li>
+<li>您正在使用 Spring Boot 的开发人员工具<blockquote>
+<p>建议:</p>
+<p>   如果你没有使用Spring Boot的开发者工具,但仍想使用 H2 的控制台.您可以将 <code>spring.h2.console.enabled</code>属性配置为<code>true</code>.</p>
+<p>注意:</p>
+<p>​    H2 控制台仅用于开发期间,因此您应该注意确保<code>spring.h2.console.enabled</code>在生产中未设置为<code>true</code>.</p>
+</blockquote>
+</li>
+</ul>
+<ol>
+<li><h6 id="更改-H2-控制台的路径-Changing-the-H2-Console’s-Path"><a href="#更改-H2-控制台的路径-Changing-the-H2-Console’s-Path" class="headerlink" title="更改 H2 控制台的路径(Changing the H2 Console’s Path)"></a>更改 H2 控制台的路径(Changing the H2 Console’s Path)</h6>默认情况下,控制台位于<code>/h2-console</code>. 可以使用 <code>spring.h2.console.path</code> 属性自定义控制台的路径.</li>
+</ol>
+</li>
+</ol>
+<ol start="6">
+<li><h6 id="使用jOOQ-Using-jOOQ"><a href="#使用jOOQ-Using-jOOQ" class="headerlink" title="使用jOOQ(Using jOOQ)"></a>使用jOOQ(Using jOOQ)</h6>jOOQ Object Oriented Querying (jOOQ) 是 Data Geekery 的一款流行产品,根据数据库生成 Java 代码,并允许使用流式 API 构建类型安全的 SQL 查询.商业版和开源版都可以与Spring Boot一起使用.<ol>
+<li><h6 id="代码生成-Code-Generation"><a href="#代码生成-Code-Generation" class="headerlink" title="代码生成(Code Generation)"></a>代码生成(Code Generation)</h6>为了使用 jOOQ 类型安全查询,您需要从数据库schema生成 Java 类.可以按照 jOOQ 用户手册中的说明进行操作.如果您使用<code>jooq-codegen-maven</code>插件,并且还使用<code>spring-boot-starter-parent</code>“父POM”,则可以很安全地忽略该插件的<code>&lt;version&gt;</code>标签.您还可以使用 Spring Boot 定义的版本变量(例如 <code>h2.version</code>)来声明插件的数据库依赖. 以下清单显示了一个示例:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line"> &lt;groupId&gt;org.jooq&lt;/groupId&gt;</span><br><span class="line"> &lt;artifactId&gt;jooq-codegen-maven&lt;/artifactId&gt;</span><br><span class="line"> &lt;executions&gt;</span><br><span class="line">  ...</span><br><span class="line"> &lt;/executions&gt;</span><br><span class="line"> &lt;dependencies&gt;</span><br><span class="line">  &lt;dependency&gt;</span><br><span class="line">	  &lt;groupId&gt;com.h2database&lt;/groupId&gt;</span><br><span class="line">	  &lt;artifactId&gt;h2&lt;/artifactId&gt;</span><br><span class="line">	  &lt;version&gt;${h2.version}&lt;/version&gt;</span><br><span class="line">  &lt;/dependency&gt;</span><br><span class="line"> &lt;/dependencies&gt;</span><br><span class="line"> &lt;configuration&gt;</span><br><span class="line">  &lt;jdbc&gt;</span><br><span class="line">	  &lt;driver&gt;org.h2.Driver&lt;/driver&gt;</span><br><span class="line">	  &lt;url&gt;jdbc:h2:~/yourdatabase&lt;/url&gt;</span><br><span class="line">  &lt;/jdbc&gt;</span><br><span class="line">  &lt;generator&gt;</span><br><span class="line">	  ...</span><br><span class="line">  &lt;/generator&gt;</span><br><span class="line"> &lt;/configuration&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="使用DSLContext-Using-DSLContext"><a href="#使用DSLContext-Using-DSLContext" class="headerlink" title="使用DSLContext(Using DSLContext)"></a>使用DSLContext(Using DSLContext)</h6>jOOQ 提供的流式API 是通过<code>org.jooq.DSLContext</code>接口初始化的.Spring Boot 将 <code>DSLContext</code> 自动配置成Spring Bean并将将其连接到应用的数据源<code>DataSource</code>.要使用<code>DSLContext</code>,可以如下注:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> DSLContext create;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(DSLContext dslContext)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.create = dslContext;</span><br><span class="line"> }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    jOOQ 手册倾向于使用名为<code>create</code>的变量来保存<code>DSLContext</code>.<br>可以使用<code>DSLContext</code>去构建查询,如下所示;</p>
+</blockquote>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> List&lt;GregorianCalendar&gt; <span class="title">authorsBornAfter1980</span><span class="params">()</span> </span>{</span><br><span class="line"> <span class="keyword">return</span> <span class="keyword">this</span>.create.selectFrom(AUTHOR)</span><br><span class="line">	  .where(AUTHOR.DATE_OF_BIRTH.greaterThan(<span class="keyword">new</span> GregorianCalendar(<span class="number">1980</span>, <span class="number">0</span>, <span class="number">1</span>)))</span><br><span class="line">	  .fetch(AUTHOR.DATE_OF_BIRTH);</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="jOOQ-SQL方言-jOOQ-SQL-Dialect"><a href="#jOOQ-SQL方言-jOOQ-SQL-Dialect" class="headerlink" title="jOOQ SQL方言(jOOQ SQL Dialect)"></a>jOOQ SQL方言(jOOQ SQL Dialect)</h6>除非已经配置了<code>spring.jooq.sql-dialect</code>属性,否则Spring Boot会决定用于数据源的 SQL 方言.如果 Spring Boot无法检测到方言,则使用<code>DEFAULT</code>.<blockquote>
+<p>注意:</p>
+<p>​    Spring Boot只能自动配置 jOOQ 开源版本支持的方言.</p>
+</blockquote>
+</li>
+<li><h6 id="自定义jOOQ-Customizing-jOOQ"><a href="#自定义jOOQ-Customizing-jOOQ" class="headerlink" title="自定义jOOQ(Customizing jOOQ)"></a>自定义jOOQ(Customizing jOOQ)</h6>可以通过自定义<code>DefaultConfigurationCustomizer</code>bean来实现更高级的自定义,该 bean将在创建<code>org.jooq.Configuration</code> <code>@Bean</code>之前调用.这优先于任何自动配置的内容.<br>如果您想完全控制 jOOQ 配置,您还可以创建自己的<code>org.jooq.Configuration</code> <code>@Bean</code>.</li>
+</ol>
+</li>
+<li><h6 id="使用R2DBC-Using-R2DBC"><a href="#使用R2DBC-Using-R2DBC" class="headerlink" title="使用R2DBC(Using R2DBC)"></a>使用R2DBC(Using R2DBC)</h6>响应式关系数据库连接(The Reactive Relational Database Connectivity ,R2DBC)项目将响应式编程API引入了关系数据库.R2DBC 的<code>io.r2dbc.spi.Connection</code>提供了一种标准方法来使用非阻塞数据库连接.连接是通过<code>ConnectionFactory</code>提供的,类似于带有jdbc的<code>DataSource</code>.<br><code>ConnectionFactory</code>配置由<code>spring.r2dbc.*</code>中的外部配置属性控制.例如,可以在 <code>application.properties</code>中声明以下部分:<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.r2dbc.url</span>=<span class="string">r2dbc:postgresql://localhost/test</span></span><br><span class="line"><span class="meta">spring.r2dbc.username</span>=<span class="string">dbuser</span></span><br><span class="line"><span class="meta">spring.r2dbc.password</span>=<span class="string">dbpass</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    不需要指定驱动程序类名,因为Spring Boot从 R2DBC 的连接工厂发现中获取驱动程序.</p>
+<p>注意:</p>
+<p>​    至少应该提供网址. URL 中指定的信息优先于单个属性,即<code>name</code>,<code>username</code>,<code>password</code>和池选项.</p>
+</blockquote>
+可以自定义由<code>ConnectionFactory</code>创建的连接,即在中央数据库配置中设置不想(或不能)特定参数,您可以使用<code>ConnectionFactoryOptionsBuilderCustomizer</code> <code>@Bean</code>.以下示例显示了如何手动覆盖数据库端口,而其余选项来使用应用程序配置:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyR2dbcConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Bean</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> ConnectionFactoryOptionsBuilderCustomizer <span class="title">connectionFactoryPortCustomizer</span><span class="params">()</span> </span>{</span><br><span class="line">  <span class="keyword">return</span> (builder) -&gt; builder.option(ConnectionFactoryOptions.PORT, <span class="number">5432</span>);</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+以下示例显示了如何设置PostgreSQL 连接选项:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyPostgresR2dbcConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="meta">@Bean</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> ConnectionFactoryOptionsBuilderCustomizer <span class="title">postgresCustomizer</span><span class="params">()</span> </span>{</span><br><span class="line">  Map&lt;String, String&gt; options = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">  options.put(<span class="string">"lock_timeout"</span>, <span class="string">"30s"</span>);</span><br><span class="line">  options.put(<span class="string">"statement_timeout"</span>, <span class="string">"60s"</span>);</span><br><span class="line">  <span class="keyword">return</span> (builder) -&gt; builder.option(PostgresqlConnectionFactoryProvider.OPTIONS, options);</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+当<code>ConnectionFactory</code>bean可用时,常规的 JDBC数据源的自动配置将不会生效.如果想保留 JDBC <code>DataSource</code>自动配置,并且能够接受在响应式应用中使用阻塞 JDBC API 的风险,可以在应用的<code>@Configuration</code>上添加<code>@Import(DataSourceAutoConfiguration.class)</code>,来使其重新开启.<ol>
+<li><h6 id="对内嵌式数据的支持-Embedded-Database-Support"><a href="#对内嵌式数据的支持-Embedded-Database-Support" class="headerlink" title="对内嵌式数据的支持(Embedded Database Support)"></a>对内嵌式数据的支持(Embedded Database Support)</h6>与 JDBC 支持类似,Spring Boot可以自动配置嵌入式数据库以供响应式使用.您无需提供任何连接URL.只需要在编译依赖中添加要使用的嵌入式数据库,如以下示例所示:<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.r2dbc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>r2dbc-h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>注意:</p>
+<p>​    如果在测试中使用此功能,可能会注意到,无论您使用多少应用context,整个测试组件都会重用同一个数据库.如果要让每个context都使用单独的嵌入式数据库,则应将<code>spring.r2dbc.generate-unique-name</code>设置为<code>true</code>.</p>
+</blockquote>
+</li>
+<li><h6 id="使用数据库客户端-Using-DatabaseClient"><a href="#使用数据库客户端-Using-DatabaseClient" class="headerlink" title="使用数据库客户端(Using DatabaseClient)"></a>使用数据库客户端(Using DatabaseClient)</h6><code>DatabaseClient</code>bean是自动配置的,可以将直接使用<code>@Autowire</code> 注入到到自己的 bean中.如下所示:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="keyword">final</span> DatabaseClient databaseClient;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(DatabaseClient databaseClient)</span> </span>{</span><br><span class="line">  <span class="keyword">this</span>.databaseClient = databaseClient;</span><br><span class="line"> }</span><br><span class="line"></span><br><span class="line"> <span class="comment">// ...</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="Spring-Data-R2DBC-Repositories"><a href="#Spring-Data-R2DBC-Repositories" class="headerlink" title="Spring Data R2DBC Repositories"></a>Spring Data R2DBC Repositories</h6>Spring Data R2DBC repositories是可以用来访问数据的接口.根据方法名来自动创建的查询.例如,<code>CityRepository</code>接口可能会声明一个<code>findAllByState(String state) </code>方法来查找指定状态的所有城市.<br>对于更复杂的查询,您可以使用Spring Data Query注释来标注方法.<br>Spring Data repositories 通常从<code>Repository</code>或<code>CrudRepository</code>接口扩展.如果使用自动配置,则从包含主配置类(用<code>@EnableAutoConfiguration</code>或<code>@SpringBootApplication</code>标注的类)的包中搜索存储库.<br>以下示例显示了典型的 Spring Data repository 接口定义:<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CityRepository</span> <span class="keyword">extends</span> <span class="title">Repository</span>&lt;<span class="title">City</span>, <span class="title">Long</span>&gt; </span>{</span><br><span class="line"></span><br><span class="line"> <span class="function">Mono&lt;City&gt; <span class="title">findByNameAndStateAllIgnoringCase</span><span class="params">(String name, String state)</span></span>;</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>建议:</p>
+<p>​    以上内容几乎没有触及Spring Data R2DBC的皮毛. 有关完整的详细信息,请参阅 Spring Data R2DBC 参考文档.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Boot-Feature/" rel="tag"># Spring Boot Feature</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/58617.html" rel="prev" title="第十二篇,Spring Boot之安全">
+                  <i class="fa fa-chevron-left"></i> 第十二篇,Spring Boot之安全
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/11539.html" rel="next" title="第十四篇,Spring Boot之使用NoSQL技术">
+                  第十四篇,Spring Boot之使用NoSQL技术 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">174k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:38</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;58530.html&quot;}</script></body></html>
