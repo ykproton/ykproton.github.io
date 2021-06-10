@@ -1,0 +1,426 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="3.31 容器镜像(Container Images) 容器镜像(Container Images)很容易将 Spring Boot fat jar 打包为 docker 镜像.然而,复制和运行 docker 镜像中的 fat jar 有很多缺点.在不拆包的情况下运行一个fat jar时总是会有一定的开销,而在容器化环境中,这可能会很明显.另一个问题是将应用的代码及其所有依赖项放在 Docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.31 Feature:  容器镜像">
+<meta property="og:url" content="http://example.com/posts/29720.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="3.31 容器镜像(Container Images) 容器镜像(Container Images)很容易将 Spring Boot fat jar 打包为 docker 镜像.然而,复制和运行 docker 镜像中的 fat jar 有很多缺点.在不拆包的情况下运行一个fat jar时总是会有一定的开销,而在容器化环境中,这可能会很明显.另一个问题是将应用的代码及其所有依赖项放在 Docker">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T04:13:07.000Z">
+<meta property="article:modified_time" content="2021-06-10T04:51:56.153Z">
+<meta property="article:author" content="chenyk">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/29720.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;29720.html&quot;,&quot;path&quot;:&quot;posts&#x2F;29720.html&quot;,&quot;title&quot;:&quot;3.31 Feature:  容器镜像&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>3.31 Feature:  容器镜像 | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-31-%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F-Container-Images"><span class="nav-number">1.</span> <span class="nav-text">3.31 容器镜像(Container Images)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F-Container-Images"><span class="nav-number">2.</span> <span class="nav-text">容器镜像(Container Images)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%86%E5%B1%82-Docker-%E9%95%9C%E5%83%8F"><span class="nav-number">2.1.</span> <span class="nav-text">分层 Docker 镜像</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Building-Container-Images"><span class="nav-number">2.2.</span> <span class="nav-text">Building Container Images</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Dockerfiles"><span class="nav-number">2.3.</span> <span class="nav-text">Dockerfiles</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BA%91%E6%9C%AC%E5%9C%B0Buildpacks-Cloud-Native-Buildpacks"><span class="nav-number">2.4.</span> <span class="nav-text">云本地Buildpacks(Cloud Native Buildpacks)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/29720.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          3.31 Feature:  容器镜像
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-10 12:13:07 / 修改时间：12:51:56" itemprop="dateCreated datePublished" datetime="2021-06-10T12:13:07+08:00">2021-06-10</time>
+    </span>
+
+  
+    <span id="/posts/29720.html" class="post-meta-item leancloud_visitors" data-flag-title="3.31 Feature:  容器镜像" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="3-31-容器镜像-Container-Images"><a href="#3-31-容器镜像-Container-Images" class="headerlink" title="3.31 容器镜像(Container Images)"></a>3.31 容器镜像(Container Images)</h5><ol start="31">
+<li><h5 id="容器镜像-Container-Images"><a href="#容器镜像-Container-Images" class="headerlink" title="容器镜像(Container Images)"></a>容器镜像(Container Images)</h5><p>很容易将 Spring Boot fat jar 打包为 docker 镜像.然而,复制和运行 docker 镜像中的 fat jar 有很多缺点.在不拆包的情况下运行一个fat jar时总是会有一定的开销,而在容器化环境中,这可能会很明显.另一个问题是将应用的代码及其所有依赖项放在 Docker 镜像的一层中是次选的.由于与升级所使用的 Spring Boot 版本相比,可能更频繁地重新编译代码,因此最好将内容分开一些.如果在应用程序类之前将 jar 文件放在层中,Docker 通常只需要更改最底层,并且可以从其缓存中提取其他层.</p>
+<ol>
+<li><h6 id="分层-Docker-镜像"><a href="#分层-Docker-镜像" class="headerlink" title="分层 Docker 镜像"></a>分层 Docker 镜像</h6><p>为了更轻松地创建优化的 Docker 镜像,Spring Boot 支持向 jar 添加层索引文件.它提供了一个层列表以及部分能够包含一部分jar.索引中的层列表排序和添加到 Docker/OCI 镜像的顺序相同.支持以下开箱即用的层:</p>
+<ul>
+<li><code>dependencies</code>(用于常规发布的依赖项)</li>
+<li><code>spring-boot-loader</code>(适用于 <code>org/springframework/boot/loader</code> 下的所有内容)</li>
+<li><code>snapshot-dependencies</code>(用于快照依赖)</li>
+<li><code>application</code>(用于应用程序类和资源)</li>
+</ul>
+<p>下面显示了一个 <code>layers.idx</code> 文件的例子:</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="attr">"dependencies":</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">BOOT-INF/lib/library1.jar</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">BOOT-INF/lib/library2.jar</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">"spring-boot-loader":</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">org/springframework/boot/loader/JarLauncher.class</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">org/springframework/boot/loader/jar/JarEntry.class</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">"snapshot-dependencies":</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">BOOT-INF/lib/library3-SNAPSHOT.jar</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">"application":</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">META-INF/MANIFEST.MF</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">BOOT-INF/classes/a/b/C.class</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>这种分层根据应用程序的构建可能会改变分隔代码.库代码不太可能在构建时发生变化,因此它被放置在自己的层中,以允许工具重新使用缓存中的层.应用程序更有可能在构建时发生变化,因此它被隔离在一个单独的层中.</p>
+<p>Spring Boot 还支持使用<code>layers.idx</code> 对war 文件进行分层.</p>
+<p>对于 Maven,请参阅 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/maven-plugin/reference/htmlsingle/#repackage-layers">packaging layered jar or war section</a>以获取有关向存档添加层索引的更多详细信息.对于 Gradle,请参阅 Gradle 插件文档的打包分层 jar 或 war 部分( <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/gradle-plugin/reference/htmlsingle/#packaging-layered-archives">packaging layered jar or war section</a>).</p>
+</li>
+<li><h6 id="Building-Container-Images"><a href="#Building-Container-Images" class="headerlink" title="Building Container Images"></a>Building Container Images</h6><p>Spring Boot 应用程序可以使用 Dockerfiles 进行容器化,或者使用 Cloud Native Buildpacks 来创建可以在任何地方运行的与 docker 兼容的容器镜像.</p>
+<ol>
+<li><h6 id="Dockerfiles"><a href="#Dockerfiles" class="headerlink" title="Dockerfiles"></a>Dockerfiles</h6><p>虽然可以通过 <code>Dockerfile</code> 中的几行代码将 Spring Boot fat jar 转换为 docker 镜像,但我们将使用分层功能来创建优化的 docker 镜像.当创建一个包含layer索引文件的 jar 时,<code>spring-boot-jarmode-layertools</code> jar 将作为依赖添加到 jar 中.当类路径上有这个jar时,可以以一种特殊的模式启动应用,允许引导代码运行与应用程序完全不同的内容,例如,提取layer的内容.</p>
+<blockquote>
+<p>Caution:</p>
+<p>​    <code>layertools</code> 模式不能与包含启动脚本的完全可执行的 Spring Boot 存档一起使用.想要构建一个可以使用<code>layertools </code>的jar时,要禁用启动脚本.</p>
+</blockquote>
+<p>以下是使用 <code>layertools</code> jar 模式启动 jar 的方法:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> java -Djarmode=layertools -jar my-app.jar</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>这将提供以下输出:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line">  java -Djarmode=layertools -jar my-app.jar</span><br><span class="line"></span><br><span class="line">Available commands:</span><br><span class="line">  list     List layers from the jar that can be extracted</span><br><span class="line">  extract  Extracts layers from the jar for image creation</span><br><span class="line">  help     Help about any command</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>extract</code>命令可用于轻松地将应用程序拆分为层,然后这些层可以添加到 dockerfile .这是一个使用 <code>jarmode</code> 的 Dockerfile 示例.</p>
+<figure class="highlight dockerfile"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> adoptopenjdk:<span class="number">11</span>-jre-hotspot as builder</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> application</span></span><br><span class="line"><span class="keyword">ARG</span> JAR_FILE=target/*.jar</span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> <span class="variable">${JAR_FILE}</span> application.jar</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> java -Djarmode=layertools -jar application.jar extract</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> adoptopenjdk:<span class="number">11</span>-jre-hotspot</span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> application</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> --from=builder application/dependencies/ ./</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> --from=builder application/spring-boot-loader/ ./</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> --from=builder application/snapshot-dependencies/ ./</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> --from=builder application/application/ ./</span></span><br><span class="line"><span class="keyword">ENTRYPOINT</span><span class="bash"> [<span class="string">"java"</span>, <span class="string">"org.springframework.boot.loader.JarLauncher"</span>]</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>假设上述 <code>Dockerfile</code> 位于当前目录中, docker 镜像可以使用 <code>docker build</code> . 构建,或者可以选择指定应用程序 jar 的路径,如下例所示:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker build --build-arg JAR_FILE=path/to/myapp.jar .</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>这是一个多stage的 dockerfile.builder stage 提取以后需要的目录.每个 <code>COPY</code> 命令都与 jarmode 提取的层相关.</p>
+<p>当然,不使用jarmode也可以写一个Dockerfile.可以使用 <code>unzip</code> 和 <code>mv</code> 的组合将内容移动到正确的层,但 jarmode 简化了这一点.</p>
+</li>
+<li><h6 id="云本地Buildpacks-Cloud-Native-Buildpacks"><a href="#云本地Buildpacks-Cloud-Native-Buildpacks" class="headerlink" title="云本地Buildpacks(Cloud Native Buildpacks)"></a>云本地Buildpacks(Cloud Native Buildpacks)</h6><p>Dockerfiles 只是构建 docker 镜像的一种方式. 另一种构建 docker 镜像的方法是直接从你的 Maven 或 Gradle 插件中使用 buildpacks.如果曾经使用过 Cloud Foundry 或 Heroku 等应用平台,那么可能已经使用过 buildpack.Buildpacks 是平台的一部分,它将应用转换为平台可以实际运行的东西.例如,Cloud Foundry 的 Java buildpack 会发现正在推送的 <code>.jar</code> 文件并自动添加相关的 JRE.</p>
+<p>使用 Cloud Native Buildpacks,可以创建可在任何地方运行的 Docker 兼容镜像.Spring Boot 包括直接支持 Maven 和 Gradle 的 buildpack.这意味着只需输入一个命令,即可快速将合理的映像放入本地运行的 Docker 守护程序中.</p>
+<p>请参阅有关如何在 Maven(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/maven-plugin/reference/htmlsingle/#build-image">Maven</a>) 和 Gradle(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/gradle-plugin/reference/htmlsingle/#build-image">Gradle</a>) 中使用 buildpack 的各个插件文档.</p>
+<blockquote>
+<p>注意:</p>
+<p>​    Paketo Spring Boot buildpack 也已更新以支持 <code>layer.idx</code> 文件,因此对它的任何自定义都将反映在 buildpack 创建的image中.</p>
+<p>注意:</p>
+<p>​    为了实现可重现的构建和容器镜像缓存,Buildpacks 可以操作应用程序资源元数据(例如文件”last modified”的信息).应该确保应用程序在运行时不依赖该元数据.Spring Boot 可以在提供静态资源时使用该信息,但这可以通过 <code>spring.web.resources.cache.use-last-modified</code> 禁用.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/11629.html" rel="prev" title="3.30 Feature: Kotlin 支持">
+                  <i class="fa fa-chevron-left"></i> 3.30 Feature: Kotlin 支持
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/4391.html" rel="next" title="4.1 Actuator:  启用生产就绪功能">
+                  4.1 Actuator:  启用生产就绪功能 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">299k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:32</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;29720.html&quot;}</script></body></html>

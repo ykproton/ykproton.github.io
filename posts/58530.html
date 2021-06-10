@@ -21,13 +21,13 @@
 <script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
 <meta name="description" content="使用SQL数据库Spring Framework 为使用 SQL 数据库提供了大量支持,从使用 JdbcTemplate 的直接 JDBC 访问到完整的”对象关系映射”技术,如 Hibernate.Spring Data 提供了新级别的个功能功能:直接从接口创建 Repository 实现,并根据约定,使用方法名来生成查询.  配置数据源( Configure a DataSource)Java">
 <meta property="og:type" content="article">
-<meta property="og:title" content="第十三篇,Spring Boot之使用SQL数据库">
+<meta property="og:title" content="3.11 Feature: 使用SQL数据库">
 <meta property="og:url" content="http://example.com/posts/58530.html">
 <meta property="og:site_name" content="ykproton">
 <meta property="og:description" content="使用SQL数据库Spring Framework 为使用 SQL 数据库提供了大量支持,从使用 JdbcTemplate 的直接 JDBC 访问到完整的”对象关系映射”技术,如 Hibernate.Spring Data 提供了新级别的个功能功能:直接从接口创建 Repository 实现,并根据约定,使用方法名来生成查询.  配置数据源( Configure a DataSource)Java">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-06-03T03:23:00.000Z">
-<meta property="article:modified_time" content="2021-06-03T03:40:08.655Z">
+<meta property="article:modified_time" content="2021-06-10T04:57:46.180Z">
 <meta property="article:author" content="chenyk">
 <meta property="article:tag" content="Spring Boot">
 <meta property="article:tag" content="Spring Boot Feature">
@@ -38,10 +38,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;58530.html&quot;,&quot;path&quot;:&quot;posts&#x2F;58530.html&quot;,&quot;title&quot;:&quot;第十三篇,Spring Boot之使用SQL数据库&quot;}</script>
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;58530.html&quot;,&quot;path&quot;:&quot;posts&#x2F;58530.html&quot;,&quot;title&quot;:&quot;3.11 Feature: 使用SQL数据库&quot;}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
-<title>第十三篇,Spring Boot之使用SQL数据库 | ykproton</title>
+<title>3.11 Feature: 使用SQL数据库 | ykproton</title>
   
 
 
@@ -133,7 +133,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">25</span>
+          <span class="site-state-item-count">49</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -146,7 +146,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -204,7 +204,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          第十三篇,Spring Boot之使用SQL数据库
+          3.11 Feature: 使用SQL数据库
         </h1>
 
         <div class="post-meta-container">
@@ -214,10 +214,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-06-03 11:23:00 / 修改时间：11:40:08" itemprop="dateCreated datePublished" datetime="2021-06-03T11:23:00+08:00">2021-06-03</time>
+      <time title="创建时间：2021-06-03 11:23:00" itemprop="dateCreated datePublished" datetime="2021-06-03T11:23:00+08:00">2021-06-03</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-10 12:57:46" itemprop="dateModified" datetime="2021-06-10T12:57:46+08:00">2021-06-10</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -229,7 +235,7 @@
     </span>
 
   
-    <span id="/posts/58530.html" class="post-meta-item leancloud_visitors" data-flag-title="第十三篇,Spring Boot之使用SQL数据库" title="阅读次数">
+    <span id="/posts/58530.html" class="post-meta-item leancloud_visitors" data-flag-title="3.11 Feature: 使用SQL数据库" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -441,13 +447,13 @@ Spring Data JPA 存储库支持三种不同的引导模式:默认,延迟和懒�
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/posts/58617.html" rel="prev" title="第十二篇,Spring Boot之安全">
-                  <i class="fa fa-chevron-left"></i> 第十二篇,Spring Boot之安全
+                <a href="/posts/58617.html" rel="prev" title="3.10 Feature: 安全">
+                  <i class="fa fa-chevron-left"></i> 3.10 Feature: 安全
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/posts/11539.html" rel="next" title="第十四篇,Spring Boot之使用NoSQL技术">
-                  第十四篇,Spring Boot之使用NoSQL技术 <i class="fa fa-chevron-right"></i>
+                <a href="/posts/11539.html" rel="next" title="3.12 Featue: NoSQL技术">
+                  3.12 Featue: NoSQL技术 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -480,13 +486,13 @@ Spring Data JPA 存储库支持三种不同的引导模式:默认,延迟和懒�
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">174k</span>
+    <span title="站点总字数">299k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:38</span>
+    <span title="站点阅读时长">4:32</span>
   </span>
 </div>
 <div class="busuanzi-count">

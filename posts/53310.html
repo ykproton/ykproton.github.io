@@ -1,0 +1,533 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="3.29 创建自己的自动配置(Creating Your Own Auto-configuration) 创建自己的自动配置(Creating Your Own Auto-configuration)如果在开发共享库的公司工作,或者正在开发开源或商业库,可能希望开发自己的自动配置.自动配置类可以捆绑在外部 jar 中,并且仍然可以由 Spring Boot 获取. 自动配置可以与”starter”">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.29 Feature: 创建自己的自动配置 ">
+<meta property="og:url" content="http://example.com/posts/53310.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="3.29 创建自己的自动配置(Creating Your Own Auto-configuration) 创建自己的自动配置(Creating Your Own Auto-configuration)如果在开发共享库的公司工作,或者正在开发开源或商业库,可能希望开发自己的自动配置.自动配置类可以捆绑在外部 jar 中,并且仍然可以由 Spring Boot 获取. 自动配置可以与”starter”">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T04:10:00.000Z">
+<meta property="article:modified_time" content="2021-06-10T04:52:14.190Z">
+<meta property="article:author" content="chenyk">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot Feature">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/53310.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;53310.html&quot;,&quot;path&quot;:&quot;posts&#x2F;53310.html&quot;,&quot;title&quot;:&quot;3.29 Feature: 创建自己的自动配置 &quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>3.29 Feature: 创建自己的自动配置  | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-29-%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE-Creating-Your-Own-Auto-configuration"><span class="nav-number">1.</span> <span class="nav-text">3.29 创建自己的自动配置(Creating Your Own Auto-configuration)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE-Creating-Your-Own-Auto-configuration"><span class="nav-number">2.</span> <span class="nav-text">创建自己的自动配置(Creating Your Own Auto-configuration)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BA%86%E8%A7%A3%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84-Bean-Understanding-Auto-configured-Beans"><span class="nav-number">2.1.</span> <span class="nav-text">了解自动配置的 Bean (Understanding Auto-configured Beans)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AE%9A%E4%BD%8D%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AECandidates-Locating-Auto-configuration-Candidates"><span class="nav-number">2.2.</span> <span class="nav-text">定位自动配置Candidates (Locating Auto-configuration Candidates)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E6%B3%A8%E8%A7%A3-Condition-Annotations"><span class="nav-number">2.3.</span> <span class="nav-text">条件注解(Condition Annotations)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Class%E6%9D%A1%E4%BB%B6-Class-Conditions"><span class="nav-number">2.4.</span> <span class="nav-text">Class条件(Class Conditions)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Bean-%E6%9D%A1%E4%BB%B6-Bean-Conditions"><span class="nav-number">2.5.</span> <span class="nav-text">Bean 条件(Bean Conditions)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Property-%E6%9D%A1%E4%BB%B6-Property-Conditions"><span class="nav-number">2.6.</span> <span class="nav-text">Property 条件(Property Conditions)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Resource-%E6%9D%A1%E4%BB%B6-Resource-Conditions"><span class="nav-number">2.7.</span> <span class="nav-text">Resource 条件(Resource Conditions)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Web-Application-%E6%9D%A1%E4%BB%B6-Web-Application-Conditions"><span class="nav-number">2.8.</span> <span class="nav-text">Web Application 条件(Web Application Conditions)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#SpEL-%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%9D%A1%E4%BB%B6-SpEL-Expression-Conditions"><span class="nav-number">2.9.</span> <span class="nav-text">SpEL  表达式条件(SpEL Expression Conditions)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E8%87%AA%E5%B7%B1%E7%9A%84%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE-Testing-your-Auto-configuration"><span class="nav-number">2.10.</span> <span class="nav-text">测试自己的自动配置(Testing your Auto-configuration)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%A8%A1%E6%8B%9F-Web-Context-Simulating-a-Web-Context"><span class="nav-number">2.11.</span> <span class="nav-text">模拟 Web Context(Simulating a Web Context)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%A6%86%E7%9B%96%E7%B1%BB%E8%B7%AF%E5%BE%84-Overriding-the-Classpath"><span class="nav-number">2.12.</span> <span class="nav-text">覆盖类路径(Overriding the Classpath)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%90%AF%E5%8A%A8%E5%99%A8-Creating-Your-Own-Starter"><span class="nav-number">2.13.</span> <span class="nav-text">创建自己的启动器(Creating Your Own Starter)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4-Naming"><span class="nav-number">2.14.</span> <span class="nav-text">命名空间(Naming)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%94%AE-Configuration-keys"><span class="nav-number">2.15.</span> <span class="nav-text">配置键(Configuration keys)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E2%80%9C%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E2%80%9D%E6%A8%A1%E5%9D%97-The-%E2%80%9Cautoconfigure%E2%80%9D-Module"><span class="nav-number">2.16.</span> <span class="nav-text">“自动配置”模块(The “autoconfigure” Module)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Starter-%E6%A8%A1%E5%9D%97-Starter-Module"><span class="nav-number">2.17.</span> <span class="nav-text">Starter 模块(Starter Module)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/53310.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          3.29 Feature: 创建自己的自动配置 
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-10 12:10:00 / 修改时间：12:52:14" itemprop="dateCreated datePublished" datetime="2021-06-10T12:10:00+08:00">2021-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/53310.html" class="post-meta-item leancloud_visitors" data-flag-title="3.29 Feature: 创建自己的自动配置 " title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="3-29-创建自己的自动配置-Creating-Your-Own-Auto-configuration"><a href="#3-29-创建自己的自动配置-Creating-Your-Own-Auto-configuration" class="headerlink" title="3.29 创建自己的自动配置(Creating Your Own Auto-configuration)"></a>3.29 创建自己的自动配置(Creating Your Own Auto-configuration)</h5><ol start="29">
+<li><h5 id="创建自己的自动配置-Creating-Your-Own-Auto-configuration"><a href="#创建自己的自动配置-Creating-Your-Own-Auto-configuration" class="headerlink" title="创建自己的自动配置(Creating Your Own Auto-configuration)"></a>创建自己的自动配置(Creating Your Own Auto-configuration)</h5><p>如果在开发共享库的公司工作,或者正在开发开源或商业库,可能希望开发自己的自动配置.自动配置类可以捆绑在外部 jar 中,并且仍然可以由 Spring Boot 获取.</p>
+<p>自动配置可以与”starter”相关联, 启动器提供自动配置代码以及典型的库.</p>
+<ol>
+<li><h6 id="了解自动配置的-Bean-Understanding-Auto-configured-Beans"><a href="#了解自动配置的-Bean-Understanding-Auto-configured-Beans" class="headerlink" title="了解自动配置的 Bean (Understanding Auto-configured Beans)"></a>了解自动配置的 Bean (Understanding Auto-configured Beans)</h6><p>自动配置是使用标准 <code>@Configuration</code> 类实现的.<code>@Conditional</code> 注解用于限制何时应应用自动配置.通常,自动配置类使用 <code>@ConditionalOnClass</code> 和 <code>@ConditionalOnMissingBean</code> 注解.这确保自动配置仅在找到相关类并且尚未声明自己的 <code>@Configuration</code> 时才应用.</p>
+<p>可以浏览 <a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure"><code>spring-boot-autoconfigure</code></a> 的源代码以查看 Spring 提供的 <code>@Configuration</code> 类(请参阅 <a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-autoconfigure/src/main/resources/META-INF/spring.factories"><code>META-INF/spring.factories</code></a> 文件).</p>
+</li>
+<li><h6 id="定位自动配置Candidates-Locating-Auto-configuration-Candidates"><a href="#定位自动配置Candidates-Locating-Auto-configuration-Candidates" class="headerlink" title="定位自动配置Candidates (Locating Auto-configuration Candidates)"></a>定位自动配置Candidates (Locating Auto-configuration Candidates)</h6><p>Spring Boot 检查发布的 jar 中是否存在 <code>META-INF/spring.factories</code> 文件.该文件应在 <code>EnableAutoConfiguration</code> key下列出配置类,如以下示例所示:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">org.springframework.boot.autoconfigure.EnableAutoConfiguration</span>=<span class="string">\</span></span><br><span class="line"><span class="string">com.mycorp.libx.autoconfigure.LibXAutoConfiguration,\</span></span><br><span class="line"><span class="string">com.mycorp.libx.autoconfigure.LibXWebAutoConfiguration</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>​    必须<strong>仅</strong>以这种方式加载自动配置. 确保它们是在特定的package空间中定义的,并且它们永远不会成为组件扫描的目标.此外,自动配置类不应启用组件扫描以查找其他组件. 应该使用特定的<code>@Imports</code>.</p>
+</blockquote>
+<p>如果配置需要按特定顺序应用,可以使用 <code>@AutoConfigureAfter</code> 或 <code>@AutoConfigureBefore</code> 注解.例如,如果提供特定于 Web 的配置,则类可能需要在 <code>WebMvcAutoConfiguration</code> 之后应用.</p>
+<p>如果想指定某些互不直接了解的自动配置的顺序,还可以使用 <code>@AutoConfigureOrder</code>.该注解与常规的 <code>@Order</code> 注解具有相同的语义,但为自动配置类提供指定顺序.</p>
+<p>与标准<code>@Configuration</code> 类一样,应用自动配置类的顺序仅影响定义它们的 bean 的顺序.随后这些 bean 的创建顺序不受影响,并由每个 bean 的依赖项和任何 <code>@DependsOn</code> 关系决定.</p>
+</li>
+<li><h6 id="条件注解-Condition-Annotations"><a href="#条件注解-Condition-Annotations" class="headerlink" title="条件注解(Condition Annotations)"></a>条件注解(Condition Annotations)</h6><p>几乎总是希望在自动配置类中包含一个或多个 <code>@Conditional</code> 注解.<code>@ConditionalOnMissingBean</code> 注解是一个常见示例,如果开发人员对默认设置不满意,则可以使用它来覆盖自动配置.</p>
+<p>Spring Boot 包含许多 <code>@Conditional</code> 注解,可以通过 <code>@Configuration</code> 注解或单个 <code>@Bean</code> 方法在自己的代码中重用这些注解. 这些注解包括:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.developing-auto-configuration.condition-annotations.class-conditions">Class Conditions</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.developing-auto-configuration.condition-annotations.bean-conditions">Bean Conditions</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.developing-auto-configuration.condition-annotations.property-conditions">Property Conditions</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.developing-auto-configuration.condition-annotations.resource-conditions">Resource Conditions</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.developing-auto-configuration.condition-annotations.web-application-conditions">Web Application Conditions</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.developing-auto-configuration.condition-annotations.spel-conditions">SpEL Expression Conditions</a></li>
+</ul>
+<ol>
+<li><h6 id="Class条件-Class-Conditions"><a href="#Class条件-Class-Conditions" class="headerlink" title="Class条件(Class Conditions)"></a>Class条件(Class Conditions)</h6><p><code>@ConditionalOnClass</code> 和 <code>@ConditionalOnMissingClass</code> 注解让 <code>@Configuration</code> 类根据指定类的存在或不存在来确定是否被包含.由于注解元数据是使用 ASM 解析的,因此可以使用 <code>value</code> 属性来引用真实的类,即使该类实际上可能不会出现在正在运行的应用程序类路径中.如果更喜欢使用 <code>String</code> 值指定类名,也可以使用 <code>name</code> 属性.</p>
+<p>此机制不适用于 <code>@Bean</code> 方法,其中通常返回类型是条件的target:在方法的condition应用前,JVM 将加载类和可能会处理方法引用,如果类不存在,这些引用将失败.</p>
+<p>为了处理这种情况,可以使用单独的 <code>@Configuration</code> 类来隔离条件,如以下示例所示:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="comment">// Some conditions ...</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyAutoConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Auto-configured beans ...</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line">    <span class="meta">@ConditionalOnClass(SomeService.class)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SomeServiceConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Bean</span></span><br><span class="line">        <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> SomeService <span class="title">someService</span><span class="params">()</span> </span>{</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SomeService();</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>​    如果使用 <code>@ConditionalOnClass</code> 或 <code>@ConditionalOnMissingClass</code> 作为元注释的一部分来组成自己的组合注解,则必须使用<code>name</code>作为引用类的名称,在这种情况下不会被处理.</p>
+</blockquote>
+</li>
+<li><h6 id="Bean-条件-Bean-Conditions"><a href="#Bean-条件-Bean-Conditions" class="headerlink" title="Bean 条件(Bean Conditions)"></a>Bean 条件(Bean Conditions)</h6><p><code>@ConditionalOnBean</code> 和 <code>@ConditionalOnMissingBean</code> 注解允许根据特定 bean 的存在或不存在来确定是否要包含 bean.可以使用 <code>value</code> 属性按类型指定 bean 或 使用<code>name</code> 以按 name 指定 beans.<code>search</code> 属性允许让开发者限制<code>ApplicationContext</code> 层次结构, 这在搜索 bean 时应考虑的.</p>
+<p>当放在<code>@Bean</code>方法上时,目标类型默为该方法的返回类型,如下例所示:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyAutoConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@ConditionalOnMissingBean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SomeService <span class="title">someService</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> SomeService();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在前面的示例中,如果 <code>ApplicationContext</code> 中尚未包含 <code>MyService</code> 类型的 bean,则将创建 <code>myService</code> bean.</p>
+<blockquote>
+<p>建议:</p>
+<p>​    需要非常小心指定 bean 定义的顺序,因为这些条件是根据目前已处理的内容进行评估的.出于这个原因,我们建议在自动配置类上仅使用 <code>@ConditionalOnBean</code> 和 <code>@ConditionalOnMissingBean</code> 注解(在用户定义的bean添加后,这些注解会能够保证加载).</p>
+<p>注意:</p>
+<p>​    <code>@ConditionalOnBean</code> 和 <code>@ConditionalOnMissingBean</code> 不会阻止创建 <code>@Configuration</code> 类.在class level使用这些condition与使用注解标记每个包含的 <code>@Bean</code> 方法之间的唯一区别是,如果条件不匹配,前者会阻止将 <code>@Configuration</code> 类注册为 bean.</p>
+<p>建议:</p>
+<p>​    在声明 <code>@Bean</code> 方法时,在方法的返回类型中提供尽可能多的类型信息.例如,如果你的 bean 的实体类实现了一个接口,那么 bean 方法的返回类型应该是具体的类而不是接口.在使用 bean 条件时,在 <code>@Bean</code> 方法中提供尽可能多的类型信息,因为它们的evaluation只能依赖于方法签名中可用的类型信息.</p>
+</blockquote>
+</li>
+<li><h6 id="Property-条件-Property-Conditions"><a href="#Property-条件-Property-Conditions" class="headerlink" title="Property 条件(Property Conditions)"></a>Property 条件(Property Conditions)</h6><p><code>@ConditionalOnProperty</code> 注解允许根据 Spring Environment 属性来决定是否包含配置.使用 <code>prefix</code> 和 <code>name</code> 属性来指定那些属性应该被检查.默认情况下,存在且不等于 <code>false</code> 的属性才会被匹配.还可以通过使用 <code>havingValue</code> 和 <code>matchIfMissing</code> 属性创建更高级的检查.</p>
+</li>
+<li><h6 id="Resource-条件-Resource-Conditions"><a href="#Resource-条件-Resource-Conditions" class="headerlink" title="Resource 条件(Resource Conditions)"></a>Resource 条件(Resource Conditions)</h6><p><code>@ConditionalOnResource</code> 注解允许仅在存在特定资源时才包含配置.可以使用通常的 Spring 风格指定资源,如下例所示:<code>file:/home/user/test.dat</code></p>
+</li>
+<li><h6 id="Web-Application-条件-Web-Application-Conditions"><a href="#Web-Application-条件-Web-Application-Conditions" class="headerlink" title="Web Application 条件(Web Application Conditions)"></a>Web Application 条件(Web Application Conditions)</h6><p><code>@ConditionalOnWebApplication</code> 和 <code>@ConditionalOnNotWebApplication</code> 注解允许根据应用程序是否为”Web 应用程序”来包含配置.基于 servlet 的 Web 应用程序可以是任何使用<code>WebApplicationContext</code>, 定义<code>session</code>范围或具有 <code>ConfigurableWebEnvironment</code>的应用.响应式 Web 应用是任何使用 <code>ReactiveWebApplicationContext</code> 或具有 <code>ConfigurableReactiveWebEnvironment</code> 的应用.</p>
+<p><code>@ConditionalOnWarDeployment</code> 注解允许根据应用程序是否是部署到容器的传统 WAR 应用程序来包含配置.此Condition与使用嵌入式服务器运行的应用不匹配.</p>
+</li>
+<li><h6 id="SpEL-表达式条件-SpEL-Expression-Conditions"><a href="#SpEL-表达式条件-SpEL-Expression-Conditions" class="headerlink" title="SpEL  表达式条件(SpEL Expression Conditions)"></a>SpEL  表达式条件(SpEL Expression Conditions)</h6><p><code>@ConditionalOnExpression</code> 注解允许根据<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/5.3.7/reference/html/core.html#expressions">SpEL expression</a>的结果包含配置.</p>
+</li>
+</ol>
+</li>
+<li><h6 id="测试自己的自动配置-Testing-your-Auto-configuration"><a href="#测试自己的自动配置-Testing-your-Auto-configuration" class="headerlink" title="测试自己的自动配置(Testing your Auto-configuration)"></a>测试自己的自动配置(Testing your Auto-configuration)</h6><p>自动配置会受到许多因素的影响:用户配置(<code>@Bean</code> 定义和<code>Environment</code>自定义),条件评估(特定库的存在)等.具体来说,每个测试都应该创建一个定义良好的 <code>ApplicationContext</code> 来表示这些自定义的组合. <code>ApplicationContextRunner</code> 提供了一种很好的方法来实现这一点.</p>
+<p><code>ApplicationContextRunner</code> 通常被定义为测试类的一个字段,用于获得基本的通用配置.以下示例确保始终调用 <code>MyServiceAutoConfiguration</code>:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ApplicationContextRunner contextRunner = <span class="keyword">new</span> ApplicationContextRunner()</span><br><span class="line">   .withConfiguration(AutoConfigurations.of(MyServiceAutoConfiguration.class));</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>​    如果必须定义多个自动配置,则无需对它们的声明进行排序,因为它们的调用顺序与运行应用程序时的顺序完全相同.</p>
+</blockquote>
+<p>每个测试都可以使用runner来表示特定的用例. 例如,下面的示例调用用户配置 (<code>UserConfiguration</code>) 并检查自动配置是否正确回退. 调用 <code>run</code> 提供了一个可以与 <code>AssertJ</code> 一起使用的回调context.</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">defaultServiceBacksOff</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">this</span>.contextRunner.withUserConfiguration(UserConfiguration.class).run((context) -&gt; {</span><br><span class="line">        assertThat(context).hasSingleBean(MyService.class);</span><br><span class="line">        assertThat(context).getBean(<span class="string">"myCustomService"</span>).isSameAs(context.getBean(MyService.class));</span><br><span class="line">    });</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function">MyService <span class="title">myCustomService</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> MyService(<span class="string">"mine"</span>);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>还可以轻松定制环境,如以下示例所示:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">serviceNameCanBeConfigured</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">this</span>.contextRunner.withPropertyValues(<span class="string">"user.name=test123"</span>).run((context) -&gt; {</span><br><span class="line">        assertThat(context).hasSingleBean(MyService.class);</span><br><span class="line">        assertThat(context.getBean(MyService.class).getName()).isEqualTo(<span class="string">"test123"</span>);</span><br><span class="line">    });</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>runner 也可以用来显示 <code>ConditionEvaluationReport</code>.报告可以在 <code>INFO</code> 或 <code>DEBUG</code> 级别打印.以下示例显示如何使用 <code>ConditionEvaluationReportLoggingListener</code> 在自动配置测试中打印报告.</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyConditionEvaluationReportingTests</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">autoConfigTest</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">new</span> ApplicationContextRunner()</span><br><span class="line">            .withInitializer(<span class="keyword">new</span> ConditionEvaluationReportLoggingListener(LogLevel.INFO))</span><br><span class="line">            .run((context) -&gt; {</span><br><span class="line">                    <span class="comment">// Test something...</span></span><br><span class="line">            });</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li><h6 id="模拟-Web-Context-Simulating-a-Web-Context"><a href="#模拟-Web-Context-Simulating-a-Web-Context" class="headerlink" title="模拟 Web Context(Simulating a Web Context)"></a>模拟 Web Context(Simulating a Web Context)</h6><p>如果需要测试仅在 Servlet 或 Reactive Web 应用上下文中运行的自动配置,请分别使用 <code>WebApplicationContextRunner</code> 或 <code>ReactiveWebApplicationContextRunner</code>.</p>
+</li>
+<li><h6 id="覆盖类路径-Overriding-the-Classpath"><a href="#覆盖类路径-Overriding-the-Classpath" class="headerlink" title="覆盖类路径(Overriding the Classpath)"></a>覆盖类路径(Overriding the Classpath)</h6><p>还可以测试在运行时不存在特定类和/或包时会发生什么.Spring Boot 附带了一个 <code>FilteredClassLoader</code>,可以很容易地被runner调用.在以下示例中,我们断言如果 <code>MyService</code> 不存在,则正确禁用自动配置:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">serviceIsIgnoredIfLibraryIsNotPresent</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">this</span>.contextRunner.withClassLoader(<span class="keyword">new</span> FilteredClassLoader(MyService.class))</span><br><span class="line">            .run((context) -&gt; assertThat(context).doesNotHaveBean(<span class="string">"myService"</span>));</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li><h6 id="创建自己的启动器-Creating-Your-Own-Starter"><a href="#创建自己的启动器-Creating-Your-Own-Starter" class="headerlink" title="创建自己的启动器(Creating Your Own Starter)"></a>创建自己的启动器(Creating Your Own Starter)</h6><p>一个典型的 Spring Boot starter 包含自动配置和自定义给定技术的infrastructure的代码,我们称之为”acme”.为了使其易于扩展,可以将专用命名空间中的许多配置key暴露给环境.最后,提供了一个”starter”依赖项,以帮助用户尽可能轻松地入门.</p>
+<p>具体来说,自定义启动器可以包含以下内容:</p>
+<ul>
+<li>包含”acme”自动配置代码的<code>autoconfigure</code>模块.</li>
+<li><code>starter</code>模块提供对<code>autoconfigure</code>模块和”acme”和其他有用的依赖.简而言之,添加 “starter” ,应该提供使用该库所需的一切.</li>
+</ul>
+<p>简而言之,添加 starter 应该提供开始使用该库所需的一切.如果”acme”有多种偏好,选项或可选功能,那么最好将自动配置分开,因为可以清楚地表达某些功能是可选的.此外,还可以创建一个启动器,提供有关这些可选依赖项的意见.同时,其他人也能只依靠<code>autoconfigure</code>模块,根据各自不同的选择,来创建启动器.</p>
+<p>如果自动配置比较简单,没有可选功能,可以选择将两个模块合并到一个starter.</p>
+<ol>
+<li><h6 id="命名空间-Naming"><a href="#命名空间-Naming" class="headerlink" title="命名空间(Naming)"></a>命名空间(Naming)</h6><p>应该确保为自己的 starter 提供一个合适的命名空间. 不要用 <code>spring-boot</code> 用作模块名称的开始,即使你使用不同的 Maven <code>groupId</code>.将来可能会为你自动配置的东西提供官方支持.</p>
+<p>根据经验,应该在 starter 之后命名一个组合模块.例如,假设正在为”acme”创建一个启动器,并将自动配置模块命名为 <code>acme-spring-boot</code> 和starter <code>acme-spring-boot-starter</code>.</p>
+</li>
+<li><h6 id="配置键-Configuration-keys"><a href="#配置键-Configuration-keys" class="headerlink" title="配置键(Configuration keys)"></a>配置键(Configuration keys)</h6><p>如果 starter 提供配置keys,请为它们使用唯一的命名空间.特别是,不要在 Spring Boot 使用的命名空间(例如<code>server</code>,<code>management</code>,<code>spring</code>等)中包含自己的key.如果使用相同的命名空间,官方可能会修改这些命名空间,可能会以破坏自定义的模块.根据经验,用自己的命名空间(例如 <code>acme</code>)作为所有key的前缀.</p>
+<p>确保通过为每个属性添加字段 javadoc 来记录配置key,如以下示例所示:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties("acme")</span><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AcmeProperties</span> </span>{    <span class="comment">/**     * Whether to check the location of acme resources.     */</span>    <span class="keyword">private</span> <span class="keyword">boolean</span> checkLocation = <span class="keyword">true</span>;    <span class="comment">/**     * Timeout for establishing a connection to the acme server.     */</span>    <span class="keyword">private</span> Duration loginTimeout = Duration.ofSeconds(<span class="number">3</span>);    <span class="comment">// getters/setters ...}</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>​    应该只使用带有 <code>@ConfigurationProperties</code> 字段 Javadoc 的纯文本,因为它们在被添加到 JSON 之前不会被处理.</p>
+</blockquote>
+<p>以下是官方在内部遵循的一些规则,以确保描述一致:</p>
+<ul>
+<li>不要以”The”或”A”开头.</li>
+<li>对于<code>boolean</code>类型,以”Whether”或”Enable”开始描述.</li>
+<li>对于基于集合的类型,以”Comma-separated list”开头的描述</li>
+<li>如果不使用毫秒,请使用 <code>java.time.Duration</code> 而不是 <code>long</code> 并描述默认单位,例如 “如果未指定持续时间后缀,则将使用秒”.</li>
+<li>不要在描述中提供默认值,除非它必须在运行时确定.</li>
+</ul>
+<p>确保触发元数据生成,以便 IDE 帮助也可用于自己的keys.可能需要查看生成的元数据 (<code>META-INF/spring-configuration-metadata.json</code>) 以确保您自己的key被正确记录.在兼容的 IDE 中使用自己的启动器也是验证元数据好主意.</p>
+</li>
+<li><h6 id="“自动配置”模块-The-“autoconfigure”-Module"><a href="#“自动配置”模块-The-“autoconfigure”-Module" class="headerlink" title="“自动配置”模块(The “autoconfigure” Module)"></a>“自动配置”模块(The “autoconfigure” Module)</h6><p><code>autoconfigure</code>模块包含使用库所需的一切.它还可能包含配置key定义(例如<code>@ConfigurationProperties</code>)和任何可用于进一步自定义组件初始化方式的回调接口.</p>
+<blockquote>
+<p>建议:</p>
+<p>​    应该将库的依赖项标记为可选,以便可以更轻松地在项目中包含<code>autoconfigure</code>模块.如果这样做,则该不会被提供库,并且默认情况下,Spring Boot 会退出.</p>
+</blockquote>
+<p>Spring Boot 使用注解处理器来收集元数据文件 (<code>META-INF/spring-autoconfigure-metadata.properties</code>) 中自动配置的条件.如果该文件存在,则用于过滤不匹配的自动配置,这将缩短启动时间.建议在包含自动配置的模块中添加以下依赖项:</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-autoconfigure-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果在应用程序中直接定义了自动配置,请确保配置 <code>spring-boot-maven-plugin</code> 以防止<code>repackage</code>目标将依赖项添加到胖 jar 中:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;project&gt;    &lt;build&gt;        &lt;plugins&gt;            &lt;plugin&gt;                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;                &lt;configuration&gt;                    &lt;excludes&gt;                        &lt;exclude&gt;                            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;                            &lt;artifactId&gt;spring-boot-autoconfigure-processor&lt;/artifactId&gt;                        &lt;/exclude&gt;                    &lt;/excludes&gt;                &lt;/configuration&gt;            &lt;/plugin&gt;        &lt;/plugins&gt;    &lt;/build&gt;&lt;/project&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>对于 Gradle 4.5 及更早版本,应在 <code>compileOnly</code> 配置中声明依赖项,如以下示例所示:</p>
+<figure class="highlight gradle"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> {    compileOnly <span class="string">"org.springframework.boot:spring-boot-autoconfigure-processor"</span>}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>对于 Gradle 4.6 及更高版本,应在 <code>annotationProcessor</code> 配置中声明依赖项,如以下示例所示:</p>
+<figure class="highlight gradle"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">dependencies</span> {    annotationProcessor <span class="string">"org.springframework.boot:spring-boot-autoconfigure-processor"</span>}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="Starter-模块-Starter-Module"><a href="#Starter-模块-Starter-Module" class="headerlink" title="Starter 模块(Starter Module)"></a>Starter 模块(Starter Module)</h6><p>starter 实际上是一个空jar. 它的唯一目的是提供必要的依赖来使用库.可以将其视为对入门所需内容的必不可少的内容.</p>
+<p>不要对添加启动器的项目做出假设.如果自己的自动配置的库通常需要其他启动器,也请提及它们.如果可选依赖的数量很多,则提供一组正确的默认依赖可能会很困难,因为应该避免包含对于库的不必要的依赖项.换句话说,不应该包含optional依赖项.</p>
+<blockquote>
+<p>注意:</p>
+<p>​    无论哪种方式,starter 都必须直接或间接引用core Spring Boot starter (<code>spring-boot-starter</code>)(间接引用:即,如果自己的 starter 依赖于另一个 starter,则无需添加它).如果一个项目仅使用自定义启动器创建,则 Spring Boot 的核心功能将因核心启动器的存在而启用.</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Boot-Feature/" rel="tag"># Spring Boot Feature</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/51065.html" rel="prev" title="3.28 Feature: Web Service">
+                  <i class="fa fa-chevron-left"></i> 3.28 Feature: Web Service
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/11629.html" rel="next" title="3.30 Feature: Kotlin 支持">
+                  3.30 Feature: Kotlin 支持 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">299k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:32</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;53310.html&quot;}</script></body></html>

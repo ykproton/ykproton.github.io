@@ -1,0 +1,1230 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="EndpointsActuator endpoint 可以用来监控应用并与之交互。 Spring Boot 包含许多内置endpoint，并允许添加自己的endpoint。例如，healthendpoint提供基本的应用程序健康信息。 每个单独的endpoint都可以通过 HTTP 或 JMX 启用或禁用和公开（远程访问）。当启用和公开endpoint时，它是可用的。内置endpoint只有在可用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4.2 Actuator:  Endpoints">
+<meta property="og:url" content="http://example.com/posts/40082.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="EndpointsActuator endpoint 可以用来监控应用并与之交互。 Spring Boot 包含许多内置endpoint，并允许添加自己的endpoint。例如，healthendpoint提供基本的应用程序健康信息。 每个单独的endpoint都可以通过 HTTP 或 JMX 启用或禁用和公开（远程访问）。当启用和公开endpoint时，它是可用的。内置endpoint只有在可用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T04:19:00.000Z">
+<meta property="article:modified_time" content="2021-06-10T04:51:34.802Z">
+<meta property="article:author" content="chenyk">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot Actuator">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/40082.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;40082.html&quot;,&quot;path&quot;:&quot;posts&#x2F;40082.html&quot;,&quot;title&quot;:&quot;4.2 Actuator:  Endpoints&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>4.2 Actuator:  Endpoints | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#Endpoints"><span class="nav-number">1.</span> <span class="nav-text">Endpoints</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BC%80%E5%90%AF-Endpoints-Enabling-Endpoints"><span class="nav-number">1.1.</span> <span class="nav-text">开启 Endpoints(Enabling Endpoints)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9A%B4%E9%9C%B2-Endpoints-Exposing-Endpoints"><span class="nav-number">1.2.</span> <span class="nav-text">暴露 Endpoints(Exposing Endpoints)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4-HTTP-endpoint-Securing-HTTP-Endpoints"><span class="nav-number">1.3.</span> <span class="nav-text">保护 HTTP endpoint(Securing HTTP Endpoints)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Endpoints-Configuring-Endpoints"><span class="nav-number">1.4.</span> <span class="nav-text">配置 Endpoints(Configuring Endpoints)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Actuator-Web-endpoint%E7%9A%84%E8%B6%85%E5%AA%92%E4%BD%93-Hypermedia-for-Actuator-Web-Endpoints"><span class="nav-number">1.5.</span> <span class="nav-text">Actuator Web endpoint的超媒体(Hypermedia for Actuator Web Endpoints)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#CORS-Support"><span class="nav-number">1.6.</span> <span class="nav-text">CORS Support</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E8%87%AA%E5%AE%9A%E4%B9%89Endpoint-Implementing-Custom-Endpoints"><span class="nav-number">1.7.</span> <span class="nav-text">实现自定义Endpoint(Implementing Custom Endpoints)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%8E%A5%E6%94%B6%E8%BE%93%E5%85%A5-Receiving-Input"><span class="nav-number">1.8.</span> <span class="nav-text">接收输入(Receiving Input)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.9.</span> <span class="nav-text">输入类型转换</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89-Web-endpoint-Custom-Web-Endpoints"><span class="nav-number">1.10.</span> <span class="nav-text">自定义 Web endpoint(Custom Web Endpoints)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Web-endpoint%E8%AF%B7%E6%B1%82%E8%B0%93%E8%AF%8D-Web-Endpoint-Request-Predicates"><span class="nav-number">1.11.</span> <span class="nav-text">Web endpoint请求谓词(Web Endpoint Request Predicates)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84-Path"><span class="nav-number">1.12.</span> <span class="nav-text">路径(Path)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#HTTP-%E6%96%B9%E6%B3%95-HTTP-method"><span class="nav-number">1.13.</span> <span class="nav-text">HTTP 方法(HTTP method)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Consumes"><span class="nav-number">1.14.</span> <span class="nav-text">Consumes</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Produces"><span class="nav-number">1.15.</span> <span class="nav-text">Produces</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Web-Endpoint-%E5%93%8D%E5%BA%94%E7%8A%B6%E6%80%81-Web-Endpoint-Response-Status"><span class="nav-number">1.16.</span> <span class="nav-text">Web Endpoint 响应状态(Web Endpoint Response Status)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Web-Endpoint-%E8%8C%83%E5%9B%B4%E8%AF%B7%E6%B1%82-Web-Endpoint-Range-Requests"><span class="nav-number">1.17.</span> <span class="nav-text">Web Endpoint 范围请求(Web Endpoint Range Requests)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Web-Endpoint%E5%AE%89%E5%85%A8"><span class="nav-number">1.18.</span> <span class="nav-text">Web Endpoint安全</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Servlet-Endpoints"><span class="nav-number">1.19.</span> <span class="nav-text">Servlet Endpoints</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Controller-Endpoint"><span class="nav-number">1.20.</span> <span class="nav-text">Controller Endpoint</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E4%BF%A1%E6%81%AF-Health-Information"><span class="nav-number">1.21.</span> <span class="nav-text">健康信息(Health Information)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84health-indicator-Auto-configured-HealthIndicators"><span class="nav-number">1.22.</span> <span class="nav-text">自动配置的health indicator(Auto-configured HealthIndicators)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89HealthIndicators-Writing-Custom-HealthIndicators"><span class="nav-number">1.23.</span> <span class="nav-text">编写自定义HealthIndicators(Writing Custom HealthIndicators)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E5%BC%8F%E5%81%A5%E5%BA%B7%E6%8C%87%E7%A4%BA%E5%99%A8-Reactive-Health-Indicators"><span class="nav-number">1.24.</span> <span class="nav-text">响应式健康指示器(Reactive Health Indicators)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84-ReactiveHealthIndicators-Auto-configured-ReactiveHealthIndicators"><span class="nav-number">1.25.</span> <span class="nav-text">自动配置的 ReactiveHealthIndicators(Auto-configured ReactiveHealthIndicators)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E7%BB%84-Health-Groups"><span class="nav-number">1.26.</span> <span class="nav-text">健康组(Health Groups)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%BA%90%E5%AE%89%E5%85%A8-DataSource-Health"><span class="nav-number">1.27.</span> <span class="nav-text">数据源安全(DataSource Health)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Kubernetes-%E6%8E%A2%E6%B5%8B%E5%99%A8-Kubernetes-Probes"><span class="nav-number">1.28.</span> <span class="nav-text">Kubernetes 探测器(Kubernetes Probes)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Kubernetes-%E6%8E%A2%E6%B5%8B%E5%99%A8%E6%A3%80%E6%9F%A5%E5%A4%96%E9%83%A8%E7%8A%B6%E6%80%81-Checking-External-State-with-Kubernetes-Probes"><span class="nav-number">1.29.</span> <span class="nav-text">使用 Kubernetes 探测器检查外部状态(Checking External State with Kubernetes Probes)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E5%92%8C%E6%8E%A2%E6%B5%8B%E7%8A%B6%E6%80%81-Application-Lifecycle-and-Probe-States"><span class="nav-number">1.30.</span> <span class="nav-text">应用程序生命周期和探测状态(Application Lifecycle and Probe States)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E4%BF%A1%E6%81%AF-Application-Information"><span class="nav-number">1.31.</span> <span class="nav-text">应用信息(Application Information)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE%E7%9A%84-InfoContributors-Auto-configured-InfoContributors"><span class="nav-number">1.32.</span> <span class="nav-text">自动配置的 InfoContributors(Auto-configured InfoContributors)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%BA%94%E7%94%A8%E4%BF%A1%E6%81%AF-Custom-Application-Information"><span class="nav-number">1.33.</span> <span class="nav-text">自定义应用信息(Custom Application Information)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Git%E6%8F%90%E4%BA%A4%E4%BF%A1%E6%81%AF-Git-Commit-Information"><span class="nav-number">1.34.</span> <span class="nav-text">Git提交信息(Git Commit Information)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E4%BF%A1%E6%81%AF-Build-Information"><span class="nav-number">1.35.</span> <span class="nav-text">构建信息(Build Information)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E8%87%AA%E5%AE%9A%E4%B9%89-InfoContributor-Writing-Custom-InfoContributors"><span class="nav-number">1.36.</span> <span class="nav-text">编写自定义 InfoContributor(Writing Custom InfoContributors)</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/40082.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          4.2 Actuator:  Endpoints
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-10 12:19:00 / 修改时间：12:51:34" itemprop="dateCreated datePublished" datetime="2021-06-10T12:19:00+08:00">2021-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/40082.html" class="post-meta-item leancloud_visitors" data-flag-title="4.2 Actuator:  Endpoints" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>21k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h5 id="Endpoints"><a href="#Endpoints" class="headerlink" title="Endpoints"></a>Endpoints</h5><p>Actuator endpoint 可以用来监控应用并与之交互。 Spring Boot 包含许多内置endpoint，并允许添加自己的endpoint。例如，<code>health</code>endpoint提供基本的应用程序健康信息。</p>
+<p>每个单独的endpoint都可以通过 HTTP 或 JMX 启用或禁用和公开（远程访问）。当启用和公开endpoint时，它是可用的。内置endpoint只有在可用时才会自动配置。大多数应用程序通过 HTTP 公开，其中endpoint 的 ID 以及 <code>/actuator</code> 的前缀映射到 URL。例如，默认情况下，<code>health</code> endpoint映射到<code>/actuator/health</code>.</p>
+<p>以下与技术无关的endpoint可用：</p>
+<table>
+<thead>
+<tr>
+<th><strong>ID</strong></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>auditevents</code></td>
+<td>公开当前应用程序的audit 事件信息。 需要一个 <code>AuditEventRepository</code> bean。</td>
+</tr>
+<tr>
+<td><code>beans</code></td>
+<td>显示应用程序中所有 Spring bean 的完整列表。</td>
+</tr>
+<tr>
+<td><code>caches</code></td>
+<td>公开可用的缓存。</td>
+</tr>
+<tr>
+<td><code>conditions</code></td>
+<td>显示在配置和自动配置类上评估的conditions ,以及匹配或不匹配的原因。</td>
+</tr>
+<tr>
+<td><code>configprops</code></td>
+<td>显示所有<code>@ConfigurationProperties</code> 的列表。</td>
+</tr>
+<tr>
+<td><code>env</code></td>
+<td>从 Spring 的 <code>ConfigurableEnvironment</code> 公开属性。</td>
+</tr>
+<tr>
+<td><code>flyway</code></td>
+<td>显示已经应用的所有 <code>Flyway</code> 数据库迁移。 需要一个或多个 <code>Flyway</code> bean。</td>
+</tr>
+<tr>
+<td><code>health</code></td>
+<td>显示应用程序运行状况信息。</td>
+</tr>
+<tr>
+<td><code>httptrace</code></td>
+<td>显示 HTTP 跟踪信息（默认情况下，最后 100 个 HTTP 请求-响应交换）。需要一个 <code>HttpTraceRepository</code> bean。</td>
+</tr>
+<tr>
+<td><code>info</code></td>
+<td>显示任意应用程序信息。</td>
+</tr>
+<tr>
+<td><code>integrationgraph</code></td>
+<td>显示 Spring 集成图。 需要依赖 <code>spring-integration-core</code>。</td>
+</tr>
+<tr>
+<td><code>loggers</code></td>
+<td>显示和修改应用程序中loggers的配置。</td>
+</tr>
+<tr>
+<td><code>liquibase</code></td>
+<td>显示已应用的所有的 Liquibase 数据库迁移。 需要一个或多个 <code>Liquibase</code> bean。</td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td>显示当前应用程序的“metrics”信息。</td>
+</tr>
+<tr>
+<td><code>mappings</code></td>
+<td>显示所有 <code>@RequestMapping</code> 路径的整理列表。</td>
+</tr>
+<tr>
+<td><code>quartz</code></td>
+<td>显示有关 Quartz 调度程序作业的信息。</td>
+</tr>
+<tr>
+<td><code>scheduledtasks</code></td>
+<td>显示应用程序中的计划任务。</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td>允许从 Spring Session 支持的会话存储中检索和删除用户会话。需要使用 Spring Session 的基于 Servlet 的 Web 应用程序。</td>
+</tr>
+<tr>
+<td>shutdown</td>
+<td>让应用程序正常关闭。 默认禁用。</td>
+</tr>
+<tr>
+<td>startup</td>
+<td>显示 <code>ApplicationStartup</code> 收集的启动步骤数据.需要使用 <code>BufferingApplicationStartup</code> 配置 <code>SpringApplication</code>。</td>
+</tr>
+<tr>
+<td><code>threaddump</code></td>
+<td>执行线程转储。</td>
+</tr>
+</tbody></table>
+<p>如果应用程序是 Web 应用程序（Spring MVC、Spring WebFlux 或 Jersey），可以使用以下附加endpoint：</p>
+<table>
+<thead>
+<tr>
+<th><strong>ID</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>heapdump</code></td>
+<td>返回一个 <code>hprof</code> 堆转储文件。 要求 HotSpot JVM。</td>
+</tr>
+<tr>
+<td><code>jolokia</code></td>
+<td>通过 HTTP 公开 JMX bean（当classpath上Jolokia 在时，不适用于 WebFlux）。</td>
+</tr>
+<tr>
+<td><code>logfile</code></td>
+<td>返回日志文件的内容（如果已设置 <code>logging.file.name</code> 或 <code>logging.file.path</code> 属性）.支持使用 HTTP <code>Range</code> header来检索日志文件的部分内容。</td>
+</tr>
+<tr>
+<td><code>prometheus</code></td>
+<td>以 Prometheus 服务器可以抓取的格式公开指标。需要依赖 <code>micrometer-registry-prometheus</code>.</td>
+</tr>
+</tbody></table>
+<ol>
+<li><h6 id="开启-Endpoints-Enabling-Endpoints"><a href="#开启-Endpoints-Enabling-Endpoints" class="headerlink" title="开启 Endpoints(Enabling Endpoints)"></a>开启 Endpoints(Enabling Endpoints)</h6><p>默认情况下，除<code>shutdown</code>之外的所有endpoint都处于启用状态。要启用endpoint，请使用其 <code>management.endpoint.&lt;id&gt;.enabled</code> 属性。以下示例启用关闭endpoint：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.shutdown.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果希望endpoint启用是opt-in而不是opt-out，将 <code>management.endpoints.enabled-by-default</code> 属性设置为 <code>false</code> 并使用endpoint的<code>enabled</code>选择重新加入。以下示例启用 <code>info</code> endpoint并禁用所有其他endpoint：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoints.enabled-by-default</span>=<span class="string">false</span></span><br><span class="line"><span class="meta">management.endpoint.info.enabled</span>=<span class="string">true</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>   禁用的endpoint从应用context中完全删除。如果只想改变endpoint公开的技术，请改用 <code>include</code> 和 <code>exclude</code> 属性。</p>
+</blockquote>
+</li>
+<li><h6 id="暴露-Endpoints-Exposing-Endpoints"><a href="#暴露-Endpoints-Exposing-Endpoints" class="headerlink" title="暴露 Endpoints(Exposing Endpoints)"></a>暴露 Endpoints(Exposing Endpoints)</h6><p>由于Endpoints 可能包含敏感信息，因此应仔细考虑何时公开它们。下表显示了内置endpoint的默认暴露：</p>
+<table>
+<thead>
+<tr>
+<th><strong>ID</strong></th>
+<th><strong>JMX</strong></th>
+<th><strong>Web</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>auditevents</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>beans</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>caches</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>conditions</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>configprops</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>env</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>flyway</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>health</code></td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>heapdump</code></td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>httptrace</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>info</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>integrationgraph</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>jolokia</code></td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>logfile</code></td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>loggers</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>liquibase</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>mappings</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>prometheus</code></td>
+<td>N/A</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>quartz</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>scheduledtasks</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>sessions</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>shutdown</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>startup</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><code>threaddump</code></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+</tbody></table>
+<p>要更改公开的endpoint，请使用以下特定于技术的<code>include</code>和<code>exclude</code>属性：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Property</strong></th>
+<th><strong>Default</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>management.endpoints.jmx.exposure.exclude</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>management.endpoints.jmx.exposure.include</code></td>
+<td><code>*</code></td>
+</tr>
+<tr>
+<td><code>management.endpoints.web.exposure.exclude</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>management.endpoints.web.exposure.include</code></td>
+<td><code>health</code></td>
+</tr>
+</tbody></table>
+<p><code>include</code> 属性列出了公开的endpoint的 ID。<code>exclude</code> 属性列出不应公开的endpoint的 ID。<code>exclude</code> 属性优先于 <code>include</code> 属性。<code>include</code>和<code>exclude</code>属性都可以使用endpoint ID 列表进行配置。</p>
+<p>例如，要停止通过 JMX 公开所有endpoint并仅公开 <code>health</code> 和 <code>info</code> endpoint，请使用以下属性：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoints.jmx.exposure.include</span>=<span class="string">health,info</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>*</code> 可用于选择所有endpoint。例如，要通过 HTTP 公开除了 <code>env</code> 和 <code>beans</code> endpoint之外的所有内容，请使用以下属性：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoints.web.exposure.include</span>=<span class="string">*</span></span><br><span class="line"><span class="meta">management.endpoints.web.exposure.exclude</span>=<span class="string">env,beans</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>   <code>*</code> 在 YAML 中具有特殊含义，因此如果要包含（或排除）所有endpoint，请务必添加引号。</p>
+<p>注意:</p>
+<p>   如果应用公开，强烈建议也保护您的endpoint(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.endpoints.security">secure your endpoints</a>)。</p>
+<p>建议:</p>
+<p>   如果想实现自己的endpoint何时公开策略，可以注册一个 <code>EndpointFilter</code> bean。</p>
+</blockquote>
+</li>
+<li><h6 id="保护-HTTP-endpoint-Securing-HTTP-Endpoints"><a href="#保护-HTTP-endpoint-Securing-HTTP-Endpoints" class="headerlink" title="保护 HTTP endpoint(Securing HTTP Endpoints)"></a>保护 HTTP endpoint(Securing HTTP Endpoints)</h6><p>应该像保护任何其他敏感 URL 一样注意保护 HTTP endpoint。如果存在 Spring Security，则默认情况下使用 Spring Security 的内容协商策略来保护endpoint。如果存在 Spring Security，则默认情况下使用 Spring Security 的内容协商策略来保护endpoint。如果希望为 HTTP endpoint配置自定义安全性，例如只允许具有特定角色的用户访问它们，Spring Boot 提供了一些方便的 <code>RequestMatcher</code> 对象，可以与 Spring Security 结合使用。</p>
+<p>典型的 Spring Security 配置可能类似于以下示例：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MySecurityConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SecurityFilterChain <span class="title">securityFilterChain</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        http.requestMatcher(EndpointRequest.toAnyEndpoint())</span><br><span class="line">                .authorizeRequests((requests) -&gt; requests.anyRequest().hasRole(<span class="string">"ENDPOINT_ADMIN"</span>));</span><br><span class="line">        http.httpBasic();</span><br><span class="line">        <span class="keyword">return</span> http.build();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>前面的示例使用 <code>EndpointRequest.toAnyEndpoint()</code> 将请求匹配到任何endpoint，然后确保所有endpoint都具有 <code>ENDPOINT_ADMIN</code> 角色。<code>EndpointRequest</code> 上还提供了其他几种匹配器方法。</p>
+<p>如果想要在防火墙后面部署应用程序，可能希望无需身份验证即可访问所有执行器endpoint。可以通过更改 <code>management.endpoints.web.exposure.include</code> 属性来实现，如下所示：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoints.web.exposure.include</span>=<span class="string">*</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>此外，如果存在 Spring Security，需要添加自定义安全配置，以允许对endpoint进行未经身份验证的访问，如以下示例所示：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MySecurityConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SecurityFilterChain <span class="title">securityFilterChain</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>{</span><br><span class="line">        http.requestMatcher(EndpointRequest.toAnyEndpoint())</span><br><span class="line">                .authorizeRequests((requests) -&gt; requests.anyRequest().permitAll());</span><br><span class="line">        <span class="keyword">return</span> http.build();</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>   在上面的两个示例中，配置仅适用于actuator endpoints。由于 Spring Boot 的安全配置会在 <code>SecurityFilterChain</code> bean 存在时完全退出，因此需要配置一个额外的 <code>SecurityFilterChain</code> bean，其规则适用于应用程序的其余部分。</p>
+</blockquote>
+</li>
+<li><h6 id="配置-Endpoints-Configuring-Endpoints"><a href="#配置-Endpoints-Configuring-Endpoints" class="headerlink" title="配置 Endpoints(Configuring Endpoints)"></a>配置 Endpoints(Configuring Endpoints)</h6><p>endpoint自动缓存那些无参读取操作的响应。要配置endpoint缓存响应的时间量，请使用其 <code>cache.time-to-live</code> 属性。以下示例将 beans endpoint的缓存的生存时间设置为 10 秒：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.beans.cache.time-to-live</span>=<span class="string">10s</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>   前缀 <code>management.endpoint.&lt;name&gt;</code> 用于配置标识唯一的endpoint。</p>
+</blockquote>
+</li>
+<li><h6 id="Actuator-Web-endpoint的超媒体-Hypermedia-for-Actuator-Web-Endpoints"><a href="#Actuator-Web-endpoint的超媒体-Hypermedia-for-Actuator-Web-Endpoints" class="headerlink" title="Actuator Web endpoint的超媒体(Hypermedia for Actuator Web Endpoints)"></a>Actuator Web endpoint的超媒体(Hypermedia for Actuator Web Endpoints)</h6><p>添加了“discovery page”，其中包含指向所有endpoint的链接。 默认情况下，“discovery page”在 <code>/actuator</code> 上可用。</p>
+<p>要禁用“discovery page”，请将以下属性添加到应用属性中：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoints.web.discovery.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>配置自定义管理context路径后，“discovery page”会自动从 <code>/actuator</code> 移动到管理context的根目录。例如，如果管理上下文路径是 <code>/management</code>，则可从 <code>/management</code>获取发现页面.当管理上下文路径设置为 <code>/</code> 时，将禁用发现页面来防止与其他映射发生冲突。</p>
+</li>
+<li><h6 id="CORS-Support"><a href="#CORS-Support" class="headerlink" title="CORS Support"></a>CORS Support</h6><p>跨域资源共享 (CORS) 是一种 W3C 规范，可以以灵活的方式指定哪些类型的跨域请求被授权。如果使用 Spring MVC 或 Spring WebFlux，则可以配置 Actuator 的 Web endpoint以支持此类场景。</p>
+<p>默认情况下禁用 CORS 支持，并且只有设置 <code>management.endpoints.web.cors.allowed-origins</code> 属性后开启。以下配置允许来自 <code>example.com</code> 域的 <code>GET</code> 和 <code>POST</code> 调用：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoints.web.cors.allowed-origins</span>=<span class="string">https://example.com</span></span><br><span class="line"><span class="meta">management.endpoints.web.cors.allowed-methods</span>=<span class="string">GET,POST</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="实现自定义Endpoint-Implementing-Custom-Endpoints"><a href="#实现自定义Endpoint-Implementing-Custom-Endpoints" class="headerlink" title="实现自定义Endpoint(Implementing Custom Endpoints)"></a>实现自定义Endpoint(Implementing Custom Endpoints)</h6><p>如果添加一个用<code>@Endpoint</code> 注解的<code>@Bean</code>，任何用<code>@ReadOperation</code>、<code>@WriteOperation</code> 或<code>@DeleteOperation</code> 注解标注的方法都会自动通过JMX 公开，在Web 应用程序中，也通过HTTP 公开。endpoint可以使用 Jersey、Spring MVC 或 Spring WebFlux 通过 HTTP 公开。 如果 Jersey 和 Spring MVC 都可用，则将使用 Spring MVC。</p>
+<p>以下示例公开了一个返回自定义对象的读取操作：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ReadOperation</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> CustomData <span class="title">getData</span><span class="params">()</span> </span>{</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> CustomData(<span class="string">"test"</span>, <span class="number">5</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>还可以使用<code>@JmxEndpoint</code> 或<code>@WebEndpoint</code> 编写特定于技术的endpoint。这些endpoint仅限于它们各自的技术。例如，<code>@WebEndpoint</code> 仅通过 HTTP 而不是通过 JMX 公开。</p>
+<p>可以使用 <code>@EndpointWebExtension</code> 和 <code>@EndpointJmxExtension</code> 编写特定于技术的扩展.这些注解可以提供特定于技术来扩充现有endpoint。</p>
+<p>最后，如果需要访问特定于 web 框架的功能，可以实现 Servlet 或 Spring <code>@Controller</code> 和 <code>@RestController</code> endpoint，但代价是它们无法通过 JMX 或在使用不同的 web 框架时可用。</p>
+<ol>
+<li><h6 id="接收输入-Receiving-Input"><a href="#接收输入-Receiving-Input" class="headerlink" title="接收输入(Receiving Input)"></a>接收输入(Receiving Input)</h6><p>endpoint上的操作通过其参数接收输入。当通过 Web 公开时，这些参数的值取自 URL 的请求参数和 JSON 请求体。当通过 JMX 公开时，参数被映射到 MBean 操作的参数。 默认需要参数。可以通过使用<code>@javax.annotation.Nullable</code> 或<code>@org.springframework.lang.Nullable</code> 来使它们成为optional。</p>
+<p>JSON 请求体中的每个根属性都可以映射到endpoint的一个参数。 考虑以下 JSON 请求正文：</p>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="attr">"name"</span>: <span class="string">"test"</span>,</span><br><span class="line">    <span class="attr">"counter"</span>: <span class="number">42</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这可用于调用采用 <code>String name</code> 和 <code>int counter</code> 参数的写操作，如以下示例所示：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WriteOperation</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateData</span><span class="params">(String name, <span class="keyword">int</span> counter)</span> </span>{</span><br><span class="line">    <span class="comment">// injects "test" and 42</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>   由于endpoint与技术无关，因此只能在方法签名中指定简单类型。特别是使用<code>CustomData</code>类型定义一个<code>name</code>来声明参数和<code>counter</code>属性不被支持. </p>
+<p>注意:  </p>
+<p>   为了允许将输入映射到操作方法的参数，实现endpoint的 Java 代码应该使用 <code>-parameters</code> 编译，实现endpoint的 Kotlin 代码应该使用 <code>-java-parameters</code> 编译.如果使用 Spring Boot 的 Gradle 插件或使用 Maven 和 <code>spring-boot-starter-parent</code>，这将自动进行。</p>
+</blockquote>
+<h6 id="输入类型转换"><a href="#输入类型转换" class="headerlink" title="输入类型转换"></a>输入类型转换</h6><p>如有必要，传递给endpoint操作方法的参数会自动转换为所需的类型。在调用操作方法之前，通过 JMX 或 HTTP 请求接收的输入将使用 <code>ApplicationConversionService</code> 的实例以及通过 <code>@EndpointConverter</code> 限定的任何 <code>Converter</code> 或 <code>GenericConverter</code> bean 转换为所需的类型。</p>
+</li>
+<li><h6 id="自定义-Web-endpoint-Custom-Web-Endpoints"><a href="#自定义-Web-endpoint-Custom-Web-Endpoints" class="headerlink" title="自定义 Web endpoint(Custom Web Endpoints)"></a>自定义 Web endpoint(Custom Web Endpoints)</h6><p><code>@Endpoint</code>、<code>@WebEndpoint</code> 或 <code>@EndpointWebExtension</code> 上的操作都会使用 Jersey、Spring MVC 或 Spring WebFlux 通过 HTTP 自动公开。如果 Jersey 和 Spring MVC 都可用，则将使用 Spring MVC。</p>
+<h6 id="Web-endpoint请求谓词-Web-Endpoint-Request-Predicates"><a href="#Web-endpoint请求谓词-Web-Endpoint-Request-Predicates" class="headerlink" title="Web endpoint请求谓词(Web Endpoint Request Predicates)"></a>Web endpoint请求谓词(Web Endpoint Request Predicates)</h6><p>在 Web 公开endpoint上的每个操作,都会自动生成请求谓词。</p>
+<h6 id="路径-Path"><a href="#路径-Path" class="headerlink" title="路径(Path)"></a>路径(Path)</h6><p>谓词的路径由endpoint的 ID 和在网络公开上的endpoint的基本路径决定。默认的基本路径是 <code>/actuator</code>。例如，具有 ID <code>sessions</code>的endpoint将使用 <code>/actuator/sessions</code> 作为谓词中的路径。</p>
+<p>通过<code>@Selector</code>标注操作方法的一个或多个参数，可以进一步自定义路径.这样的参数作为路径变量添加到路径谓词中。当调用endpoint操作时，变量的值被传递到操作方法中。如果要捕获所有剩余的路径元素，可以将<code>@Selector(Match=ALL_REMAINING) </code>添加到最后一个参数并使其成为与 <code>String[]</code> 转换为兼容的类型.</p>
+<h6 id="HTTP-方法-HTTP-method"><a href="#HTTP-方法-HTTP-method" class="headerlink" title="HTTP 方法(HTTP method)"></a>HTTP 方法(HTTP method)</h6><p>谓词的HTTP方法由操作类型决定，如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Operation</strong></th>
+<th><strong>HTTP method</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>@ReadOperation</code></td>
+<td><code>GET</code></td>
+</tr>
+<tr>
+<td><code>@WriteOperation</code></td>
+<td><code>POST</code></td>
+</tr>
+<tr>
+<td><code>@DeleteOperation</code></td>
+<td><code>DELETE</code></td>
+</tr>
+</tbody></table>
+<h6 id="Consumes"><a href="#Consumes" class="headerlink" title="Consumes"></a>Consumes</h6><p>对于使用请求体的<code>@WriteOperation</code>（HTTP <code>POST</code>），谓词的consumes 子句是<code>application/vnd.spring-boot.actuator.v2+json, application/json</code>.对于所有其他操作，consumes 子句为空。</p>
+<h6 id="Produces"><a href="#Produces" class="headerlink" title="Produces"></a>Produces</h6><p>谓词的produces 子句可以由<code>@DeleteOperation</code>、<code>@ReadOperation</code> 和<code>@WriteOperation</code> 注解的<code>produces</code>属性确定。该属性是可选的。 如果未使用，则生产子句会自动确定。</p>
+<p>如果操作方法返回 <code>void</code> 或 <code>Void</code>，那么produces 子句为空。如果操作方法返回<code>org.springframework.core.io.Resource</code>，那么produces子句就是<code>application/octet-stream</code>.对于所有其他操作，生产子句是 <code>application/vnd.spring-boot.actuator.v2+json, application/json</code>。</p>
+<h6 id="Web-Endpoint-响应状态-Web-Endpoint-Response-Status"><a href="#Web-Endpoint-响应状态-Web-Endpoint-Response-Status" class="headerlink" title="Web Endpoint 响应状态(Web Endpoint Response Status)"></a>Web Endpoint 响应状态(Web Endpoint Response Status)</h6><p>endpoint 操作的默认响应状态取决于操作类型（读取、写入或删除）以及操作返回的内容（如果有）。</p>
+<p><code>@ReadOperation</code> 返回一个值，响应状态将为 200 (OK)。 如果它没有返回值，则响应状态将为 404（未找到）。</p>
+<p>如果<code>@WriteOperation</code> 或<code>@DeleteOperation</code> 返回一个值，则响应状态将为 200（OK）。 如果它没有返回值，则响应状态将为 204（无内容）。</p>
+<p>如果在没有必需参数的情况下调用操作，或者带有无法转换为必需类型的参数，则操作方法不会被调用并且响应状态为 400（Bad Request）。</p>
+<h6 id="Web-Endpoint-范围请求-Web-Endpoint-Range-Requests"><a href="#Web-Endpoint-范围请求-Web-Endpoint-Range-Requests" class="headerlink" title="Web Endpoint 范围请求(Web Endpoint Range Requests)"></a>Web Endpoint 范围请求(Web Endpoint Range Requests)</h6><p>HTTP 范围请求可用于请求部分 HTTP 资源。使用 Spring MVC 或 Spring Web Flux 时，返回 <code>org.springframework.core.io.Resource</code> 的操作会自动支持范围请求。</p>
+<blockquote>
+<p>注意:</p>
+<p>   使用 Jersey 时不支持范围请求。</p>
+</blockquote>
+<h6 id="Web-Endpoint安全"><a href="#Web-Endpoint安全" class="headerlink" title="Web Endpoint安全"></a>Web Endpoint安全</h6><p>Web endpoint或特定于 Web 的endpoint扩展上的操作可以接收当前 <code>java.security.Principal</code> 或 <code>org.springframework.boot.actuate.endpoint.SecurityContext</code> 作为方法参数。前者通常与<code>@Nullable</code> 结合使用，为经过身份验证和未经身份验证的用户提供不同的行为。后者通常用于使用 <code>isUserInRole(String)</code>方法来执行授权检查。</p>
+</li>
+<li><h6 id="Servlet-Endpoints"><a href="#Servlet-Endpoints" class="headerlink" title="Servlet Endpoints"></a>Servlet Endpoints</h6><p>通过实现一个用 <code>@ServletEndpoint</code> 注解的类，同时实现了<code>Supplier&lt;EndpointServlet&gt;</code>，可以将 Servlet 作为Endpoint公开. Servlet endpoint提供了与 Servlet 容器的更深层次的集成，但以可移植性为代价。旨在用于将现有 Servlet 作为endpoint公开。对于新endpoint，应尽可能首选 <code>@Endpoint</code> 和 <code>@WebEndpoint</code> 注解。</p>
+</li>
+<li><h6 id="Controller-Endpoint"><a href="#Controller-Endpoint" class="headerlink" title="Controller Endpoint"></a>Controller Endpoint</h6><p><code>@ControllerEndpoint</code> 和 <code>@RestControllerEndpoint</code> 可用于实现那些仅由 Spring MVC 或 Spring WebFlux 公开的endpoint。方法使用 Spring MVC 和 Spring WebFlux 的标准注解（例如 <code>@RequestMapping</code> 和 <code>@GetMapping</code>）进行映射，endpoint的 ID 用作路径的前缀。Controller endpoint提供了与 Spring 的 Web 框架更深入的集成，但以可移植性为代价。应尽可能首选<code>@Endpoint</code> 和<code>@WebEndpoint</code> 注解。</p>
+</li>
+</ol>
+</li>
+<li><h6 id="健康信息-Health-Information"><a href="#健康信息-Health-Information" class="headerlink" title="健康信息(Health Information)"></a>健康信息(Health Information)</h6><p>可以使用健康信息来检查正在运行的应用的状态。 当生产系统出现故障时，监控软件通常使用它来提醒。健康endpoint公开的信息取决于 <code>management.endpoint.health.show-details</code> 和 <code>management.endpoint.health.show-components</code> 属性，可以使用以下值之一进行配置：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>never</code></td>
+<td>永远不会显示详细信息。</td>
+</tr>
+<tr>
+<td><code>when-authorized</code></td>
+<td>仅向授权用户显示详细信息。 可以使用<code>management.endpoint.health.roles</code> 配置授权角色。</td>
+</tr>
+<tr>
+<td><code>always</code></td>
+<td>给所有用户显示详细信息。</td>
+</tr>
+</tbody></table>
+<p>默认值是<code>never</code>。 当一个用户担任一个或多个endpoint角色时，被认为是被授权的。如果endpoint没有配置角色（默认），所有通过身份验证的用户都被认为是授权的。可以使用 <code>management.endpoint.health.roles</code> 属性配置角色。</p>
+<blockquote>
+<p>注意:</p>
+<p>   如果已保护应用并希望始终使用，安全配置必须允许经过身份验证和未经身份验证的用户访问health endpoint。</p>
+</blockquote>
+<p>Health information是从 <code>HealthContributorRegistry</code> 的内容中收集的（默认情况下， <code>ApplicationContext</code>中定义的所有 <code>HealthContributor</code> 实例）。Spring Boot 包含许多自动配置的 <code>HealthContributor</code>，也可以编写自己的。</p>
+<p><code>HealthContributor</code> 可以是 <code>HealthIndicator</code> 或 <code>CompositeHealthContributor</code>. <code>HealthIndicator</code> 提供实际的健康信息，包括<code>Status</code>. <code>CompositeHealthContributor</code> 提供了其他 <code>HealthContributor</code> 的组合.总之，参与者形成了一个树结构来表示整个系统的健康状况。</p>
+<p>默认情况下，最终系统运行状况由 <code>StatusAggregator</code> 派生，它根据状态的列表,对来自每个 <code>HealthIndicator</code> 的状态进行排序。排序列表中的第一个状态用作整体健康状态。如果没有 <code>HealthIndicator</code> 返回 <code>StatusAggregator</code> 已知的状态，则使用 <code>UNKNOWN</code> 状态。</p>
+<blockquote>
+<p>建议:</p>
+<p>   <code>HealthContributorRegistry</code> 可用于在运行时注册和取消注册health indicator。</p>
+</blockquote>
+<ol>
+<li><h6 id="自动配置的health-indicator-Auto-configured-HealthIndicators"><a href="#自动配置的health-indicator-Auto-configured-HealthIndicators" class="headerlink" title="自动配置的health indicator(Auto-configured HealthIndicators)"></a>自动配置的health indicator(Auto-configured HealthIndicators)</h6><p>Spring Boot 会在适当的时候自动配置以下 <code>HealthIndicator</code>。还可以通过使用下表中列出的key配置 <code>management.health.key.enabled</code> 来启用/禁用选定的指标。</p>
+<table>
+<thead>
+<tr>
+<th><strong>Key</strong></th>
+<th><strong>Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cassandra</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/cassandra/CassandraDriverHealthIndicator.java"><code>CassandraDriverHealthIndicator</code></a></td>
+<td>检查 Cassandra 数据库是否已启动。</td>
+</tr>
+<tr>
+<td><code>couchbase</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/couchbase/CouchbaseHealthIndicator.java"><code>CouchbaseHealthIndicator</code></a></td>
+<td>检查 Couchbase 集群是否已启动。</td>
+</tr>
+<tr>
+<td><code>db</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/jdbc/DataSourceHealthIndicator.java"><code>DataSourceHealthIndicator</code></a></td>
+<td>检查是否可以获得到“DataSource”的连接。</td>
+</tr>
+<tr>
+<td><code>diskspace</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/system/DiskSpaceHealthIndicator.java"><code>DiskSpaceHealthIndicator</code></a></td>
+<td>检查磁盘空间不足。</td>
+</tr>
+<tr>
+<td><code>elasticsearch</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/elasticsearch/ElasticsearchRestHealthIndicator.java"><code>ElasticsearchRestHealthIndicator</code></a></td>
+<td>检查 Elasticsearch 集群是否已启动。</td>
+</tr>
+<tr>
+<td><code>hazelcast</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/hazelcast/HazelcastHealthIndicator.java"><code>HazelcastHealthIndicator</code></a></td>
+<td>检查 Hazelcast 服务器是否已启动。</td>
+</tr>
+<tr>
+<td><code>influxdb</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/influx/InfluxDbHealthIndicator.java"><code>InfluxDbHealthIndicator</code></a></td>
+<td>检查 InfluxDB 服务器是否已启动。</td>
+</tr>
+<tr>
+<td><code>jms</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/jms/JmsHealthIndicator.java"><code>JmsHealthIndicator</code></a></td>
+<td>检查 JMS 代理是否已启动。</td>
+</tr>
+<tr>
+<td><code>ldap</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/ldap/LdapHealthIndicator.java"><code>LdapHealthIndicator</code></a></td>
+<td>检查 LDAP 服务器是否已启动。</td>
+</tr>
+<tr>
+<td><code>mail</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/mail/MailHealthIndicator.java"><code>MailHealthIndicator</code></a></td>
+<td>检查邮件服务器是否已启动。</td>
+</tr>
+<tr>
+<td><code>mongo</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/mongo/MongoHealthIndicator.java"><code>MongoHealthIndicator</code></a></td>
+<td>检查 Mongo 数据库是否已启动。</td>
+</tr>
+<tr>
+<td><code>neo4j</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/neo4j/Neo4jHealthIndicator.java"><code>Neo4jHealthIndicator</code></a></td>
+<td>检查 Neo4j 数据库是否已启动。</td>
+</tr>
+<tr>
+<td><code>ping</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/health/PingHealthIndicator.java"><code>PingHealthIndicator</code></a></td>
+<td>始终以“<code>UP</code>”响应。</td>
+</tr>
+<tr>
+<td><code>rabbit</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/amqp/RabbitHealthIndicator.java"><code>RabbitHealthIndicator</code></a></td>
+<td>检查 Rabbit 服务器是否已启动。</td>
+</tr>
+<tr>
+<td><code>redis</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/redis/RedisHealthIndicator.java"><code>RedisHealthIndicator</code></a></td>
+<td>检查 Redis 服务器是否已启动。</td>
+</tr>
+<tr>
+<td><code>solr</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/solr/SolrHealthIndicator.java"><code>SolrHealthIndicator</code></a></td>
+<td>检查 Solr 服务器是否已启动。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>建议:</p>
+<p>   可以通过设置 <code>management.health.defaults.enabled</code> 属性来禁用它们。</p>
+</blockquote>
+<p>其他 <code>HealthIndicators</code> 可用,但默认情况下没有启用：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Key</strong></th>
+<th><strong>Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>livenessstate</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/availability/LivenessStateHealthIndicator.java"><code>LivenessStateHealthIndicator</code></a></td>
+<td>公开“Liveness”应用程序可用性状态。</td>
+</tr>
+<tr>
+<td><code>readinessstate</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/availability/ReadinessStateHealthIndicator.java"><code>ReadinessStateHealthIndicator</code></a></td>
+<td>公开“Readiness”应用程序可用性状态。</td>
+</tr>
+</tbody></table>
+</li>
+<li><h6 id="编写自定义HealthIndicators-Writing-Custom-HealthIndicators"><a href="#编写自定义HealthIndicators-Writing-Custom-HealthIndicators" class="headerlink" title="编写自定义HealthIndicators(Writing Custom HealthIndicators)"></a>编写自定义HealthIndicators(Writing Custom HealthIndicators)</h6><p>要提供自定义健康信息，可以注册实现 <code>HealthIndicator</code> 接口的 Spring bean。需要提供 <code>health()</code> 方法的实现并返回 <code>Health</code> 响应。<code>Health</code> 响应应包括状态，并且可以包括可选显示的其他详细信息。以下代码显示了一个示例 <code>HealthIndicator</code> 实现：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyHealthIndicator</span> <span class="keyword">implements</span> <span class="title">HealthIndicator</span> </span>{    <span class="meta">@Override</span>    <span class="function"><span class="keyword">public</span> Health <span class="title">health</span><span class="params">()</span> </span>{        <span class="keyword">int</span> errorCode = check();        <span class="keyword">if</span> (errorCode != <span class="number">0</span>) {            <span class="keyword">return</span> Health.down().withDetail(<span class="string">"Error Code"</span>, errorCode).build();        }        <span class="keyword">return</span> Health.up().build();    }    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">check</span><span class="params">()</span> </span>{        <span class="comment">// perform some specific health check        return ...    }}</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>   给定 <code>HealthIndicator</code> 的标识符是不带 <code>HealthIndicator</code> 后缀的 bean 的名称（如果存在）。 在前面的示例中，健康信息在名为 <code>my</code> 的条目中可用。</p>
+</blockquote>
+<p>除了 Spring Boot 预定义的 <code>Status</code> 类型之外，<code>Health</code> 还可以返回一个自定义 <code>Status</code> 来表示新的系统状态。在这种情况下，还需要提供 <code>StatusAggregator</code> 接口的自定义实现，或者必须使用 <code>management.endpoint.health.status.order</code> 配置属性来配置默认实现。</p>
+<p>例如，假设 <code>HealthIndicator</code> 实现正在使用code为 <code>FATAL</code> 的新的<code>Status</code>。要配置严重性顺序，请将以下属性添加到您的应用程序属性：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.health.status.order</span>=<span class="string">fatal,down,out-of-service,unknown,up</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>响应中的 HTTP 状态代码反映了整体健康状况。默认情况下，<code>OUT_OF_SERVICE</code> 和 <code>DOWN</code> 映射到 503。任何未映射的健康状态（包括 <code>UP</code>）映射到 200。如果通过 HTTP 访问health endpoint，可能还想注册自定义状态映射.配置自定义映射会禁用 <code>DOWN</code> 和 <code>OUT_OF_SERVICE</code> 的默认映射。如果要保留默认映射，则必须与所有自定义映射一起显式配置。例如，以下属性将 <code>FATAL</code> 映射到 503（服务不可用）并保留 <code>DOWN</code> 和 <code>OUT_OF_SERVICE</code> 的默认映射：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.health.status.http-mapping.down</span>=<span class="string">503management.endpoint.health.status.http-mapping.fatal=503management.endpoint.health.status.http-mapping.out-of-service=503</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>   如果需要更多控制，可以定义自己的 <code>HttpCodeStatusMapper</code> bean。</p>
+</blockquote>
+<p>下表显示了内置状态的默认状态映射：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Status</strong></th>
+<th><strong>Mapping</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>DOWN</code></td>
+<td><code>SERVICE_UNAVAILABLE</code> (<code>503</code>)</td>
+</tr>
+<tr>
+<td><code>OUT_OF_SERVICE</code></td>
+<td><code>SERVICE_UNAVAILABLE</code> (<code>503</code>)</td>
+</tr>
+<tr>
+<td><code>UP</code></td>
+<td>默认没有映射，所以 HTTP 状态是 200</td>
+</tr>
+<tr>
+<td><code>UNKNOWN</code></td>
+<td>默认没有映射，所以 HTTP 状态是 200</td>
+</tr>
+</tbody></table>
+</li>
+<li><h6 id="响应式健康指示器-Reactive-Health-Indicators"><a href="#响应式健康指示器-Reactive-Health-Indicators" class="headerlink" title="响应式健康指示器(Reactive Health Indicators)"></a>响应式健康指示器(Reactive Health Indicators)</h6><p>对于响应式应用程序，例如使用 Spring WebFlux 的应用程序，<code>ReactiveHealthContributor</code> 提供了一个非阻塞方式来获取应用程序健康状况。与传统的 <code>HealthContributor</code> 类似，健康信息是从 <code>ReactiveHealthContributorRegistry</code> 的内容中收集的（默认情况下，您<code>ApplicationContext</code> 中定义的所有 <code>HealthContributor</code> 和 <code>ReactiveHealthContributor</code> 实例）。在弹性调度器上执行的响应式 API的常规 <code>HealthContributor</code>不被检查。</p>
+<blockquote>
+<p>建议:</p>
+<p>   在响应式应用程序中，应使用 <code>ReactiveHealthContributorRegistry</code> 在运行时注册和取消注册健康指示器。如果需要注册一个普通的 <code>HealthContributor</code>，应该使用 <code>ReactiveHealthContributor#adapt</code> 来包装它。</p>
+</blockquote>
+<p>要从响应式 API 提供自定义健康信息，可以注册实<code>ReactiveHealthIndicator</code> 接口的 Spring bean。以下代码显示了一个示例 <code>ReactiveHealthIndicator</code> 实现：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyReactiveHealthIndicator</span> <span class="keyword">implements</span> <span class="title">ReactiveHealthIndicator</span> </span>{    <span class="meta">@Override</span>    <span class="function"><span class="keyword">public</span> Mono&lt;Health&gt; <span class="title">health</span><span class="params">()</span> </span>{        <span class="keyword">return</span> doHealthCheck().onErrorResume((exception) -&gt;            Mono.just(<span class="keyword">new</span> Health.Builder().down(exception).build()));    }    <span class="function"><span class="keyword">private</span> Mono&lt;Health&gt; <span class="title">doHealthCheck</span><span class="params">()</span> </span>{        <span class="comment">// perform some specific health check        return ...    }}</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>   要自动处理错误，考虑从 <code>AbstractReactiveHealthIndicator</code> 扩展。</p>
+</blockquote>
+</li>
+<li><h6 id="自动配置的-ReactiveHealthIndicators-Auto-configured-ReactiveHealthIndicators"><a href="#自动配置的-ReactiveHealthIndicators-Auto-configured-ReactiveHealthIndicators" class="headerlink" title="自动配置的 ReactiveHealthIndicators(Auto-configured ReactiveHealthIndicators)"></a>自动配置的 ReactiveHealthIndicators(Auto-configured ReactiveHealthIndicators)</h6><p>在适当的时候，Spring Boot 会自动配置以下 <code>ReactiveHealthIndicators</code>：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Key</strong></th>
+<th><strong>Name</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cassandra</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/cassandra/CassandraDriverReactiveHealthIndicator.java"><code>CassandraDriverReactiveHealthIndicator</code></a></td>
+<td>检查 Cassandra 数据库是否已启动。</td>
+</tr>
+<tr>
+<td><code>couchbase</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/couchbase/CouchbaseReactiveHealthIndicator.java"><code>CouchbaseReactiveHealthIndicator</code></a></td>
+<td>检查 Couchbase 集群是否已启动。</td>
+</tr>
+<tr>
+<td><code>elasticsearch</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/elasticsearch/ElasticsearchReactiveHealthIndicator.java"><code>ElasticsearchReactiveHealthIndicator</code></a></td>
+<td>检查 Elasticsearch 集群是否已启动。</td>
+</tr>
+<tr>
+<td><code>mongo</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/mongo/MongoReactiveHealthIndicator.java"><code>MongoReactiveHealthIndicator</code></a></td>
+<td>检查 Mongo 数据库是否已启动。</td>
+</tr>
+<tr>
+<td><code>neo4j</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/neo4j/Neo4jReactiveHealthIndicator.java"><code>Neo4jReactiveHealthIndicator</code></a></td>
+<td>检查 Neo4j 数据库是否已启动。</td>
+</tr>
+<tr>
+<td><code>redis</code></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/redis/RedisReactiveHealthIndicator.java"><code>RedisReactiveHealthIndicator</code></a></td>
+<td>检查 Redis 服务器是否已启动。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>建议:</p>
+<pre><code>如有必要，响应式indicator会取代常规indicator。 此外，任何未明确处理的 `HealthIndicator` 都会自动包装。
+</code></pre>
+</blockquote>
+</li>
+<li><h6 id="健康组-Health-Groups"><a href="#健康组-Health-Groups" class="headerlink" title="健康组(Health Groups)"></a>健康组(Health Groups)</h6><p>将健康indicator根据使用目的编成不同的组,这个有时候会很有用。</p>
+<p>要创建health indicator group，可以使用 <code>management.endpoint.health.group.&lt;name&gt;</code> 属性并指定要包含或排除的health indicator ID 列表。例如，要创建仅包含database indicator的组，可以定义以下内容：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.health.group.custom.include</span>=<span class="string">db</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后，可以通过点击 <code>localhost:8080/actuator/health/custom</code> 来检查结果.</p>
+<p>同样，要创建一个组,从组中排除数据库指标并包括所有其他指标，可以定义以下内容：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.health.group.custom.exclude</span>=<span class="string">db</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>默认情况下，组将继承与系统运行状况相同的 <code>StatusAggregator</code> 和 <code>HttpCodeStatusMapper</code> 设置，但是，也可以在每个组的基础上定义这些设置。如果需要，也可以覆盖 <code>show-details</code> 和 <code>roles</code> 属性：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.health.group.custom.show-details</span>=<span class="string">when-authorizedmanagement.endpoint.health.group.custom.roles=adminmanagement.endpoint.health.group.custom.status.order=fatal,upmanagement.endpoint.health.group.custom.status.http-mapping.fatal=500management.endpoint.health.group.custom.status.http-mapping.out-of-service=500</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>   如果需要注册自定义 <code>StatusAggregator</code> 或 <code>HttpCodeStatusMapper</code> bean 以与组一起使用，则可以使用 <code>@Qualifier("groupname")</code>。</p>
+</blockquote>
+</li>
+<li><h6 id="数据源安全-DataSource-Health"><a href="#数据源安全-DataSource-Health" class="headerlink" title="数据源安全(DataSource Health)"></a>数据源安全(DataSource Health)</h6><p><code>DataSource</code> 健康指示器显示标准数据源和路由数据源 bean 的健康状况。路由数据源的健康状况包括其每个目标数据源的健康状况。在health endpoint的响应中，每个路由数据源的目标都使用其路由key命名。如果不想在指标的输出中包含路由数据源，请将 <code>management.health.db.ignore-routing-data-sources</code> 设置为 true。</p>
+</li>
+</ol>
+</li>
+<li><h6 id="Kubernetes-探测器-Kubernetes-Probes"><a href="#Kubernetes-探测器-Kubernetes-Probes" class="headerlink" title="Kubernetes 探测器(Kubernetes Probes)"></a>Kubernetes 探测器(Kubernetes Probes)</h6><p>部署在 Kubernetes 上的应用程序可以通过 Container Probes 提供有关其内部状态的信息。根据 Kubernetes 配置，kubelet 将调用这些探测器并对结果做出反应。</p>
+<p>Spring Boot 开箱即用地管理应用程序可用性状态。如果部署在 Kubernetes 环境中，执行器将从 <code>ApplicationAvailability</code> 接口收集“Liveness”和“Readiness”信息，并在专用健康指示器中使用该信息：<code>LivenessStateHealthIndicator</code> 和 <code>ReadinessStateHealthIndicator</code>。这些indicator将显示在全局health endpoint（<code>“/actuator/health”</code>）上。 将使用健康组将它们作为单独的 HTTP 探测器公开：<code>“/actuator/health/liveness”</code>和<code>“/actuator/health/readiness”</code>。</p>
+<p>然后，可以使用以下endpoint信息配置您的 Kubernetes infrastructure：</p>
+<figure class="highlight yml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">ivenessProbe:  httpGet:    path: /actuator/health/liveness    port:</span> <span class="string">&lt;actuator-port&gt;</span>  <span class="attr">failureThreshold: ...  periodSeconds: ...readinessProbe:  httpGet:    path: /actuator/health/readiness    port:</span> <span class="string">&lt;actuator-port&gt;</span>  <span class="attr">failureThreshold: ...  periodSeconds:</span> <span class="string">...</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>   <code>&lt;actuator-port&gt;</code> 应设置为执行器endpoint可用的端口。如果设置了<code>“management.server.port”</code>属性，它可能是主要的 Web 服务器端口，或者一个单独的管理端口。</p>
+</blockquote>
+<p>仅当应用程序在 Kubernetes 环境中运行时才会自动启用这些健康组。可以使用 <code>management.endpoint.health.probes.enabled</code> 配置属性在任何环境中启用它们。</p>
+<blockquote>
+<p>注意:</p>
+<p>   如果应用的启动时间比配置的活跃期长，Kubernetes 会提到<code>“startupProbe”</code>作为可能的解决方案。这里不一定需要<code>“startupProbe”</code>，因为<code>“readinessProbe”</code>会一直失败直到在所有启动任务完成，请查看 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.endpoints.kubernetes-probes.lifecycle">how Probes behave during the application lifecycle</a>。</p>
+<p>警告:</p>
+<p>   如果 Actuator endpoint部署在单独的管理context中，请注意endpoint不会使用与主应用程序相同的 Web 基础设施（端口、连接池、框架组件）。在这种情况下，即使主应用程序不能正常工作（例如，它不能接受新连接），探测检查也可能成功。</p>
+</blockquote>
+<ol>
+<li><h6 id="使用-Kubernetes-探测器检查外部状态-Checking-External-State-with-Kubernetes-Probes"><a href="#使用-Kubernetes-探测器检查外部状态-Checking-External-State-with-Kubernetes-Probes" class="headerlink" title="使用 Kubernetes 探测器检查外部状态(Checking External State with Kubernetes Probes)"></a>使用 Kubernetes 探测器检查外部状态(Checking External State with Kubernetes Probes)</h6><p>Actuator 将“liveness”和“readiness”探测器配置为健康组；这意味着他们可以使用所有健康组功能。例如，可以配置额外的health indicator：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.endpoint.health.group.readiness.include</span>=<span class="string">readinessState,customCheck</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>默认情况下，Spring Boot 不会向这些组添加其他health indicator。</p>
+<p>“liveness”探测器不应依赖于外部系统的健康检查。如果应用的 Liveness State 被破坏，Kubernetes 将尝试通过重新启动应用程序实例来解决该问题。这意味着如果外部系统出现故障（例如数据库、Web API、外部缓存），Kubernetes 可能会重新启动所有应用程序实例并造成级联故障。</p>
+<p>至于“readiness”探测器，应用程序开发人员必须谨慎选择检查外部系统，即 Spring Boot 在“readiness”探测器中不包含任何额外的健康检查。如果应用实例的状态是未就绪，Kubernetes 不会将流量路由到该实例。一些外部系统可能不会被应用程序实例共享，在这种情况下，它们可以很自然地包含在就绪探测中。其他外部系统可能对应用程序不是必需的（应用程序可能有断路器和回退），在这种情况下，它们绝对不应该被包含在内。不幸的是，外部系统被所有应用程序实例共享是很常见的，并且必须做出判断调用：将其包含在readiness probe中，并期望在外部服务关闭时应用程序停止服务，或者忽略它并处理堆栈更高层的故障，例如 在调用者中使用断路器。</p>
+<blockquote>
+<p>注意:</p>
+<p>   如果应用的所有实例都未就绪，则 <code>type=ClusterIP</code> 或 <code>NodePort</code> 的 Kubernetes 服务将不接受任何传入连接。由于没有连接，因此没有 HTTP 错误响应（503 等）。<code>type=LoadBalancer</code> 的服务可能接受也可能不接受连接，具体取决于provider。具有显式 Ingress 的 Service 也会以依赖于实现的方式进行响应 - Ingress 服务本身必须决定如何处理来自下游的“connection refused”。很可能在负载均衡器和入口的情况下,可能出现HTTP 503 。</p>
+</blockquote>
+<p>此外，如果应用使用 Kubernetes 自动缩放，它可能会对被从负载均衡器中取出的应用做出不同的反应，具体取决于其自动缩放器配置。</p>
+</li>
+<li><h6 id="应用程序生命周期和探测状态-Application-Lifecycle-and-Probe-States"><a href="#应用程序生命周期和探测状态-Application-Lifecycle-and-Probe-States" class="headerlink" title="应用程序生命周期和探测状态(Application Lifecycle and Probe States)"></a>应用程序生命周期和探测状态(Application Lifecycle and Probe States)</h6><p>Kubernetes Probes 支持的一个重要方面是它与应用程序生命周期的一致性。<code>AvailabilityState</code> 是应用在内存中的内部状态，与公开该状态的实际探测器之间存在显着差异：根据应用程序生命周期的阶段，探测器可能不可用。</p>
+<p>Spring Boot 在启动和关闭期间发布 Application Events，Probes 可以监听此类事件并暴露 <code>AvailabilityState</code> 信息。</p>
+<p>下表显示了不同阶段的 <code>AvailabilityState</code> 和 HTTP 连接器的状态。</p>
+<p>当 Spring Boot 应用程序启动时：</p>
+<table>
+<thead>
+<tr>
+<th><strong>Startup phase</strong></th>
+<th><strong>LivenessState</strong></th>
+<th><strong>ReadinessState</strong></th>
+<th><strong>HTTP server</strong></th>
+<th><strong>Notes</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Starting</td>
+<td><code>BROKEN</code></td>
+<td><code>REFUSING_TRAFFIC</code></td>
+<td>Not started</td>
+<td>Kubernetes 会检查“活跃度”探测器，如果时间过长，则重新启动应用程序。</td>
+</tr>
+<tr>
+<td>Started</td>
+<td><code>CORRECT</code></td>
+<td><code>REFUSING_TRAFFIC</code></td>
+<td>Refuses requests</td>
+<td>应用程序上下文被刷新。 应用程序执行启动任务，但尚未接收流量。</td>
+</tr>
+<tr>
+<td>Ready</td>
+<td><code>CORRECT</code></td>
+<td><code>ACCEPTING_TRAFFIC</code></td>
+<td>Accepts requests</td>
+<td>启动任务完成。 应用程序正在接收流量。</td>
+</tr>
+</tbody></table>
+<p>当 Spring Boot 应用程序关闭时：</p>
+<table>
+<thead>
+<tr>
+<th>Shutdown phase</th>
+<th>Liveness State</th>
+<th>Readiness State</th>
+<th>HTTP server</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Running</td>
+<td><code>CORRECT</code></td>
+<td><code>ACCEPTING_TRAFFIC</code></td>
+<td>Accepts requests</td>
+<td>已请求关闭。</td>
+</tr>
+<tr>
+<td>Graceful shutdown</td>
+<td><code>CORRECT</code></td>
+<td><code>REFUSING_TRAFFIC</code></td>
+<td>New requests are rejected</td>
+<td>如果启用，<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/features.html#features.graceful-shutdown">正常关闭处理正在进行的请求</a>。</td>
+</tr>
+<tr>
+<td>Shutdown complete</td>
+<td>N/A</td>
+<td>N/A</td>
+<td>Server is shut down</td>
+<td>应用程序上下文关闭，应用程序关闭。</td>
+</tr>
+</tbody></table>
+</li>
+</ol>
+</li>
+<li><h6 id="应用信息-Application-Information"><a href="#应用信息-Application-Information" class="headerlink" title="应用信息(Application Information)"></a>应用信息(Application Information)</h6><p>应用程序信息公开从 <code>ApplicationContext</code> 中定义的所有 <code>InfoContributor</code> bean 收集的各种信息.Spring Boot 包含许多自动配置的 <code>InfoContributor</code> bean，可以编写自己的 bean。</p>
+<ol>
+<li><h6 id="自动配置的-InfoContributors-Auto-configured-InfoContributors"><a href="#自动配置的-InfoContributors-Auto-configured-InfoContributors" class="headerlink" title="自动配置的 InfoContributors(Auto-configured InfoContributors)"></a>自动配置的 InfoContributors(Auto-configured InfoContributors)</h6><p>在适当的时候，Spring Boot 会自动配置以下 <code>InfoContributor</code> bean：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Name</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/info/EnvironmentInfoContributor.java"><code>EnvironmentInfoContributor</code></a></td>
+<td align="center">在 <code>info</code> 键下暴露 <code>Environment</code> 中的所有键。</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/info/GitInfoContributor.java"><code>GitInfoContributor</code></a></td>
+<td align="center">如果 <code>git.properties</code> 文件可用，则公开 git 信息。</td>
+</tr>
+<tr>
+<td align="center"><a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-actuator/src/main/java/org/springframework/boot/actuate/info/BuildInfoContributor.java"><code>BuildInfoContributor</code></a></td>
+<td align="center">如果<code>META-INF/build-info.properties</code>文件可用，则公开构建信息。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>建议:</p>
+<p>   可以通过设置 <code>management.info.defaults.enabled</code> 属性来禁用它们。</p>
+</blockquote>
+</li>
+<li><h6 id="自定义应用信息-Custom-Application-Information"><a href="#自定义应用信息-Custom-Application-Information" class="headerlink" title="自定义应用信息(Custom Application Information)"></a>自定义应用信息(Custom Application Information)</h6><p>可以通过设置 <code>info.*</code> Spring 属性来自定义 info endpoint公开的数据。<code>info</code> key下的所有 <code>Environment</code> 属性都会自动公开。例如，可以将以下设置添加到 <code>application.properties</code> 文件中：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">info.app.encoding</span>=<span class="string">UTF-8info.app.java.source=11info.app.java.target=11</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>   还可以在构建时展开信息属性，而不是对这些值进行硬编码。假设使用 Maven，可以按如下方式重写前面的示例：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;info.app.encoding</span>=<span class="string">@project.build.sourceEncoding@info.app.java.source=@java.version@info.app.java.target=@java.version@</span></span><br></pre></td></tr></tbody></table></figure></blockquote>
+</li>
+<li><h6 id="Git提交信息-Git-Commit-Information"><a href="#Git提交信息-Git-Commit-Information" class="headerlink" title="Git提交信息(Git Commit Information)"></a>Git提交信息(Git Commit Information)</h6><p><code>info</code> endpoint的另一个有用功能是它能够在构建项目时发布有关 <code>git</code> 源代码存储库状态的信息。如果 <code>GitProperties</code> bean 可用，则可以使用 <code>info</code> endpoint来公开这些属性。</p>
+<blockquote>
+<p>建议:</p>
+<p>   如果 <code>git.properties</code> 文件在类路径的根目录下可用，则 <code>GitProperties</code> bean 是自动配置的。</p>
+</blockquote>
+<p>默认情况下，endpoint公开 <code>git.branch</code>、<code>git.commit.id</code> 和 <code>git.commit.time</code> 属性（如果存在）。如果不希望endpoint响应中出现这些属性中的任何一个，则需要将它们从 <code>git.properties</code> 文件中排除。如果要显示完整的git信息（即<code>git.properties</code>的全部内容），使用<code>management.info.git.mode</code>属性，如下：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.info.git.mode</span>=<span class="string">full</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>要完全禁用 <code>info</code> endpoint的 git commit 信息，请将 <code>management.info.git.enabled</code> 属性设置为 <code>false</code>，如下所示：</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.info.git.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="构建信息-Build-Information"><a href="#构建信息-Build-Information" class="headerlink" title="构建信息(Build Information)"></a>构建信息(Build Information)</h6><p>如果 <code>BuildProperties</code> bean 可用，则 <code>info</code> endpoint还可以发布有关您建的信息。如果类路径中有 <code>META-INF/build-info.properties</code> 文件，就会发生这种情况。</p>
+<blockquote>
+<p>建议:</p>
+<p>   Maven 和 Gradle 插件都可以生成该文件。</p>
+</blockquote>
+</li>
+<li><h6 id="编写自定义-InfoContributor-Writing-Custom-InfoContributors"><a href="#编写自定义-InfoContributor-Writing-Custom-InfoContributors" class="headerlink" title="编写自定义 InfoContributor(Writing Custom InfoContributors)"></a>编写自定义 InfoContributor(Writing Custom InfoContributors)</h6><p>要提供自定义应用信息，可以注册实现 <code>InfoContributor</code> 接口的 Spring bean。</p>
+<p>以下示例提供了一个具有单个值的<code>example</code>条目：</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyInfoContributor</span> <span class="keyword">implements</span> <span class="title">InfoContributor</span> </span>{    <span class="meta">@Override</span>    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contribute</span><span class="params">(Info.Builder builder)</span> </span>{        builder.withDetail(<span class="string">"example"</span>, Collections.singletonMap(<span class="string">"key"</span>, <span class="string">"value"</span>));    }}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果访问 <code>info</code> endpoint，应该会看到包含以下附加条目的响应：</p>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{    <span class="attr">"example"</span>: {        <span class="attr">"key"</span> : <span class="string">"value"</span>    }}</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Boot-Actuator/" rel="tag"># Spring Boot Actuator</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/4391.html" rel="prev" title="4.1 Actuator:  启用生产就绪功能">
+                  <i class="fa fa-chevron-left"></i> 4.1 Actuator:  启用生产就绪功能
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/42024.html" rel="next" title="4.3 Acuator:  通过 HTTP 进行监控和管理">
+                  4.3 Acuator:  通过 HTTP 进行监控和管理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">299k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:32</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;40082.html&quot;}</script></body></html>

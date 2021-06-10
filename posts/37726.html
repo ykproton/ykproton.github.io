@@ -1,0 +1,509 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/cat-logo.jpg">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/cat-logo.jpg">
+  <link rel="mask-icon" href="/images/cat-logo.jpg" color="#222">
+
+
+
+
+
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.js"></script>
+
+<script class="next-config" data-name="main" type="application/json">{&quot;hostname&quot;:&quot;example.com&quot;,&quot;root&quot;:&quot;&#x2F;&quot;,&quot;images&quot;:&quot;&#x2F;images&quot;,&quot;scheme&quot;:&quot;Pisces&quot;,&quot;version&quot;:&quot;8.4.0&quot;,&quot;exturl&quot;:false,&quot;sidebar&quot;:{&quot;position&quot;:&quot;left&quot;,&quot;display&quot;:&quot;post&quot;,&quot;padding&quot;:18,&quot;offset&quot;:12},&quot;copycode&quot;:false,&quot;bookmark&quot;:{&quot;enable&quot;:false,&quot;color&quot;:&quot;#222&quot;,&quot;save&quot;:&quot;auto&quot;},&quot;fancybox&quot;:false,&quot;mediumzoom&quot;:false,&quot;lazyload&quot;:false,&quot;pangu&quot;:false,&quot;comments&quot;:{&quot;style&quot;:&quot;tabs&quot;,&quot;active&quot;:null,&quot;storage&quot;:true,&quot;lazyload&quot;:false,&quot;nav&quot;:null},&quot;motion&quot;:{&quot;enable&quot;:false,&quot;async&quot;:false,&quot;transition&quot;:{&quot;post_block&quot;:&quot;fadeIn&quot;,&quot;post_header&quot;:&quot;fadeInDown&quot;,&quot;post_body&quot;:&quot;fadeInDown&quot;,&quot;coll_header&quot;:&quot;fadeInLeft&quot;,&quot;sidebar&quot;:&quot;fadeInUp&quot;}},&quot;prism&quot;:false,&quot;i18n&quot;:{&quot;placeholder&quot;:&quot;搜索...&quot;,&quot;empty&quot;:&quot;没有找到任何搜索结果：${query}&quot;,&quot;hits_time&quot;:&quot;找到 ${hits} 个搜索结果（用时 ${time} 毫秒）&quot;,&quot;hits&quot;:&quot;找到 ${hits} 个搜索结果&quot;}}</script>
+<meta name="description" content="部署到云(Deploying to the Cloud)Spring Boot 的可执行 jar 是为大多数流行的云 PaaS(平台即服务)提供商准备的.这些提供商往往要求”自带容器”.他们管理应用进程(不是专门的 Java 应用程序),因此需要一个中间层,使开发者的应用程序适应云中正在运行的进程的概念. 两个流行的云提供商 Heroku 和 Cloud Foundry 采用”buildpack">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5.2 Deploy:  部署到云">
+<meta property="og:url" content="http://example.com/posts/37726.html">
+<meta property="og:site_name" content="ykproton">
+<meta property="og:description" content="部署到云(Deploying to the Cloud)Spring Boot 的可执行 jar 是为大多数流行的云 PaaS(平台即服务)提供商准备的.这些提供商往往要求”自带容器”.他们管理应用进程(不是专门的 Java 应用程序),因此需要一个中间层,使开发者的应用程序适应云中正在运行的进程的概念. 两个流行的云提供商 Heroku 和 Cloud Foundry 采用”buildpack">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-06-10T04:36:00.000Z">
+<meta property="article:modified_time" content="2021-06-10T05:02:40.518Z">
+<meta property="article:author" content="chenyk">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot Deploy">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/posts/37726.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{&quot;sidebar&quot;:&quot;&quot;,&quot;isHome&quot;:false,&quot;isPost&quot;:true,&quot;lang&quot;:&quot;zh-CN&quot;,&quot;comments&quot;:true,&quot;permalink&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;37726.html&quot;,&quot;path&quot;:&quot;posts&#x2F;37726.html&quot;,&quot;title&quot;:&quot;5.2 Deploy:  部署到云&quot;}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">&quot;&quot;</script>
+<title>5.2 Deploy:  部署到云 | ykproton</title>
+  
+
+
+
+
+  <noscript>
+    
+  </noscript>
+<script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css');loadCss('https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.3/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css"></noscript></head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">ykproton</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%88%B0%E4%BA%91-Deploying-to-the-Cloud"><span class="nav-number">1.</span> <span class="nav-text">部署到云(Deploying to the Cloud)</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#Cloud-Foundry"><span class="nav-number">1.1.</span> <span class="nav-text">Cloud Foundry</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A%E5%88%B0%E6%9C%8D%E5%8A%A1-Binding-to-Services"><span class="nav-number">1.2.</span> <span class="nav-text">绑定到服务(Binding to Services)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Kubernetes"><span class="nav-number">1.3.</span> <span class="nav-text">Kubernetes</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Kubernetes-Container-Lifecycle"><span class="nav-number">1.4.</span> <span class="nav-text">Kubernetes Container Lifecycle</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Heroku"><span class="nav-number">1.5.</span> <span class="nav-text">Heroku</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#OpenShift"><span class="nav-number">1.6.</span> <span class="nav-text">OpenShift</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Amazon-Web-Services-AWS"><span class="nav-number">1.7.</span> <span class="nav-text">Amazon Web Services (AWS)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#AWS-Elastic-Beanstalk"><span class="nav-number">1.8.</span> <span class="nav-text">AWS Elastic Beanstalk</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Using-the-Tomcat-Platform"><span class="nav-number">1.9.</span> <span class="nav-text">Using the Tomcat Platform</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Using-the-Java-SE-Platform"><span class="nav-number">1.10.</span> <span class="nav-text">Using the Java SE Platform</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Boxfuse-%E5%92%8CAmazon-%E7%BD%91%E7%BB%9C%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.12.</span> <span class="nav-text">Boxfuse 和Amazon 网络服务</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#Google-Cloud"><span class="nav-number">1.13.</span> <span class="nav-text">Google Cloud</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">chenyk</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ykproton" title="GitHub → https://github.com/ykproton" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/37726.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          5.2 Deploy:  部署到云
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-10 12:36:00 / 修改时间：13:02:40" itemprop="dateCreated datePublished" datetime="2021-06-10T12:36:00+08:00">2021-06-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/37726.html" class="post-meta-item leancloud_visitors" data-flag-title="5.2 Deploy:  部署到云" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ol start="2">
+<li><h5 id="部署到云-Deploying-to-the-Cloud"><a href="#部署到云-Deploying-to-the-Cloud" class="headerlink" title="部署到云(Deploying to the Cloud)"></a>部署到云(Deploying to the Cloud)</h5><p>Spring Boot 的可执行 jar 是为大多数流行的云 PaaS(平台即服务)提供商准备的.这些提供商往往要求”自带容器”.他们管理应用进程(不是专门的 Java 应用程序),因此需要一个中间层,使开发者的应用程序适应云中正在运行的进程的概念.</p>
+<p>两个流行的云提供商 Heroku 和 Cloud Foundry 采用”buildpack”方法.buildpack 将部署的代码包装在启动应用所需的所有内容中. 它可能是 JDK 和对 <code>java</code> 的调用,嵌入式 Web 服务器或成熟的应用程序服务器.buildpack 是可插拔的,但理想情况下,应该尽可能少地自定义.这减少了不受控制的功能的占用空间. 它最大限度地减少了开发和生产环境之间的差异.</p>
+<p>理想情况下,应用程序,就像一个 Spring Boot 可执行 jar,将运行所需的一切都打包在其中.</p>
+<ol>
+<li><h6 id="Cloud-Foundry"><a href="#Cloud-Foundry" class="headerlink" title="Cloud Foundry"></a>Cloud Foundry</h6><p>Cloud Foundry 提供了默认构建包,如果没有指定其他构建包,这些构建包就会发挥作用.Cloud Foundry Java buildpack 对包括 Spring Boot 在内的 Spring 应用程序有很好的支持.可以部署独立的可执行 jar 应用程序以及传统的 <code>.war</code> 打包应用程序.</p>
+<p>构建应用程序(例如,通过使用 <code>mvn clean package</code>)并安装 cf 命令行工具后,使用 <code>cf push</code> 命令部署应用程序,替换已编译的 <code>.jar</code> 的路径.在推送应用程序之前,请确保已使用 cf 命令行客户端登录. 以下行显示使用 <code>cf push</code> 命令部署应用程序:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cf push acloudyspringtime -p target/demo-0.0.1-SNAPSHOT.jar</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意:</p>
+<p>​    在前面的示例中,将 <code>acloudyspringtime</code> 替换为给 cf 作为应用程序名称的任何值.</p>
+</blockquote>
+<p>如果同一目录中存在 Cloud Foundry <code>manifest.yml</code> 文件,则会考虑该文件.此时,<code>cf</code> 开始上传您的应用程序,生成类似于以下示例的输出:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Uploading acloudyspringtime... OK</span><br><span class="line">Preparing to start acloudyspringtime... OK</span><br><span class="line">-----&gt; Downloaded app package (8.9M)</span><br><span class="line">-----&gt; Java Buildpack Version: v3.12 (offline) | https://github.com/cloudfoundry/java-buildpack.git#6f25b7e</span><br><span class="line">-----&gt; Downloading Open Jdk JRE 1.8.0_121 from https://java-buildpack.cloudfoundry.org/openjdk/trusty/x86_64/openjdk-1.8.0_121.tar.gz (found in cache)</span><br><span class="line">       Expanding Open Jdk JRE to .java-buildpack/open_jdk_jre (1.6s)</span><br><span class="line">-----&gt; Downloading Open JDK Like Memory Calculator 2.0.2_RELEASE from https://java-buildpack.cloudfoundry.org/memory-calculator/trusty/x86_64/memory-calculator-2.0.2_RELEASE.tar.gz (found in cache)</span><br><span class="line">       Memory Settings: -Xss349K -Xmx681574K -XX:MaxMetaspaceSize=104857K -Xms681574K -XX:MetaspaceSize=104857K</span><br><span class="line">-----&gt; Downloading Container Certificate Trust Store 1.0.0_RELEASE from https://java-buildpack.cloudfoundry.org/container-certificate-trust-store/container-certificate-trust-store-1.0.0_RELEASE.jar (found in cache)</span><br><span class="line">       Adding certificates to .java-buildpack/container_certificate_trust_store/truststore.jks (0.6s)</span><br><span class="line">-----&gt; Downloading Spring Auto Reconfiguration 1.10.0_RELEASE from https://java-buildpack.cloudfoundry.org/auto-reconfiguration/auto-reconfiguration-1.10.0_RELEASE.jar (found in cache)</span><br><span class="line">Checking status of app 'acloudyspringtime'...</span><br><span class="line">  0 of 1 instances running (1 starting)</span><br><span class="line">  ...</span><br><span class="line">  0 of 1 instances running (1 starting)</span><br><span class="line">  ...</span><br><span class="line">  0 of 1 instances running (1 starting)</span><br><span class="line">  ...</span><br><span class="line">  1 of 1 instances running (1 running)</span><br><span class="line"></span><br><span class="line">App started</span><br></pre></td></tr></tbody></table></figure>
+
+<p>恭喜！ 该应用程序现已上线！</p>
+<p>应用程序上线后,可以使用 <code>cf apps</code> 命令验证已部署应用程序的状态,如以下示例所示:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> cf apps</span></span><br><span class="line">Getting applications in ...</span><br><span class="line">OK</span><br><span class="line"></span><br><span class="line">name                 requested state   instances   memory   disk   urls</span><br><span class="line">...</span><br><span class="line">acloudyspringtime    started           1/1         512M     1G     acloudyspringtime.cfapps.io</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>一旦 Cloud Foundry 确认应用程序已部署,应该能够在给定的 URI 中找到该应用程序.在前面的示例中,可以在 <a target="_blank" rel="noopener" href="https://acloudyspringtime.cfapps.io/">https://acloudyspringtime.cfapps.io/</a> 找到它.</p>
+<ol>
+<li><h6 id="绑定到服务-Binding-to-Services"><a href="#绑定到服务-Binding-to-Services" class="headerlink" title="绑定到服务(Binding to Services)"></a>绑定到服务(Binding to Services)</h6><p>默认情况下,有关应用的元数据以及服务连接信息作为环境变量公开给应用程序(例如:<code>$VCAP_SERVICES</code>).这个架构决定是由于 Cloud Foundry 的多语言(任何语言和平台都可以作为 buildpack 支持)的性质而决定的.作用在进程作用域的环境变量与语言无关.</p>
+<p>环境变量并不总是最简单的 API,因此 Spring Boot 会自动提取它们并将数据扁平化为可以通过 Spring 的 <code>Environment</code> 抽象访问的属性,如以下示例所示:</p>
+<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> <span class="keyword">implements</span> <span class="title">EnvironmentAware</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String instanceId;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setEnvironment</span><span class="params">(Environment environment)</span> </span>{</span><br><span class="line">        <span class="keyword">this</span>.instanceId = environment.getProperty(<span class="string">"vcap.application.instance_id"</span>);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>所有 Cloud Foundry 属性都以 <code>vcap</code> 为前缀. 可以使用 <code>vcap</code> 属性访问应用程序信息(例如应用程序的公共 URL)和服务信息(例如数据库凭据).</p>
+</li>
+<li><h6 id="Kubernetes"><a href="#Kubernetes" class="headerlink" title="Kubernetes"></a>Kubernetes</h6><p>Spring Boot 通过检查环境中的”<code>*_SERVICE_HOST</code>“和”<code>*_SERVICE_PORT</code>“变量来自动检测 Kubernetes 部署环境.可以使用 <code>spring.main.cloud-platform</code> 配置属性覆盖此检测.</p>
+<ol>
+<li><h6 id="Kubernetes-Container-Lifecycle"><a href="#Kubernetes-Container-Lifecycle" class="headerlink" title="Kubernetes Container Lifecycle"></a>Kubernetes Container Lifecycle</h6><p>当 Kubernetes 删除应用实例时,关闭过程同时涉及多个子系统:shutdown hooks,取消注册服务,从负载均衡器中移除实例……由于此关闭处理并行发生(并且由于分布式系统的性质),因此存在一个窗口,在此期间流量可以路由到已开始关闭处理的 pod.</p>
+<p>可以在 preStop 处理程序中配置sleep execution ,避免将请求路由到已经开始关闭的 pod.睡眠时间应该足够长,以便新请求停止路由到 pod,其持续时间会因部署而异.preStop 处理程序可以通过 Pod 配置文件中的 PodSpec 进行配置,如下所示:</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">example-container</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">example-image</span></span><br><span class="line">    <span class="attr">lifecycle:</span></span><br><span class="line">      <span class="attr">preStop:</span></span><br><span class="line">        <span class="attr">exec:</span></span><br><span class="line">          <span class="attr">command:</span> [<span class="string">"sh"</span>, <span class="string">"-c"</span>, <span class="string">"sleep 10"</span>]</span><br></pre></td></tr></tbody></table></figure>
+
+<p>一旦 <code>pre-stop</code> 钩子完成,SIGTERM 将被发送到容器并开始正常关闭,并且允许任何剩余的正在进行的请求完成.</p>
+</li>
+</ol>
+</li>
+<li><h6 id="Heroku"><a href="#Heroku" class="headerlink" title="Heroku"></a>Heroku</h6><p>Heroku 是另一个流行的 PaaS 平台.要自定义 Heroku 构建,需要提供一个 <code>Procfile</code>,它提供部署应用程序所需的指令.. Heroku 分配一个端口供 Java 应用程序使用,然后确保路由到外部 URI 的工作正常.</p>
+<p>必须将应用程序配置为监听正确的端口. 以下示例显示了入门 REST 应用程序的 <code>Procfile</code>:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">web: java -Dserver.port=$PORT -jar target/demo-0.0.1-SNAPSHOT.jar</span><br></pre></td></tr></tbody></table></figure>
+
+<p>Spring Boot 使 <code>-D</code> 参数可以像访问 Spring Environment 实例属性一样访问.<code>server.port</code> 配置属性被提供给嵌入式 Tomcat,Jetty 或 Undertow 实例,然后在启动时使用该端口.<code>$PORT</code> 环境变量由 Heroku PaaS 分配.</p>
+<p>需要做的应该就这么多. Heroku 部署最常见的部署工作流是 <code>git push</code> 代码到生产环境,如下面的例子所示:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> git push heroku main</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>这将输出以下结果:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">Initializing repository, done.</span><br><span class="line">Counting objects: 95, done.</span><br><span class="line">Delta compression using up to 8 threads.</span><br><span class="line">Compressing objects: 100% (78/78), done.</span><br><span class="line">Writing objects: 100% (95/95), 8.66 MiB | 606.00 KiB/s, done.</span><br><span class="line">Total 95 (delta 31), reused 0 (delta 0)</span><br><span class="line"></span><br><span class="line">-----&gt; Java app detected</span><br><span class="line">-----&gt; Installing OpenJDK 1.8... done</span><br><span class="line">-----&gt; Installing Maven 3.3.1... done</span><br><span class="line">-----&gt; Installing settings.xml... done</span><br><span class="line">-----&gt; Executing: mvn -B -DskipTests=true clean install</span><br><span class="line"></span><br><span class="line">       [INFO] Scanning for projects...</span><br><span class="line">       Downloading: https://repo.spring.io/...</span><br><span class="line">       Downloaded: https://repo.spring.io/... (818 B at 1.8 KB/sec)</span><br><span class="line">        ....</span><br><span class="line">       Downloaded: https://s3pository.heroku.com/jvm/... (152 KB at 595.3 KB/sec)</span><br><span class="line">       [INFO] Installing /tmp/build_0c35a5d2-a067-4abc-a232-14b1fb7a8229/target/...</span><br><span class="line">       [INFO] Installing /tmp/build_0c35a5d2-a067-4abc-a232-14b1fb7a8229/pom.xml ...</span><br><span class="line">       [INFO] ------------------------------------------------------------------------</span><br><span class="line">       [INFO] BUILD SUCCESS</span><br><span class="line">       [INFO] ------------------------------------------------------------------------</span><br><span class="line">       [INFO] Total time: 59.358s</span><br><span class="line">       [INFO] Finished at: Fri Mar 07 07:28:25 UTC 2014</span><br><span class="line">       [INFO] Final Memory: 20M/493M</span><br><span class="line">       [INFO] ------------------------------------------------------------------------</span><br><span class="line"></span><br><span class="line">-----&gt; Discovering process types</span><br><span class="line">       Procfile declares types -&gt; web</span><br><span class="line"></span><br><span class="line">-----&gt; Compressing... done, 70.4MB</span><br><span class="line">-----&gt; Launching... done, v6</span><br><span class="line">       https://agile-sierra-1405.herokuapp.com/ deployed to Heroku</span><br><span class="line"></span><br><span class="line">To git@heroku.com:agile-sierra-1405.git</span><br><span class="line"> * [new branch]      main -&gt; main</span><br></pre></td></tr></tbody></table></figure>
+
+<p>应用现在应该在 Heroku 上启动并运行.</p>
+</li>
+<li><h6 id="OpenShift"><a href="#OpenShift" class="headerlink" title="OpenShift"></a>OpenShift</h6><p>OpenShift 有许多资源描述了如何部署 Spring Boot 应用程序,包括:</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.openshift.com/using-openshift-enterprise-grade-spring-boot-deployments/">Using the S2I builder</a></li>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/reference_architectures/2017/html-single/spring_boot_microservices_on_red_hat_openshift_container_platform_3/">Architecture guide</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.openshift.com/using-spring-boot-on-openshift/">Running as a traditional web application on Wildfly</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.openshift.com/openshift-commons-briefing-96-cloud-native-applications-spring-rhoar/">OpenShift Commons Briefing</a></li>
+</ul>
+</li>
+<li><h6 id="Amazon-Web-Services-AWS"><a href="#Amazon-Web-Services-AWS" class="headerlink" title="Amazon Web Services (AWS)"></a>Amazon Web Services (AWS)</h6><p>Amazon Web Services 提供了多种安装 Spring Boot 的应用的方法,可以是传统的 Web 应用程序 (war),也可以是带有嵌入式 Web 服务器的可执行 jar 文件.</p>
+<p>选项包括:</p>
+<ul>
+<li>AWS Elastic Beanstalk</li>
+<li>AWS Code Deploy</li>
+<li>AWS OPS Works</li>
+<li>AWS Cloud Formation</li>
+<li>AWS Container Registry</li>
+</ul>
+<p>每个都有不同的功能和定价模型. 在本文档中,我们描述了使用 AWS Elastic Beanstalk 的方法.</p>
+<ol>
+<li><h6 id="AWS-Elastic-Beanstalk"><a href="#AWS-Elastic-Beanstalk" class="headerlink" title="AWS Elastic Beanstalk"></a>AWS Elastic Beanstalk</h6><p>如官方 <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_Java.html">Elastic Beanstalk Java guide</a> 指南中所述,有两个主要选项来部署 Java 应用程序. 可以使用”Tomcat 平台”或”Java SE 平台”.</p>
+<h6 id="Using-the-Tomcat-Platform"><a href="#Using-the-Tomcat-Platform" class="headerlink" title="Using the Tomcat Platform"></a>Using the Tomcat Platform</h6><p>此选项适用于生成 war 文件的 Spring Boot 项目. 无需特殊配置. 只需要遵循官方指南.</p>
+<h6 id="Using-the-Java-SE-Platform"><a href="#Using-the-Java-SE-Platform" class="headerlink" title="Using the Java SE Platform"></a>Using the Java SE Platform</h6><p>此选项适用于生成 jar 文件,并运行嵌入式 Web 容器的 Spring Boot 项目.Elastic Beanstalk 环境在端口 <code>80</code> 上运行一个 nginx 实例来代理在端口 5000 上运行的真正的应用.要配置它,请将以下行添加到 <code>application.properties</code> 文件中:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">server.port=5000</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>建议:</p>
+<p>​    <em>上传二进制文件而不是源文件</em></p>
+<p>​    默认情况下,Elastic Beanstalk 上传源代码并在 AWS 中编译它们.但是,最好改为上传二进制文件.为此,请将类似于以下内容的行添加到 <code>.elasticbeanstalk/config.yml</code> 文件中:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;deploy:artifact: target/demo-0.0.1-SNAPSHOT.jar</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<p>建议:</p>
+<p>​    <em>通过设置环境类型降低性能开销</em></p>
+<p>​    默认情况下,Elastic Beanstalk 环境是负载平衡的.负载均衡器的成本很高.为避免该成本,请将环境类型设置为”Single instance”,如 <a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/environments-create-wizard.html#environments-create-wizard-capacity">the Amazon documentation</a>中所述. 还可以使用 CLI 和以下命令创建单实例环境:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;eb create -s</span><br></pre></td></tr></tbody></table></figure></blockquote>
+</li>
+<li><h6 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h6><p>这是访问 AWS 的最简单方法之一,但还有更多内容需要介绍,例如如何将 Elastic Beanstalk 集成到任何 CI/CD 工具中,使用 Elastic Beanstalk Maven 插件而不是 CLI,等等. 有一篇 <a target="_blank" rel="noopener" href="https://exampledriven.wordpress.com/2017/01/09/spring-boot-aws-elastic-beanstalk-example/">blog post</a> 更详细地介绍了这些主题.</p>
+</li>
+</ol>
+</li>
+<li><h6 id="Boxfuse-和Amazon-网络服务"><a href="#Boxfuse-和Amazon-网络服务" class="headerlink" title="Boxfuse 和Amazon 网络服务"></a>Boxfuse 和Amazon 网络服务</h6><p>Boxfuse 的工作原理是将您的 Spring Boot 可执行 jar 或 war 转换为最小的 VM 镜像,该镜像可以以不可修改的方式在 VirtualBox 或 AWS 上部署.Boxfuse 与 Spring Boot 深度集成,并使用 Spring Boot 配置文件中的信息自动配置端口和健康检查 URL.Boxfuse 将这些信息用于它生成的图像以及它提供的所有资源(实例,安全组,弹性负载均衡器等).</p>
+<p>如果创建了 Boxfuse 账户,将其连接到 AWS 账户,安装了最新版本的 Boxfuse 客户端,并确保应用程序已由 Maven 或 Gradle 构建(例如,通过使用 <code>mvn clean package</code>),可以使用类似于以下的命令将 Spring Boot 应用程序部署到 AWS:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> boxfuse run myapp-1.0.jar -env=prod</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果当前目录中存在 <code>boxfuse.conf</code> 文件,则使用该文件.</p>
+<blockquote>
+<p>建议:</p>
+<p>​    默认情况下,Boxfuse 在启动时激活一个名为 <code>boxfuse</code> 的 Spring 配置文件.如果可执行 jar 或 war 包含 <code>application-boxfuse.properties</code> 文件,则 Boxfuse 将根据其包含的属性进行配置.</p>
+</blockquote>
+<p>此时,<code>boxfuse</code> 为应用程序创建一个镜像,上传它,并在 AWS 上配置和启动必要的资源,产生类似于以下示例的输出:</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Fusing Image for myapp-1.0.jar ...Image fused in 00:06.838s (53937 K) -&gt; axelfontaine/myapp:1.0Creating axelfontaine/myapp ...Pushing axelfontaine/myapp:1.0 ...Verifying axelfontaine/myapp:1.0 ...Creating Elastic IP ...Mapping myapp-axelfontaine.boxfuse.io to 52.28.233.167 ...Waiting for AWS to create an AMI for axelfontaine/myapp:1.0 in eu-central-1 (this may take up to 50 seconds) ...AMI created in 00:23.557s -&gt; ami-d23f38cfCreating security group boxfuse-sg_axelfontaine/myapp:1.0 ...Launching t2.micro instance of axelfontaine/myapp:1.0 (ami-d23f38cf) in eu-central-1 ...Instance launched in 00:30.306s -&gt; i-92ef9f53Waiting for AWS to boot Instance i-92ef9f53 and Payload to start at https://52.28.235.61/ ...Payload started in 00:29.266s -&gt; https://52.28.235.61/Remapping Elastic IP 52.28.233.167 to i-92ef9f53 ...Waiting 15s for AWS to complete Elastic IP Zero Downtime transition ...Deployment completed successfully. axelfontaine/myapp:1.0 is up and running at https://myapp-axelfontaine.boxfuse.io/</span><br></pre></td></tr></tbody></table></figure>
+
+<p>应用程序现在应该在 AWS 上启动并运行.请参阅关于 <a target="_blank" rel="noopener" href="https://boxfuse.com/blog/spring-boot-ec2.html">在 EC2 上部署 Spring Boot 应用程序</a> 以及 <a target="_blank" rel="noopener" href="https://boxfuse.com/blog/spring-boot-ec2.html">Boxfuse Spring Boot 集成文档</a> ) 开始使用 Maven 构建来运行应用程序.</p>
+</li>
+<li><h6 id="Google-Cloud"><a href="#Google-Cloud" class="headerlink" title="Google Cloud"></a>Google Cloud</h6><p>Google Cloud 有多个选项可用于启动 Spring Boot 应用程序.最容易的可能是 App Engine,但也可以找到在带有 Container Engine 的容器中或在带有 Compute Engine 的虚拟机上运行 Spring Boot 的方法.</p>
+<p>要在 App Engine 中运行,可以先在 UI 中创建一个项目,它设置唯一标识符并设置 HTTP 路由.向项目添加一个 Java 应用程序并将其留空,然后使用 Google Cloud SDK 从命令行或 CI build将 Spring Boot 应用程序推送到该插槽中.</p>
+<p>App Engine Standard 要求使用 WAR 打包. 按照 <a target="_blank" rel="noopener" href="https://github.com/GoogleCloudPlatform/java-docs-samples/tree/master/appengine-java8/springboot-helloworld/README.md">these steps</a>将 App Engine 标准应用程序部署到 GCP.</p>
+<p>或者,App Engine Flex 要求创建一个 <code>app.yaml</code> 文件来描述应用程序所需的资源.通常,将此文件放在 <code>src/main/appengine</code> 中,它应该类似于以下文件:</p>
+<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">service: defaultruntime: javaenv: flexruntime_config:  jdk: openjdk8handlers:- url:</span> <span class="string">/.*</span>  <span class="attr">script:</span> <span class="string">this</span> <span class="string">field</span> <span class="string">is</span> <span class="string">required,</span> <span class="attr">but ignoredmanual_scaling:  instances: 1health_check:  enable_health_check: Falseenv_variables:  ENCRYPT_KEY:</span> <span class="string">your_encryption_key_here</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>可以通过添加项目 ID 到构建配置中来部署应用程序(例如,使用 Maven 插件),如以下示例所示:</p>
+<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span>    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.cloud.tools<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>appengine-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.3.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span>    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span>        <span class="tag">&lt;<span class="name">project</span>&gt;</span>myproject<span class="tag">&lt;/<span class="name">project</span>&gt;</span>    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后使用 <code>mvn appengine:deploy</code> 进行部署(如果需要先进行身份验证,则构建失败).</p>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Boot/" rel="tag"># Spring Boot</a>
+              <a href="/tags/Spring-Boot-Deploy/" rel="tag"># Spring Boot Deploy</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/15372.html" rel="prev" title="5.1 Deploy:  部署Spring Boot应用">
+                  <i class="fa fa-chevron-left"></i> 5.1 Deploy:  部署Spring Boot应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/posts/40038.html" rel="next" title="5.3 Deploy:  安装 Spring Boot 应用">
+                  5.3 Deploy:  安装 Spring Boot 应用 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  © 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">chenyk</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">299k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:32</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+
+  
+
+
+
+
+
+  
+  
+
+  
+  <script async="" src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+  
+  
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.1.0/dist/quicklink.umd.js"></script>
+  
+  
+
+
+
+<script src="/bundle.js"></script><script>{&quot;enable&quot;:true,&quot;spinner&quot;:true};
+{&quot;enable&quot;:true,&quot;app_id&quot;:null,&quot;app_key&quot;:null,&quot;server_url&quot;:null,&quot;security&quot;:true};
+{&quot;enable&quot;:true,&quot;home&quot;:true,&quot;archive&quot;:true,&quot;delay&quot;:true,&quot;timeout&quot;:3000,&quot;priority&quot;:true,&quot;ignores&quot;:null,&quot;url&quot;:&quot;http:&#x2F;&#x2F;example.com&#x2F;posts&#x2F;37726.html&quot;}</script></body></html>
