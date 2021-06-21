@@ -126,7 +126,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-count">50</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -174,6 +174,248 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/9355.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/posts/9355.html" class="post-title-link" itemprop="url">Nginx</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-06-21 21:32:44 / 修改时间：21:34:58" itemprop="dateCreated datePublished" datetime="2021-06-21T21:32:44+08:00">2021-06-21</time>
+    </span>
+
+  
+    <span id="/posts/9355.html" class="post-meta-item leancloud_visitors" data-flag-title="Nginx" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h4 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h4><ol>
+<li><h5 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h5><p><em>Nginx</em> (engine x) 是一个高性能的<strong>HTTP</strong>和<strong>反向代理</strong>web服务器.</p>
+</li>
+<li><h5 id="反向代理"><a href="#反向代理" class="headerlink" title="反向代理:"></a>反向代理:</h5><ul>
+<li><h6 id="正向代理"><a href="#正向代理" class="headerlink" title="正向代理:"></a>正向代理:</h6><p>代理服务器为客户端做代理,主要为客户端服务,可以隐藏客户端信息</p>
+<p><img src="/Nginx/%E6%AD%A3%E5%90%91%E4%BB%A3%E7%90%86.png" alt="img"></p>
+</li>
+<li><h6 id="反向代理-1"><a href="#反向代理-1" class="headerlink" title="反向代理:"></a>反向代理:</h6><p>主要是为服务端代理,所以叫做反向代理,可以隐藏服务端信息</p>
+<img src="Nginx/反向代理.png" alt="img" style="zoom:67%;"></li>
+</ul>
+</li>
+<li><h5 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡:"></a>负载均衡:</h5><p>缓解服务器压力,和提升容错能力</p>
+<ol>
+<li><h6 id="单点负载均衡"><a href="#单点负载均衡" class="headerlink" title="单点负载均衡"></a>单点负载均衡</h6></li>
+</ol>
+<img src="Nginx/v2-6aa2607e04cc9d2f0d448f9fa80b2ae2_720w.jpg" alt="img" style="zoom:50%;">
+
+<ol>
+<li><h6 id="负载均衡集群"><a href="#负载均衡集群" class="headerlink" title="负载均衡集群"></a>负载均衡集群</h6><p>避免因为单个负载均衡节点故障,导致不可用</p>
+<img src="Nginx/负载均衡集群.jpg" alt="preview" style="zoom:50%;"></li>
+<li><h6 id="负载均衡算法"><a href="#负载均衡算法" class="headerlink" title="负载均衡算法"></a>负载均衡算法</h6><ol>
+<li><strong>Round Robin（轮询）：</strong>为第一个请求选择列表中的第一个服务器，然后按顺序向下移动列表直到结尾，然后循环。</li>
+<li><strong>LeastConnections（最小连接）：</strong>优先选择连接数最少的服务器，在普遍会话较长的情况下推荐使用。</li>
+<li><strong>Source：</strong>根据请求源的 IP 的散列（hash）来选择要转发的服务器。这种方式可以一定程度上保证特定用户能连接到相同的服务器。</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><h5 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h5><p>动态请求与静态资源放在不同的服务器上</p>
+</li>
+<li><h5 id="安装Nginx"><a href="#安装Nginx" class="headerlink" title="安装Nginx"></a>安装Nginx</h5><ol>
+<li><p>添加源:<code>sudo rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm</code></p>
+</li>
+<li><p>使用<code>yum search nginx</code>查看,源是否添加成功</p>
+<p>安装Nginx</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y nginx</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>设置自动运行</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start nginx.service</span><br><span class="line">sudo systemctl enable nginx.service</span><br></pre></td></tr></tbody></table></figure>
+
+<p>若想使用外部主机连接上虚拟机,访问 IP:80 ，需要关闭虚拟机的防火墙：</p>
+<p>centOS7关闭防火墙命令：</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">      &nbsp;systemctl stop firewalld.service</span><br></pre></td></tr></tbody></table></figure>
+
+<p>或者配置防火墙开放端口:</p>
+<ul>
+<li><p>查看开放的端口号:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --list-all </span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>设置开放的端口号:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd  --add-service=http -permanent</span><br><span class="line">sudo firewall-cmd --add-port=80/tcp --permanent</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>重启防火墙:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd -reload</span><br></pre></td></tr></tbody></table></figure></li>
+</ul>
+</li>
+</ol>
+</li>
+<li><h5 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h5><p>使用nginx命令式,必须进入nginx目录: 比如 /user/sbin/nginx</p>
+<ol>
+<li><p>查看版本号</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./nginx -v</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>启动nginx</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./nginx</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>关闭nginx</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./nginx -s stop</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>重新加载配置:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./nginx -s reload</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li><h5 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h5><p>配置文件: 在安装位置找到配置文件,nginx.conf</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">user  nobody;</span></span><br><span class="line">worker_processes  1;</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">error_log  logs/error.log;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">error_log  logs/error.log  notice;</span></span><br><span class="line"><span class="meta">#</span><span class="bash">error_log  logs/error.log  info;</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash">pid        logs/nginx.pid;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">events {</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http {</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    #log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '</span><br><span class="line">    #                  '$status $body_bytes_sent "$http_referer" '</span><br><span class="line">    #                  '"$http_user_agent" "$http_x_forwarded_for"';</span><br><span class="line"></span><br><span class="line">    #access_log  logs/access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    #keepalive_timeout  0;</span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    #gzip  on;</span><br><span class="line"></span><br><span class="line">    server {</span><br><span class="line">        listen       80;</span><br><span class="line">        server_name  localhost;</span><br><span class="line"></span><br><span class="line">        #charset koi8-r;</span><br><span class="line"></span><br><span class="line">        #access_log  logs/host.access.log  main;</span><br><span class="line"></span><br><span class="line">        location / {</span><br><span class="line">            root   html;</span><br><span class="line">            index  index.html index.htm;</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        #error_page  404              /404.html;</span><br><span class="line"></span><br><span class="line">        # redirect server error pages to the static page /50x.html</span><br><span class="line">        #</span><br><span class="line">        error_page   500 502 503 504  /50x.html;</span><br><span class="line">        location = /50x.html {</span><br><span class="line">            root   html;</span><br><span class="line">        }</span><br><span class="line"></span><br><span class="line">        # proxy the PHP scripts to Apache listening on 127.0.0.1:80</span><br><span class="line">        #</span><br><span class="line">        #location ~ \.php$ {</span><br><span class="line">        #    proxy_pass   http://127.0.0.1;</span><br><span class="line">        #}</span><br><span class="line"></span><br><span class="line">        # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000</span><br><span class="line">        #</span><br><span class="line">        #location ~ \.php$ {</span><br><span class="line">        #    root           html;</span><br><span class="line">        #    fastcgi_pass   127.0.0.1:9000;</span><br><span class="line">        #    fastcgi_index  index.php;</span><br><span class="line">        #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;</span><br><span class="line">        #    include        fastcgi_params;</span><br><span class="line">        #}</span><br><span class="line"></span><br><span class="line">        # deny access to .htaccess files, if Apache's document root</span><br><span class="line">        # concurs with nginx's one</span><br><span class="line">        #</span><br><span class="line">        #location ~ /\.ht {</span><br><span class="line">        #    deny  all;</span><br><span class="line">        #}</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    # another virtual host using mix of IP-, name-, and port-based configuration</span><br><span class="line">    #</span><br><span class="line">    #server {</span><br><span class="line">    #    listen       8000;</span><br><span class="line">    #    listen       somename:8080;</span><br><span class="line">    #    server_name  somename  alias  another.alias;</span><br><span class="line"></span><br><span class="line">    #    location / {</span><br><span class="line">    #        root   html;</span><br><span class="line">    #        index  index.html index.htm;</span><br><span class="line">    #    }</span><br><span class="line">    #}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    # HTTPS server</span><br><span class="line">    #</span><br><span class="line">    #server {</span><br><span class="line">    #    listen       443 ssl;</span><br><span class="line">    #    server_name  localhost;</span><br><span class="line"></span><br><span class="line">    #    ssl_certificate      cert.pem;</span><br><span class="line">    #    ssl_certificate_key  cert.key;</span><br><span class="line"></span><br><span class="line">    #    ssl_session_cache    shared:SSL:1m;</span><br><span class="line">    #    ssl_session_timeout  5m;</span><br><span class="line"></span><br><span class="line">    #    ssl_ciphers  HIGH:!aNULL:!MD5;</span><br><span class="line">    #    ssl_prefer_server_ciphers  on;</span><br><span class="line"></span><br><span class="line">    #    location / {</span><br><span class="line">    #        root   html;</span><br><span class="line">    #        index  index.html index.htm;</span><br><span class="line">    #    }</span><br><span class="line">    #}</span><br><span class="line"></span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<p>配置文件分为三个部分:</p>
+<ol>
+<li><p>全局块:</p>
+<p>从配置文件开始到event 块之间的内容,主要设置一些影响nginx服务器整体运行的配置指令.比如并发数,log位置,pid</p>
+</li>
+<li><p>event 块</p>
+<p> 主要影响Nginx服务器与用户的网络连接.</p>
+<p>worker_connections 支持的最大连接数.</p>
+</li>
+<li><p>http 块</p>
+<p>配置最频繁的部分,代理,缓存,日志定义,以及第三方配置都在这部分</p>
+<p>注意:http 块也包括 http全局块,server块</p>
+<ol>
+<li><p>http 全局块 </p>
+<p>包括文件引入,MIME-TYPE定义,日志自定义,连接超时时间,单链接请求数上限</p>
+</li>
+<li><p>server 块</p>
+<p>与虚拟主机有密切关系.虚拟主机从用户看,是和独立的硬件注意是完全一样的,该技术是为了节省硬件成本.</p>
+<p>每个http块可以包含多个server块,每一个server块就相当于一个虚拟主机.</p>
+<p>每一个server块也分为全局server块,以及可以同事包含多个location 块</p>
+<ul>
+<li><p>全局server块:</p>
+<p>配置虚拟主机的监听配置和本虚拟主机的名称或者IP配置</p>
+</li>
+<li><p>location 块</p>
+<p>主要作用是基于Nginx服务器接收到的请求字符串(server_name/uri-string),对虚拟主机名称之外的字符串进行匹配,对特定的请求进行处理.地址定向,数据缓存和应答控制等功能,还有许多第三方模块的配置也在这里进行.</p>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><h5 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h5><ol>
+<li><h6 id="反向代理-2"><a href="#反向代理-2" class="headerlink" title="反向代理"></a>反向代理</h6><p>效果: 将发送的Nginx的请求,直接转发给tomcat.访问Nginx的端口,即可访问tomcat的8080端口</p>
+<p>在Nginx配置文件中修改或者增加:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">location / {</span><br><span class="line">  root html;</span><br><span class="line"><span class="meta">  #</span><span class="bash">主要配置proxy_pass</span></span><br><span class="line">  proxy_pass http://127.0.0.1:8080/examples/;</span><br><span class="line">  index index.html index.html;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><h6 id="根据路径的反向代理"><a href="#根据路径的反向代理" class="headerlink" title="根据路径的反向代理"></a>根据路径的反向代理</h6><figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">server{</span><br><span class="line"><span class="meta">#</span><span class="bash">监听端口</span></span><br><span class="line">	listen 9001;</span><br><span class="line">	server_name xxxName;</span><br><span class="line"><span class="meta">	</span></span><br><span class="line"><span class="meta">	#</span><span class="bash">如果路径是/edu/开头,则进行如下服务</span></span><br><span class="line">	location ~ /edu/ {</span><br><span class="line">		proxy_pass http://127.0.0.1:8080;</span><br><span class="line">	}</span><br><span class="line"><span class="meta">	</span></span><br><span class="line"><span class="meta">	#</span><span class="bash">如果路径是/vod/开头,则进行如下服务</span></span><br><span class="line">	location ~ /vod/ {</span><br><span class="line">		proxy_pass http://127.0.0.1:8081;</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>location 参数说明</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">location [ = | ~ | ~* | ^~ ] uri {</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li><p>= : 用于不含正则表达式的uri前,要求请求祖父穿与 uri 严格匹配,如果匹配成功,就停止继续向下搜索,并立即处理请求.</p>
+</li>
+<li><p>~ : 用于表示uri包含正则表达式,并且区分大小写</p>
+</li>
+<li><p>~* :表示用于uri包含正则表达式,不区分大小写</p>
+</li>
+<li><p>^~ : 用于不包含正则表达式的uri前,要求Nginx服务器找到标志uri和请求字符串匹配度最高的 location后,立即使用此location处理请求,而不再使用location中的正则 uri 和请求字符串做匹配:</p>
+<p>注意: 如果uri包含正则表达式,则必须要有~ 或者 ~* 标志.</p>
+</li>
+</ol>
+</li>
+<li><h6 id="负载均衡-1"><a href="#负载均衡-1" class="headerlink" title="负载均衡"></a>负载均衡</h6><p>配置文件:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">upstream myserver {</span><br><span class="line">    server 192.168.0.104:9002 weight=1; # 服务器1</span><br><span class="line">    server 192.168.0.104:9003 weight=1; # 服务器2</span><br><span class="line">    ip_hash;   #负载均衡策略</span><br><span class="line">}</span><br><span class="line">      </span><br><span class="line">server {</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    root         /usr/share/nginx/html;</span><br><span class="line">      </span><br><span class="line">    # Load configuration files for the default server block.</span><br><span class="line">    include /etc/nginx/default.d/*.conf;</span><br><span class="line">      </span><br><span class="line">      </span><br><span class="line">    location /  {</span><br><span class="line">            proxy_pass http://myserver; # 导向自定义的myserver</span><br><span class="line">    }</span><br><span class="line">      </span><br><span class="line">    error_page 404 /404.html;</span><br><span class="line">    location = /404.html {</span><br><span class="line">    }</span><br><span class="line">      </span><br><span class="line">    error_page 500 502 503 504 /50x.html;</span><br><span class="line">    location = /50x.html {</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">      </span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li><p>分配策略:</p>
+<ol>
+<li><p>轮询(默认)</p>
+<p>每个请求按时间顺序,注意分配到不同的后端服务器,如果后端服务器down掉,则自动剔除.</p>
+</li>
+<li><p>weight</p>
+<p>weight代表权重,默认为1,权重越高,被分配的客户端越多.用于后端服务器性能不均的情况.</p>
+</li>
+<li><p>ip_hash</p>
+<p>每个请求按照ip的hash结果进行分配,这样每个访客固定访问一个后端服务器,可以解决session问题.</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">upstream myserver {</span><br><span class="line">  server 192.168.0.104:9002 weight=1;</span><br><span class="line">  server 192.168.0.104:9003 weight=1;</span><br><span class="line">  ip_hash; </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>fair(第三方)</p>
+<p>按照后端服务器响应时间来分配请求,响应时间越短的优先分配.</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">upstream myserver {</span><br><span class="line">  server 192.168.0.104:9002 weight=1;</span><br><span class="line">  server 192.168.0.104:9003 weight=1;</span><br><span class="line">  fair; </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+</ul>
+<ol start="4">
+<li><p>动态资源静态资源分离:</p>
+<figure class="highlight shell"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">server {</span><br><span class="line">    listen       80;</span><br><span class="line">    server_name  localhost;</span><br><span class="line">    root         /usr/share/nginx/html;</span><br><span class="line">         </span><br><span class="line">    # Load configuration files for the default server block.</span><br><span class="line">    include /etc/nginx/default.d/*.conf;</span><br><span class="line">         </span><br><span class="line"><span class="meta">#</span><span class="bash">静态资源路径, root会作为根路径,实际访问路径是/home/static</span></span><br><span class="line">    location /static/ {</span><br><span class="line">            root /home/;</span><br><span class="line">    }</span><br><span class="line">         </span><br><span class="line">    location /  {</span><br><span class="line">            proxy_pass http://myserver;</span><br><span class="line">    }</span><br><span class="line">         </span><br><span class="line">    error_page 404 /404.html;</span><br><span class="line">    location = /404.html {</span><br><span class="line">    }</span><br><span class="line">         </span><br><span class="line">    error_page 500 502 503 504 /50x.html;</span><br><span class="line">    location = /50x.html {</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">         </span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1835,654 +2077,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/47604.html">
-
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chenyk">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ykproton">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/posts/47604.html" class="post-title-link" itemprop="url">4.6 Acuator: Metrics</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-06-10 12:23:58 / 修改时间：12:50:57" itemprop="dateCreated datePublished" datetime="2021-06-10T12:23:58+08:00">2021-06-10</time>
-    </span>
-
-  
-    <span id="/posts/47604.html" class="post-meta-item leancloud_visitors" data-flag-title="4.6 Acuator: Metrics" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>18k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 ≈</span>
-      <span>16 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <ol start="6">
-<li><h5 id="检测-Metrics"><a href="#检测-Metrics" class="headerlink" title="检测(Metrics)"></a>检测(Metrics)</h5><p>Spring Boot Actuator 为 <code>Micrometer</code> 提供依赖管理和自动配置,支持众多监控系统的应用Metrics facade ,包括:</p>
-<ul>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.appoptics">AppOptics</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.atlas">Atlas</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.datadog">Datadog</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.dynatrace">Dynatrace</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.elastic">Elastic</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.ganglia">Ganglia</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.graphite">Graphite</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.humio">Humio</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.influx">Influx</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.jmx">JMX</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.kairos">KairosDB</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.newrelic">New Relic</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.prometheus">Prometheus</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.signalfx">SignalFx</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.simple">Simple (in-memory)</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.stackdriver">Stackdriver</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.statsd">StatsD</a></p>
-</li>
-<li><p><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.export.wavefront">Wavefront</a></p>
-<blockquote>
-<p>建议:</p>
-<p>​    要了解有关 Micrometer 功能的更多信息,请参阅其 <a target="_blank" rel="noopener" href="https://micrometer.io/docs">参考文档</a>,尤其是 <a target="_blank" rel="noopener" href="https://micrometer.io/docs/concepts">概念部分</a>.</p>
-</blockquote>
-</li>
-</ul>
-<ol>
-<li><h6 id="开始-Getting-started"><a href="#开始-Getting-started" class="headerlink" title="开始(Getting started)"></a>开始(Getting started)</h6><p>Spring Boot 自动配置一个复合 <code>MeterRegistry</code> ,并为类路径上每个受支持的实现注册到复合中.在运行时classpath中依赖 <code>micrometer-registry-{system}</code> 足以让 Spring Boot 配置registry.</p>
-<p>大多数注册中心都有共同的特征. 例如,即使 <code>Micrometer</code> registry实现在类路径上,也可以禁用特定registry. 例如,禁用 Datadog:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.datadog.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还可以禁用所有registry,除非registry特定属性另有说明,如以下示例所示:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.defaults.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>Spring Boot 还将所有自动配置的registry添加到 <code>Metrics</code> 类上的全局静态复合registry,除非明确告诉它不要:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.use-global-registry</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>可以注册任意数量的 <code>MeterRegistryCustomizer</code> bean 以进一步配置registry,例如应用公共标签,然后再向registry注册任何meters:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMeterRegistryConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> MeterRegistryCustomizer&lt;MeterRegistry&gt; <span class="title">metricsCommonTags</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> (registry) -&gt; registry.config().commonTags(<span class="string">"region"</span>, <span class="string">"us-east-1"</span>);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>可以通过更具体地了解泛型类型,将自定义应用于特定的registry实现:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMeterRegistryConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> MeterRegistryCustomizer&lt;GraphiteMeterRegistry&gt; <span class="title">graphiteMetricsNamingConvention</span><span class="params">()</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> (registry) -&gt; registry.config().namingConvention(<span class="keyword">this</span>::name);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">name</span><span class="params">(String name, Meter.Type type, String baseUnit)</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> ...</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>Spring Boot 还配置了可以通过配置或专用注解标记控制的 <a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.supported">built-in instrumentation</a>.</p>
-</li>
-<li><h6 id="支持的监控系统-Supported-Monitoring-Systems"><a href="#支持的监控系统-Supported-Monitoring-Systems" class="headerlink" title="支持的监控系统(Supported Monitoring Systems)"></a>支持的监控系统(Supported Monitoring Systems)</h6><ol>
-<li><h6 id="AppOptics"><a href="#AppOptics" class="headerlink" title="AppOptics"></a>AppOptics</h6><p>默认情况下,AppOptics registry会定期将metric推送到 <code>api.appoptics.com/v1/measurements</code>. 要将指标导出到 SaaS AppOptics,必须提供 API token :</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.appoptics.api-token</span>=<span class="string">YOUR_TOKEN</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Atlas"><a href="#Atlas" class="headerlink" title="Atlas"></a>Atlas</h6><p>默认情况下,metrics会导出到在本地机器上运行的 Atlas. 可以使用以下命令提供要使用的 Atlas 服务器的位置:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.atlas.uri</span>=<span class="string">https://atlas.example.com:7101/api/v1/publish</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Datadog"><a href="#Datadog" class="headerlink" title="Datadog"></a>Datadog</h6><p>Datadog registry定期将指标推送到 datadoghq. 要将指标导出到 Datadog,必须提供 API key :</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.datadog.api-key</span>=<span class="string">YOUR_KEY</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还可以更改指标发送到 Datadog 的时间间隔:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.datadog.step</span>=<span class="string">30s</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Dynatrace"><a href="#Dynatrace" class="headerlink" title="Dynatrace"></a>Dynatrace</h6><p>Dynatrace registry 定期将metrics 推送到配置的 URI. 要将指标导出到 Dynatrace,必须提供 API token,设备 ID 和 URI:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.dynatrace.api-token</span>=<span class="string">YOUR_TOKEN</span></span><br><span class="line"><span class="meta">management.metrics.export.dynatrace.device-id</span>=<span class="string">YOUR_DEVICE_ID</span></span><br><span class="line"><span class="meta">management.metrics.export.dynatrace.uri</span>=<span class="string">YOUR_URI</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还可以更改指标发送到 Dynatrace 的时间间隔:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.dynatrace.step</span>=<span class="string">30s</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Elastic"><a href="#Elastic" class="headerlink" title="Elastic"></a>Elastic</h6><p>默认情况下,指标会导出到在本地机器上运行的 Elastic. 可以使用以下属性提供要使用的Elastic 服务器的位置:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.elastic.host</span>=<span class="string">https://elastic.example.com:8086</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Ganglia"><a href="#Ganglia" class="headerlink" title="Ganglia"></a>Ganglia</h6><p>默认情况下,metrics会导出到在本地计算机上运行的 Ganglia. 要使用的 Ganglia 服务器主机和端口可以通过以下方式提供:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.ganglia.host</span>=<span class="string">ganglia.example.com</span></span><br><span class="line"><span class="meta">management.metrics.export.ganglia.port</span>=<span class="string">9649</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Graphite"><a href="#Graphite" class="headerlink" title="Graphite"></a>Graphite</h6><p>默认情况下,metrics会导出到在本地计算机上运行的 Graphite. 可以使用以下方式提供要使用的 Graphite 服务器主机和端口:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.graphite.host</span>=<span class="string">graphite.example.com</span></span><br><span class="line"><span class="meta">management.metrics.export.graphite.port</span>=<span class="string">9004</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>Micrometer 提供了一个默认的 <code>HierarchicalNameMapper</code>,用于管理维度仪表 ID 如何映射到平面层次名称.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    要控制此行为,请定义 <code>GraphiteMeterRegistry</code> 并提供自己的 <code>HierarchicalNameMapper</code>.除非定义自己的,否则提供自动配置的 <code>GraphiteConfig</code> 和 <code>Clock bean</code>:</p>
-</blockquote>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyGraphiteConfiguration</span> </span>{</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> GraphiteMeterRegistry <span class="title">graphiteMeterRegistry</span><span class="params">(GraphiteConfig config, Clock clock)</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> GraphiteMeterRegistry(config, clock, <span class="keyword">this</span>::toHierarchicalName);</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">toHierarchicalName</span><span class="params">(Meter.Id id, NamingConvention convention)</span> </span>{</span><br><span class="line">        <span class="keyword">return</span> ...</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Humio"><a href="#Humio" class="headerlink" title="Humio"></a>Humio</h6><p>默认情况下,Humio registry会定期将指标推送到 <code>cloud.humio.com</code>. 要将指标导出到 SaaS Humio,必须提供 API token:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.humio.api-token</span>=<span class="string">YOUR_TOKEN</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还应该配置一个或多个标签来识别指标将被推送到的数据源:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.humio.tags.alpha</span>=<span class="string">a</span></span><br><span class="line"><span class="meta">management.metrics.export.humio.tags.bravo</span>=<span class="string">b</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Influx"><a href="#Influx" class="headerlink" title="Influx"></a>Influx</h6><p>默认情况下,指标会导出到使用默认配置在本地计算机上运行的 Influx v1 实例.要将指标导出到 InfluxDB v2,请配置用于写入指标的<code>org</code>,<code>bucket</code>和身份验证<code>token</code>.可以使用以下方法提供要使用的 Influx 服务器的位置:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.influx.uri</span>=<span class="string">https://influx.example.com:8086</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="JMX"><a href="#JMX" class="headerlink" title="JMX"></a>JMX</h6><p>Micrometer 提供了到 JMX 的分层映射,主要是作为一种廉价且可移植的本地查看metrics的方式.默认情况下,指标导出到指标 JMX 域. 可以使用以下方式提供要使用的域:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.jmx.domain</span>=<span class="string">com.example.app.metrics</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>Micrometer 提供了一个默认的 <code>HierarchicalNameMapper</code>,用于管理维度仪表 ID 如何映射到平面层次名称.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    要控制此行为,请定义 <code>JmxMeterRegistry</code> 并提供自己的 <code>HierarchicalNameMapper</code>.除非自己定义,否则会提供自动配置的 <code>JmxConfig </code>和 <code>Clock</code> bean:</p>
-</blockquote>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyJmxConfiguration</span> </span>{    <span class="meta">@Bean</span>    <span class="function"><span class="keyword">public</span> JmxMeterRegistry <span class="title">jmxMeterRegistry</span><span class="params">(JmxConfig config, Clock clock)</span> </span>{        <span class="keyword">return</span> <span class="keyword">new</span> JmxMeterRegistry(config, clock, <span class="keyword">this</span>::toHierarchicalName);    }    <span class="function"><span class="keyword">private</span> String <span class="title">toHierarchicalName</span><span class="params">(Meter.Id id, NamingConvention convention)</span> </span>{        <span class="keyword">return</span> ...    }}</span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="KairosDB"><a href="#KairosDB" class="headerlink" title="KairosDB"></a>KairosDB</h6><p>默认情况下,指标会导出到在本地计算机上运行的 KairosDB. 可以使用以下命令提供要使用的 KairosDB 服务器的位置:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.kairos.uri</span>=<span class="string">https://kairosdb.example.com:8080/api/v1/datapoints</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="New-Relic"><a href="#New-Relic" class="headerlink" title="New Relic"></a>New Relic</h6><p>New Relic registry定期将指标推送到 New Relic. 要将指标导出到 New Relic,必须提供 API key和帐户 ID:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.newrelic.api-key</span>=<span class="string">YOUR_KEY</span></span><br><span class="line"><span class="meta">management.metrics.export.newrelic.account-id</span>=<span class="string">YOUR_ACCOUNT_ID</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还可以更改指标发送到 New Relic 的时间间隔:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.newrelic.step</span>=<span class="string">30s</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>默认情况下,metrics 是通过 REST 调用发布的,但也可以使用 Java 代理 API,如果在类路径上有它:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.newrelic.client-provider-type</span>=<span class="string">insights-agent</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>最后,可以通过定义自己的 <code>NewRelicClientProvider</code> bean 来完全控制.</p>
-</li>
-<li><h6 id="Prometheus"><a href="#Prometheus" class="headerlink" title="Prometheus"></a>Prometheus</h6><p>Prometheus 期望抓取或轮询单个应用程序实例以获取metrics.Spring Boot 在 <code>/actuator/prometheus</code> 提供了一个可用的actuator endpoint,以显示具有适当格式的 <code>Prometheus</code> 抓取.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    endpoint默认不可用,必须公开.</p>
-</blockquote>
-<p>这是添加到 <code>prometheus.yml</code> 的 <code>scrape_config</code>示例:</p>
-<figure class="highlight yaml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">'spring'</span></span><br><span class="line">    <span class="attr">metrics_path:</span> <span class="string">'/actuator/prometheus'</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">'HOST:PORT'</span>]</span><br></pre></td></tr></tbody></table></figure>
-
-<p>对于可能存在时间不够长而无法抓取的临时或批处理作业,可以使用 Prometheus Pushgateway 将其metrics 公开给 Prometheus.要启用 Prometheus Pushgateway 支持,将以下依赖项添加到项目中:</p>
-<figure class="highlight xml"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.prometheus<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>simpleclient_pushgateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>当类路径上存在 Prometheus Pushgateway 依赖项并且 <code>management.metrics.export.prometheus.pushgateway.enabled</code> 属性设置为 <code>true</code> 时,会自动配置 <code>PrometheusPushGatewayManager</code> bean.这管理将指标推送到 Prometheus Pushgateway.</p>
-<p><code>PrometheusPushGatewayManager</code> 可以使用 <code>management.metrics.export.prometheus.pushgateway</code> 下的属性进行调整.对于高级配置,还可以提供自己的 <code>PrometheusPushGatewayManager</code> bean.</p>
-</li>
-<li><h6 id="SignalFx"><a href="#SignalFx" class="headerlink" title="SignalFx"></a>SignalFx</h6><p>SignalFx registry定期将指标推送到 SignalFx. 要将指标导出到 SignalFx,必须提供的access token:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.signalfx.access-token</span>=<span class="string">YOUR_ACCESS_TOKEN</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还可以更改指标发送到 SignalFx 的时间间隔:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.signalfx.step</span>=<span class="string">30s</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Simple"><a href="#Simple" class="headerlink" title="Simple"></a>Simple</h6><p>Micrometer 附带一个简单的内存后端,如果没有配置其他registry,它会自动作为备用. 这使可以查看<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.5.0/reference/html/actuator.html#actuator.metrics.endpoint">metrics endpoint</a>中收集了哪些metrics .</p>
-<p>只要使用任何其他可用后端,内存后端就会自行禁用. 还可以明确禁用它:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.simple.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Stackdriver"><a href="#Stackdriver" class="headerlink" title="Stackdriver"></a>Stackdriver</h6><p>Stackdriver registry会定期将指标推送到 Stackdriver. 要将指标导出到 SaaS Stackdriver,必须提供 Google Cloud project  ID:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.stackdriver.project-id</span>=<span class="string">my-project</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还可以更改指标发送到 Stackdriver 的时间间隔:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.stackdriver.step</span>=<span class="string">30s</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="StatsD"><a href="#StatsD" class="headerlink" title="StatsD"></a>StatsD</h6><p>StatsD registry地通过 UDP 将指标快速地推送到 StatsD 代理.默认情况下,指标会导出到在本地计算机上运行的 StatsD 代理. 要使用的 StatsD 代理主机,端口和协议可以通过以下方式提供:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.statsd.host</span>=<span class="string">statsd.example.com</span></span><br><span class="line"><span class="meta">management.metrics.export.statsd.port</span>=<span class="string">9125</span></span><br><span class="line"><span class="meta">management.metrics.export.statsd.protocol</span>=<span class="string">udp</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>还可以更改要使用的 StatsD 线路协议(默认为 Datadog):</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.statsd.flavor</span>=<span class="string">etsy</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Wavefront"><a href="#Wavefront" class="headerlink" title="Wavefront"></a>Wavefront</h6><p>Wavefront registry定期将指标推送到 Wavefront. 如果直接将指标导出到 Wavefront,则必须提供 API token :</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.wavefront.api-token</span>=<span class="string">YOUR_API_TOKEN</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>或者,可以使用 Wavefront sidecar 或在环境中设置的内部代理,将指标数据转发到 Wavefront API 主机:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.wavefront.uri</span>=<span class="string">proxy://localhost:2878</span></span><br></pre></td></tr></tbody></table></figure>
-
-<blockquote>
-<p>建议:</p>
-<p>​    如果将指标发布到 Wavefront 代理,则主机必须采用 <code>proxy://HOST:PORT</code> 格式.</p>
-</blockquote>
-<p>还可以更改指标发送到 Wavefront 的时间间隔:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.export.wavefront.step</span>=<span class="string">30s</span></span><br></pre></td></tr></tbody></table></figure></li>
-</ol>
-</li>
-<li><h6 id="支持的Metrics和Meters-Supported-Metrics-and-Meters"><a href="#支持的Metrics和Meters-Supported-Metrics-and-Meters" class="headerlink" title="支持的Metrics和Meters(Supported Metrics and Meters)"></a>支持的Metrics和Meters(Supported Metrics and Meters)</h6><p>Spring Boot 为各种技术提供自动仪表注册.在大多数情况下,开箱即用的默认值将提供可发布的合理指标给到所有支持的监控系统.</p>
-<ol>
-<li><h6 id="JVM-Metrics"><a href="#JVM-Metrics" class="headerlink" title="JVM Metrics"></a>JVM Metrics</h6><p>自动配置将使用核心 Micrometer 类启用 JVM 指标. JVM 指标发布在 <code>jvm.</code> meter名下.</p>
-<p>提供了以下 JVM 指标:</p>
-<ul>
-<li>各种内存和缓冲池详细信息</li>
-<li>与垃圾回收相关的统计信息</li>
-<li>线程利用率</li>
-<li>加载/卸载的类数</li>
-</ul>
-</li>
-<li><h6 id="System-Metrics"><a href="#System-Metrics" class="headerlink" title="System Metrics"></a>System Metrics</h6><p>自动配置将使用核心 Micrometer 类启用系统指标. 系统指标在<code>system.</code>和<code>process.</code>meter names下发布.</p>
-<p>提供了以下系统指标:</p>
-<ul>
-<li>CPU 指标</li>
-<li>文件描述符指标</li>
-<li>正常运行时间指标(应用程序运行的时间量以及绝对启动时间的固定量表)</li>
-</ul>
-</li>
-<li><h6 id="Logger-Metrics"><a href="#Logger-Metrics" class="headerlink" title="Logger Metrics"></a>Logger Metrics</h6><p>自动配置为 Logback 和 Log4J2 启用事件指标. 详细信息发布在 <code>log4j2.events.</code> 或 <code>logback.events.</code> meter 名下.</p>
-</li>
-<li><h6 id="Spring-MVC-Metrics"><a href="#Spring-MVC-Metrics" class="headerlink" title="Spring MVC Metrics"></a>Spring MVC Metrics</h6><p>自动配置启用对 Spring MVC controller和函数式程序处理的所有请求的检测.默认情况下,metric生成的名称为 <code>http.server.requests</code>.可以通过设置 <code>management.metrics.web.server.request.metric-name</code> 属性来自定义名称.</p>
-<p><code>@Controller</code> 类和 <code>@RequestMapping</code> 方法支持 <code>@Timed</code> 注解.如果不想记录所有 Spring MVC 请求的指标,可以将 <code>management.metrics.web.server.request.autotime.enabled</code> 设置为 <code>false</code> 并使用 <code>@Timed</code> 注解.</p>
-<p>默认情况下,Spring MVC 相关metrics标记有以下信息:</p>
-<table>
-<thead>
-<tr>
-<th><strong>Tag</strong></th>
-<th><strong>Description</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>exception</code></td>
-<td>处理请求时抛出的任何异常的简单类名。</td>
-</tr>
-<tr>
-<td><code>method</code></td>
-<td>请求的方法（例如，<code>GET</code> 或 <code>POST</code>）</td>
-</tr>
-<tr>
-<td><code>outcome</code></td>
-<td>请求的结果基于响应的状态代码。 1xx 是“<code>INFORMATIONAL</code>”，2xx 是“<code>SUCCESS</code>”，3xx 是“<code>REDIRECTION</code>”，4xx 是“<code>CLIENT_ERROR</code>”，5xx 是“<code>SERVER_ERROR</code>”</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td>响应的 HTTP 状态代码（例如，<code>200</code> 或 <code>500</code>）</td>
-</tr>
-<tr>
-<td><code>uri</code></td>
-<td>如果可能，在变量替换之前请求的 URI 模板（例如，<code>/api/person/{id}</code>）</td>
-</tr>
-</tbody></table>
-<p>要添加到默认标签,请提供一个或多个实现 <code>WebMvcTagsContributor</code> 的 <code>@Bean</code>.要替换默认标签,请提供一个实现 <code>WebMvcTagsProvider</code> 的 <code>@Bean</code>.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    在某些情况下,Web 控制器中处理的异常不会记录为请求指标标记.应用可以通过将处理的异常设置为请求属性来选择加入和记录异常.</p>
-</blockquote>
-</li>
-<li><h6 id="Spring-WebFlux-Metrics"><a href="#Spring-WebFlux-Metrics" class="headerlink" title="Spring WebFlux Metrics"></a>Spring WebFlux Metrics</h6><p>自动配置启用对 Spring WebFlux controller和functional handler的所有请求的检测.默认情况下,metrics生成的名称为 <code>http.server.requests</code>.可以通过设置 <code>management.metrics.web.server.request.metric-name</code> 属性来自定义名称.</p>
-<p><code>@Controller</code> 类和 <code>@RequestMapping</code> 方法支持 <code>@Timed</code> 注解.如果不想记录所有 Spring WebFlux 请求的metrics ,可以将 <code>management.metrics.web.server.request.autotime.enabled</code> 设置为 <code>false</code> 并使用 <code>@Timed</code> 注解.</p>
-<p>默认情况下,WebFlux 相关metrics 标记有以下信息:</p>
-<table>
-<thead>
-<tr>
-<th>Tag</th>
-<th>Description</th>
-<th></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>exception</code></td>
-<td>处理请求时抛出的任何异常的简单类名。</td>
-<td></td>
-</tr>
-<tr>
-<td><code>method</code></td>
-<td>请求的方法（例如，<code>GET</code> 或 <code>POST</code>）</td>
-<td></td>
-</tr>
-<tr>
-<td><code>outcome</code></td>
-<td>请求的结果基于响应的状态代码。 1xx 是“<code>INFORMATIONAL</code>”，2xx 是“<code>SUCCESS</code>”，3xx 是“<code>REDIRECTION</code>”，4xx 是“<code>CLIENT_ERROR</code>”，5xx 是“<code>SERVER_ERROR</code>”</td>
-<td></td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td>响应的 HTTP 状态代码（例如，<code>200</code> 或 <code>500</code>）</td>
-<td></td>
-</tr>
-<tr>
-<td><code>uri</code></td>
-<td>如果可能，在变量替换之前请求的 URI 模板（例如，<code>/api/person/{id}</code>）</td>
-<td></td>
-</tr>
-</tbody></table>
-<p>要添加到默认标签,提供一个或多个实现 <code>WebFluxTagsContributor</code> 的 <code>@Bean</code>. 要替换默认标签,提供一个实现 <code>WebFluxTagsProvider</code> 的 <code>@Bean</code>.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    在某些情况下,controller和handler函数中处理的异常不会作为request metrics tags 记录.应用程序可以将异常设为请求属性来选择加入和记录异常.</p>
-</blockquote>
-</li>
-<li><h6 id="Jersey-Server-Metrics"><a href="#Jersey-Server-Metrics" class="headerlink" title="Jersey Server Metrics"></a>Jersey Server Metrics</h6><p>只要 Micrometer 的 <code>micrometer-jersey2</code> 模块在类路径上,自动配置就会启用检测Jersey JAX-RS 实现所处理的所有请求的.默认情况下,metrics 生成的名称为 <code>http.server.requests</code>. 可以通过设置 <code>management.metrics.web.server.request.metric-name</code> 属性来自定义名称.</p>
-<p>请求处理类和方法支持<code>@Timed</code> 注解.如果不想记录所有 Jersey 请求的指标,可以将 <code>management.metrics.web.server.request.autotime.enabled</code> 设置为 <code>false</code> 并专门使用 <code>@Timed</code> 注解.</p>
-<p>默认情况下,Jersey 服务器指标标记有以下信息:</p>
-<table>
-<thead>
-<tr>
-<th>Tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>exception</code></td>
-<td>处理请求时抛出的任何异常的简单类名。</td>
-</tr>
-<tr>
-<td><code>method</code></td>
-<td>请求的方法（例如，<code>GET</code> 或 <code>POST</code>）</td>
-</tr>
-<tr>
-<td><code>outcome</code></td>
-<td>请求的结果基于响应的状态代码。 1xx 是“<code>INFORMATIONAL</code>”，2xx 是“<code>SUCCESS</code>”，3xx 是“<code>REDIRECTION</code>”，4xx 是“<code>CLIENT_ERROR</code>”，5xx 是“<code>SERVER_ERROR</code>”</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td>响应的 HTTP 状态代码（例如，<code>200</code> 或 <code>500</code>）</td>
-</tr>
-<tr>
-<td><code>uri</code></td>
-<td>如果可能，在变量替换之前请求的 URI 模板（例如，<code>/api/person/{id}</code>）</td>
-</tr>
-</tbody></table>
-<p>要自定义标签,请提供一个实现 JerseyTagsProvider 的 <code>@Bean</code>.</p>
-</li>
-<li><h6 id="HTTP-Client-Metrics"><a href="#HTTP-Client-Metrics" class="headerlink" title="HTTP Client Metrics"></a>HTTP Client Metrics</h6><p>Spring Boot Actuator 管理 <code>RestTemplate</code> 和 <code>WebClient</code> 的检测.为此,必须注入自动配置的builder并使用它来创建实例:</p>
-<ul>
-<li><code>RestTemplateBuilder</code> 用于 <code>RestTemplate</code></li>
-<li><code>WebClient.Builder</code> 用于 <code>WebClient</code></li>
-</ul>
-<p>也可以手动应用负责此检测的定制器,即 <code>MetricsRestTemplateCustomizer</code> 和 <code>MetricsWebClientCustomizer</code>.</p>
-<p>默认情况下,metrics生成的名称为 <code>http.client.requests</code>. 可以通过设置 <code>management.metrics.web.client.request.metric-name</code> 属性来自定义名称.</p>
-<p>默认情况下,由检测客户端生成的metrics 标记有以下信息:</p>
-<table>
-<thead>
-<tr>
-<th><strong>Tag</strong></th>
-<th><strong>Description</strong></th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>exception</code></td>
-<td>处理请求时抛出的任何异常的简单类名。</td>
-</tr>
-<tr>
-<td><code>method</code></td>
-<td>请求的方法（例如，<code>GET</code> 或 <code>POST</code>）</td>
-</tr>
-<tr>
-<td><code>outcome</code></td>
-<td>请求的结果基于响应的状态代码。 1xx 是“<code>INFORMATIONAL</code>”，2xx 是“<code>SUCCESS</code>”，3xx 是“<code>REDIRECTION</code>”，4xx 是“<code>CLIENT_ERROR</code>”，5xx 是“<code>SERVER_ERROR</code>”</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td>响应的 HTTP 状态代码（例如，<code>200</code> 或 <code>500</code>）</td>
-</tr>
-<tr>
-<td><code>uri</code></td>
-<td>如果可能，在变量替换之前请求的 URI 模板（例如，<code>/api/person/{id}</code>）</td>
-</tr>
-</tbody></table>
-<p>要自定义标签,并根据客户端,可以提供一个实现 <code>RestTemplateExchangeTagsProvider</code> 或 <code>WebClientExchangeTagsProvider</code> 的 <code>@Bean</code>.<code>RestTemplateExchangeTags</code> 和 <code>WebClientExchangeTags</code> 中提供有方便的静态函数.</p>
-</li>
-<li><h6 id="Tomcat-Metrics"><a href="#Tomcat-Metrics" class="headerlink" title="Tomcat Metrics"></a>Tomcat Metrics</h6><p>仅当启用 <code>MBeanRegistry</code> 时,自动配置才会启用 Tomcat 的检测.默认情况下,<code>MBeanRegistry</code> 是禁用的,但可以通过将 <code>server.tomcat.mbeanregistry.enabled</code> 设置为 <code>true</code> 来启用它.</p>
-<p>metric tomcat的发布在<code>tomcat.</code> meter名下.</p>
-</li>
-<li><h6 id="Cache-Metrics"><a href="#Cache-Metrics" class="headerlink" title="Cache Metrics"></a>Cache Metrics</h6><p>使用<code>cache</code>为前缀的metrics 启动时,自动配置在启动时启用所有可用的<code>Cache</code>的检测.缓存检测是针对基本metric进行标准化的. 还可以使用其他特定于缓存的指标.</p>
-<p>支持以下缓存库:</p>
-<ul>
-<li>Caffeine</li>
-<li>EhCache 2</li>
-<li>Hazelcast</li>
-<li>Any compliant JCache (JSR-107) implementation</li>
-<li>Redis</li>
-</ul>
-<p>Metrics 由缓存的名称和从 bean name派生的 <code>CacheManager</code> 的名称标记.</p>
-<blockquote>
-<p>注意:</p>
-<p>​    只有在启动时配置的缓存才会绑定到registry.对于缓存配置中未定义的缓存,例如 在启动阶段后即时或以编程方式创建的缓存,需要显式注册.<code>CacheMetricsRegistrar</code> bean 可用于简化该过程.</p>
-</blockquote>
-</li>
-<li><h6 id="DataSource-Metrics"><a href="#DataSource-Metrics" class="headerlink" title="DataSource Metrics"></a>DataSource Metrics</h6><p>自动配置启用对所有可用 <code>DataSource</code> 对象的检测,其metrics 以 <code>jdbc.connections</code> 为前缀.数据源检测会产生表示池中当前活动,空闲,最大允许和最小允许连接的仪表.</p>
-<p>Metrics 也由基于 bean 名称计算得出的 <code>DataSource</code> 的名称标记.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    默认情况下,Spring Boot 为所有支持的数据源提供元数据； 如果最喜欢的数据源不支持开箱即用,可以添加额外的 <code>DataSourcePoolMetadataProvider</code>bean. 有关示例,请参阅 <code>DataSourcePoolMetadataProvidersConfiguration</code>.</p>
-</blockquote>
-<p>此外,特定于 Hikari 的metrics以 <code>hikaricp</code> 前缀公开. 每个指标都由池的名称标记(可以用 <code>spring.datasource.name</code> 控制).</p>
-</li>
-<li><h6 id="Hibernate-Metrics"><a href="#Hibernate-Metrics" class="headerlink" title="Hibernate Metrics"></a>Hibernate Metrics</h6><p>如果 <code>org.hibernate:hibernate-micrometer</code> 在类路径上,则所有启用了统计信息的可用 Hibernate <code>EntityManagerFactory</code> 实例都使用名为 <code>hibernate</code> 的metric 进行检测.</p>
-<p>Metrics 也由从 bean 名称派生的 <code>EntityManagerFactory</code> 的名称标记.</p>
-<p>要启用统计信息,标准 JPA 属性 <code>hibernate.generate_statistics</code> 必须设置为 <code>true</code>. 可以在自动配置的 <code>EntityManagerFactory</code> 上启用它,如以下示例所示:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.jpa.properties[hibernate.generate_statistics]</span>=<span class="string">true</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Spring-Data-Repository-Metrics"><a href="#Spring-Data-Repository-Metrics" class="headerlink" title="Spring Data Repository Metrics"></a>Spring Data Repository Metrics</h6><p>自动配置启用检测,来检测所有对 Spring Data <code>Repository</code> 方法的调用.默认情况下,metrics生成的名称为 <code>spring.data.repository.invocations</code>.可以通过设置 <code>management.metrics.data.repository.metric-name</code> 属性来自定义名称.</p>
-<p><code>Repository</code> 类和方法支持 <code>@Timed</code> 注解. 如果不想记录所有的 <code>Repository</code> 调用的metrics ,可以将 <code>management.metrics.data.repository.autotime.enabled</code> 设置为 <code>false</code> 并使用独有的 <code>@Timed</code> 注解.</p>
-<p>默认情况下,存储库调用相关metrics标记有以下信息:</p>
-<table>
-<thead>
-<tr>
-<th>Tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>repository</code></td>
-<td>源 <code>Repository</code> 的简单类名.</td>
-</tr>
-<tr>
-<td><code>method</code></td>
-<td>被调用的 <code>Repository</code> 方法的名称.</td>
-</tr>
-<tr>
-<td><code>state</code></td>
-<td>结果状态(<code>SUCCESS</code>,<code>ERROR</code>,<code>CANCELED</code> 或<code>RUNNING</code>).</td>
-</tr>
-<tr>
-<td><code>exception</code></td>
-<td>从调用中抛出的任何异常的简单类名.</td>
-</tr>
-</tbody></table>
-<p>要替换默认标签,请提供一个实现 <code>RepositoryTagsProvider</code> 的 <code>@Bean</code>.</p>
-</li>
-<li><h6 id="RabbitMQ-Metrics"><a href="#RabbitMQ-Metrics" class="headerlink" title="RabbitMQ Metrics"></a>RabbitMQ Metrics</h6><p>自动配置将使用名为 <code>rabbitmq</code> 的metric,从而来启用所有可用 RabbitMQ 连接工厂的instrumentation.</p>
-</li>
-<li><h6 id="Spring-Integration-Metrics"><a href="#Spring-Integration-Metrics" class="headerlink" title="Spring Integration Metrics"></a>Spring Integration Metrics</h6><p>只要 <code>MeterRegistry</code> bean 可用,Spring Integration 就会自动提供 Micrometer 支持. Metrics 发布在 <code>spring.integration.</code> 下meter name名.</p>
-</li>
-<li><h6 id="Kafka-Metrics"><a href="#Kafka-Metrics" class="headerlink" title="Kafka Metrics"></a>Kafka Metrics</h6><p>自动配置会分别为自动配置的consumer factory和producer factory注册一个 <code>MicrometerConsumerListener</code> 和 MicrometerProducerListener<code>.还将为</code>StreamsBuilderFactoryBean<code>注册一个</code>KafkaStreamsMicrometerListener`.</p>
-</li>
-<li><h6 id="MongoDB-Metrics"><a href="#MongoDB-Metrics" class="headerlink" title="MongoDB Metrics"></a>MongoDB Metrics</h6><h6 id="Command-Metrics"><a href="#Command-Metrics" class="headerlink" title="Command Metrics"></a>Command Metrics</h6><p>自动配置将向自动配置的 <code>MongoClient</code> 注册一个 <code>MongoMetricsCommandListener</code>.</p>
-<p>为将命令发送给 MongoDB 的底层驱动,会创建一个名为 <code>mongodb.driver.commands</code> 的计时器metric .默认情况下,每个metric 都标有以下信息:</p>
-<table>
-<thead>
-<tr>
-<th>Tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>command</code></td>
-<td>发出的命令名称</td>
-</tr>
-<tr>
-<td><code>cluster.id</code></td>
-<td>命令被发送到的集群的标识符</td>
-</tr>
-<tr>
-<td><code>server.address</code></td>
-<td>命令发送到的服务器地址</td>
-</tr>
-<tr>
-<td><code>status</code></td>
-<td>命令的结果 - (<code>SUCCESS</code>, <code>FAILED</code>) 之一</td>
-</tr>
-</tbody></table>
-<p>要替换默认metric标签,定义一个 <code>MongoCommandTagsProvider</code> bean,如以下示例所示:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyCommandTagsProviderConfiguration</span> </span>{    <span class="meta">@Bean</span>    <span class="function"><span class="keyword">public</span> MongoCommandTagsProvider <span class="title">customCommandTagsProvider</span><span class="params">()</span> </span>{        <span class="keyword">return</span> <span class="keyword">new</span> CustomCommandTagsProvider();    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>要禁用自动配置的command metrics,请设置以下属性:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.mongo.command.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure>
-
-<h6 id="Connection-Pool-Metrics"><a href="#Connection-Pool-Metrics" class="headerlink" title="Connection Pool Metrics"></a>Connection Pool Metrics</h6><p>自动配置将向自动配置的 <code>MongoClient</code> 注册一个 <code>MongoMetricsConnectionPoolListener</code>.</p>
-<p>为连接池创建了以下仪表metrics :</p>
-<ul>
-<li><code>mongodb.driver.pool.size</code> 报告连接池的当前大小,包括空闲和使用中的成员</li>
-<li><code>mongodb.driver.pool.checkedout</code> 报告当前使用的连接数</li>
-<li><code>mongodb.driver.pool.waitqueuesize</code> 报告池中连接的等待队列的当前大小</li>
-</ul>
-<p>默认情况下,每个metric 都标有以下信息:</p>
-<table>
-<thead>
-<tr>
-<th>Tag</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>cluster.id</code></td>
-<td>连接池对应的集群标识</td>
-</tr>
-<tr>
-<td><code>server.address</code></td>
-<td>连接池对应的服务器地址</td>
-</tr>
-</tbody></table>
-<p>要替换默认metric 标签,定义一个 <code>MongoConnectionPoolTagsProvider</code> bean,如以下示例所示:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyConnectionPoolTagsProviderConfiguration</span> </span>{    <span class="meta">@Bean</span>    <span class="function"><span class="keyword">public</span> MongoConnectionPoolTagsProvider <span class="title">customConnectionPoolTagsProvider</span><span class="params">()</span> </span>{        <span class="keyword">return</span> <span class="keyword">new</span> CustomConnectionPoolTagsProvider();    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>要禁用自动配置的连接池metrics,设置以下属性:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.mongo.connectionpool.enabled</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure></li>
-<li><h6 id="Timed-注解支持"><a href="#Timed-注解支持" class="headerlink" title="@Timed 注解支持"></a>@Timed 注解支持</h6><p><code>io.micrometer.core.annotation</code> 包中的<code>@Timed</code> 注解可以与上面列出的几种支持的技术一起使用.如果支持,注解可以在类级别或方法级别使用.</p>
-<p>例如,以下代码显示了如何使用注解来检测 <code>@RestController</code> 中的所有请求映射:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span><span class="meta">@Timedpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyController</span> </span>{    <span class="meta">@GetMapping("/api/addresses")</span>    <span class="function"><span class="keyword">public</span> List&lt;Address&gt; <span class="title">listAddress</span><span class="params">()</span> </span>{        <span class="keyword">return</span> ...    }    <span class="meta">@GetMapping("/api/people")</span>    <span class="function"><span class="keyword">public</span> List&lt;Person&gt; <span class="title">listPeople</span><span class="params">()</span> </span>{        <span class="keyword">return</span> ...    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>如果只想检测单个映射,则可以在方法上使用注解而不是类:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestControllerpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyController</span> </span>{    <span class="meta">@GetMapping("/api/addresses")</span>    <span class="function"><span class="keyword">public</span> List&lt;Address&gt; <span class="title">listAddress</span><span class="params">()</span> </span>{        <span class="keyword">return</span> ...    }    <span class="meta">@GetMapping("/api/people")</span>    <span class="meta">@Timed</span>    <span class="function"><span class="keyword">public</span> List&lt;Person&gt; <span class="title">listPeople</span><span class="params">()</span> </span>{        <span class="keyword">return</span> ...    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>如果想更改特定方法的计时细节,还可以组合类级别和方法级别的注解:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span><span class="meta">@Timedpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyController</span> </span>{    <span class="meta">@GetMapping("/api/addresses")</span>    <span class="function"><span class="keyword">public</span> List&lt;Address&gt; <span class="title">listAddress</span><span class="params">()</span> </span>{        <span class="keyword">return</span> ...    }    <span class="meta">@GetMapping("/api/people")</span>    <span class="meta">@Timed(extraTags = { "region", "us-east-1" })</span>    <span class="meta">@Timed(value = "all.people", longTask = true)</span>    <span class="function"><span class="keyword">public</span> List&lt;Person&gt; <span class="title">listPeople</span><span class="params">()</span> </span>{        <span class="keyword">return</span> ...    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<blockquote>
-<p>注意:</p>
-<p>​    带有 <code>longTask = true</code> 的 <code>@Timed</code> 注解将为该方法启用长任务计时器.长任务计时器需要单独的metric名称,并且可以与短任务计时器堆叠.</p>
-</blockquote>
-</li>
-</ol>
-</li>
-<li><h6 id="注册自定义Metrics"><a href="#注册自定义Metrics" class="headerlink" title="注册自定义Metrics"></a>注册自定义Metrics</h6><p>要注册自定义指标,请将 <code>MeterRegistry</code> 注入组件,如以下示例所示:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Componentpublic</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBean</span> </span>{    <span class="keyword">private</span> <span class="keyword">final</span> Dictionary dictionary;    <span class="function"><span class="keyword">public</span> <span class="title">MyBean</span><span class="params">(MeterRegistry registry)</span> </span>{        <span class="keyword">this</span>.dictionary = Dictionary.load();        registry.gauge(<span class="string">"dictionary.size"</span>, Tags.empty(), <span class="keyword">this</span>.dictionary.getWords().size());    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>如果metrics依赖于其他 bean,建议使用 <code>MeterBinder</code> 来注册它们,如下例所示:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMeterBinderConfiguration</span> </span>{    <span class="meta">@Bean</span>    <span class="function"><span class="keyword">public</span> MeterBinder <span class="title">queueSize</span><span class="params">(Queue queue)</span> </span>{        <span class="keyword">return</span> (registry) -&gt; Gauge.builder(<span class="string">"queueSize"</span>, queue::size).register(registry);    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<p>使用 <code>MeterBinder</code> 可确保设置正确的依赖关系,并且在检索metric’值时,该 bean 可用.如果发现跨组件或应用重复检测一组metrics ,则 <code>MeterBinder</code> 实现也很有用.</p>
-<blockquote>
-<p>注意:</p>
-<p>​    默认情况下,来自所有 <code>MeterBinder</code> bean 的metric将自动绑定到 Spring 管理的 <code>MeterRegistry</code>.</p>
-</blockquote>
-</li>
-<li><h6 id="自定义单个Metrics"><a href="#自定义单个Metrics" class="headerlink" title="自定义单个Metrics"></a>自定义单个Metrics</h6><p>如果需要将自定义应用到特定 <code>Meter</code> 实例,可以使用 <code>io.micrometer.core.instrument.config.MeterFilter</code> 接口.</p>
-<p>例如,如果要将所有以 <code>com.example</code> 开头的仪表 ID 的 <code>mytag.region</code> tag重命名为 <code>mytag.area</code>,则可以执行以下操作:</p>
-<figure class="highlight java"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration(proxyBeanMethods = false)</span><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyMetricsFilterConfiguration</span> </span>{    <span class="meta">@Bean</span>    <span class="function"><span class="keyword">public</span> MeterFilter <span class="title">renameRegionTagMeterFilter</span><span class="params">()</span> </span>{        <span class="keyword">return</span> MeterFilter.renameTag(<span class="string">"com.example"</span>, <span class="string">"mytag.region"</span>, <span class="string">"mytag.area"</span>);    }}</span><br></pre></td></tr></tbody></table></figure>
-
-<blockquote>
-<p>建议:</p>
-<p>​    默认情况下,所有 <code>MeterFilter</code> bean 将自动绑定到 Spring 管理的 <code>MeterRegistry</code>.确保使用 Spring 管理的 <code>MeterRegistry</code> 注册自己的metrics,而不是使用 <code>Metrics</code> 上的任何静态方法.这些使用非 Spring 管理的全局registry.</p>
-</blockquote>
-<ol>
-<li><h6 id="Common-Tags"><a href="#Common-Tags" class="headerlink" title="Common Tags"></a>Common Tags</h6><p>常用标签一般用于对主机,实例,区域,堆栈等操作环境进行维度进行深度探讨.Commons 标签适用于所有meters,可以按照以下示例进行配置:</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.tags.region</span>=<span class="string">us-east-1management.metrics.tags.stack=prod</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>上面的示例分别为所有值为 <code>us-east-1</code> 和 <code>prod</code> 的meter添加了 <code>region</code> 和 <code>stack</code> 标签.</p>
-<blockquote>
-<p>注意:</p>
-<p>​    如果使用 Graphite,公共标签的顺序很重要.由于使用这种方法无法保证常用标签的顺序,建议 Graphite 用户定义自定义 <code>MeterFilter</code>.</p>
-</blockquote>
-</li>
-<li><h6 id="Per-meter-Properties"><a href="#Per-meter-Properties" class="headerlink" title="Per-meter Properties"></a>Per-meter Properties</h6><p>除了 <code>MeterFilter</code> bean,还可以使用属性在每个meter的基础上应用有限的自定义.每个meter自定义适用于任何以给定名称开头的所有meter ID.例如,以下将禁用 ID 以 <code>example.remote</code> 开头的所有meter.</p>
-<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">management.metrics.enable.example.remote</span>=<span class="string">false</span></span><br></pre></td></tr></tbody></table></figure>
-
-<p>以下属性允许单一meter自定义:</p>
-<table>
-<thead>
-<tr>
-<th>Property</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>management.metrics.enable</code></td>
-<td>是否拒绝仪表发出任何指标.</td>
-</tr>
-<tr>
-<td><code>management.metrics.distribution.percentiles-histogram</code></td>
-<td>是否发布适用于计算可聚合(跨维度)百分位数近似值的直方图.</td>
-</tr>
-<tr>
-<td><code>management.metrics.distribution.minimum-expected-value</code>, <code>management.metrics.distribution.maximum-expected-value</code></td>
-<td>通过限制预期值的范围来发布更少的直方图桶.</td>
-</tr>
-<tr>
-<td><code>management.metrics.distribution.percentiles</code></td>
-<td>发布在您的应用程序中计算的百分位值</td>
-</tr>
-<tr>
-<td><code>management.metrics.distribution.slo</code></td>
-<td>使用由您的服务级别目标定义的存储桶发布累积直方图.</td>
-</tr>
-</tbody></table>
-</li>
-</ol>
-</li>
-<li><h6 id="Metrics-Endpoint"><a href="#Metrics-Endpoint" class="headerlink" title="Metrics Endpoint"></a>Metrics Endpoint</h6><p>Spring Boot 提供了一个<code>metrics</code>endpoint,可用于诊断检查应用程序收集的metrics.endpoint默认不可用,必须公开,公开后才可以使用.</p>
-<p>导航到 <code>/actuator/metrics</code> 会显示可用meter名的列表.可以将名称作为选择器来深入查看有关meter的信息,例如 <code>/actuator/metrics/jvm.memory.max</code>.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    在此处使用的名称应该与代码中使用的名称相匹配,而不是为监视系统而进行命名约定规范化后所得到的名称.换句话说,如果 <code>jvm.memory.max</code> 在 Prometheus 中显示为 <code>jvm_memory_max</code> 因为它的蛇形命名规范,在检查metricsendpoint中的meter时,仍然应该使用 <code>jvm.memory.max</code> 作为选择器.</p>
-</blockquote>
-<p>还可以将任意数量的 <code>tag=KEY:VALUE</code> 查询参数添加到 URL 的末尾,以按维度向下获取仪表,例如 <code>/actuator/metrics/jvm.memory.max?tag=area:nonheap</code>.</p>
-<blockquote>
-<p>建议:</p>
-<p>​    报告的测量值是与meter name和标签匹配的所有meters的统计数据的总和.所以在上面的例子中,返回的”Value”统计信息是堆的”Code Cache”,”Compressed Class Space”和”Metaspace”区域的最大内存占用的总和.如果只想查看”Metaspace”的最大值,可以添加一个额外的 <code>tag=id:Metaspace</code>,即 <code>/actuator/metrics/jvm.memory.max?tag=area:nonheap&amp;tag=id:Metaspace</code>.</p>
-</blockquote>
-</li>
-</ol>
-</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
     <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">…</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
@@ -2507,13 +2101,13 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">299k</span>
+    <span title="站点总字数">305k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:32</span>
+    <span title="站点阅读时长">4:37</span>
   </span>
 </div>
 <div class="busuanzi-count">
