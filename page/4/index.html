@@ -126,20 +126,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -174,6 +174,124 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/34767.html">
+
+    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="chenyk">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ykproton">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/posts/34767.html" class="post-title-link" itemprop="url">3.18 Feature: 发送邮件</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-04 12:58:00" itemprop="dateCreated datePublished" datetime="2021-06-04T12:58:00+08:00">2021-06-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-10 13:06:19" itemprop="dateModified" datetime="2021-06-10T13:06:19+08:00">2021-06-10</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/posts/34767.html" class="post-meta-item leancloud_visitors" data-flag-title="3.18 Feature: 发送邮件" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>646</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 ≈</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h5 id="3-18-发送邮件-Sending-Email"><a href="#3-18-发送邮件-Sending-Email" class="headerlink" title="3.18 发送邮件 (Sending Email)"></a>3.18 发送邮件 (Sending Email)</h5><ol start="18">
+<li><h5 id="发送邮件-Sending-Email"><a href="#发送邮件-Sending-Email" class="headerlink" title="发送邮件 (Sending Email)"></a>发送邮件 (Sending Email)</h5><p>Spring Framework 提供了使用 <code>JavaMailSender</code> 接口发送电子邮件的抽象,Spring Boot 为其提供了自动配置以及 starter 模块.</p>
+<blockquote>
+<p>建议:</p>
+<p>​    有关如何使用 JavaMailSender 的详细说明,请参阅参考文档(<a target="_blank" rel="noopener" href="https://docs.spring.io/spring-framework/docs/5.3.7/reference/html/integration.html#mail">reference documentation</a>).</p>
+</blockquote>
+<p>如果 <code>spring.mail.host</code> 和相关库(由 <code>spring-boot-starter-mail</code> 定义)可用,如果<code>JavaMailSender</code>不存在,则会创建默认的 <code>JavaMailSender</code>.可以通过 <code>spring.mail</code> 命名空间中的配置项进一步自定义sender . 有关更多详细信息,参阅 <a target="_blank" rel="noopener" href="https://github.com/spring-projects/spring-boot/tree/v2.5.0/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/mail/MailProperties.java"><code>MailProperties</code></a>.</p>
+<p>特别是,某些默认超时值是无限的,可能希望更改该值以避免线程被无响应的邮件服务器所阻塞,如下例所示:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.mail.properties[mail.smtp.connectiontimeout]</span>=<span class="string">5000</span></span><br><span class="line"><span class="meta">spring.mail.properties[mail.smtp.timeout]</span>=<span class="string">3000</span></span><br><span class="line"><span class="meta">spring.mail.properties[mail.smtp.writetimeout]</span>=<span class="string">5000</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>还可以使用来自 JNDI 的现有<code>Session</code>配置 <code>JavaMailSender</code>:</p>
+<figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.mail.jndi-name</span>=<span class="string">mail/Session</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>设置 <code>jndi-name</code> 时,它优先于所有其他与会话相关的设置.</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1853,122 +1971,8 @@ Spring Data JPA 存储库支持三种不同的引导模式:默认,延迟和懒�
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope="" itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/19259.html">
-
-    <span hidden="" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="chenyk">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden="" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ykproton">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/posts/19259.html" class="post-title-link" itemprop="url">3.8 Feature: 优雅停机</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-03 10:54:00" itemprop="dateCreated datePublished" datetime="2021-06-03T10:54:00+08:00">2021-06-03</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-06-10 13:07:23" itemprop="dateModified" datetime="2021-06-10T13:07:23+08:00">2021-06-10</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
-          <a href="/categories/Spring-Boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/posts/19259.html" class="post-meta-item leancloud_visitors" data-flag-title="3.8 Feature: 优雅停机" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>566</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 ≈</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h5 id="优雅停机-Graceful-shutdown"><a href="#优雅停机-Graceful-shutdown" class="headerlink" title="优雅停机(Graceful shutdown)"></a>优雅停机(Graceful shutdown)</h5><p>   四个嵌入式Web服务器(Jetty,Reactor Netty,Tomcat和Undertow)以及响应式和基于Servlet的Web应用都支持优雅停机.发生在关闭应用context过程中,并且是在停止<code>SmartLifecycle</code> bean的最早阶段执行.这个停止处理使用一个超时时间,该超时提供一个宽限期,宽限期内,现有请求将被允许完成,但不允许有新的请求进来.所使用的Web服务器不同,不允许新请求的实现方式也不同.Jetty,Reactor Netty和Tomcat将在网络层体制接受请求. Undertow接受请求,但会立即响应服务不可用(503).</p>
-<blockquote>
-<p>注意:</p>
-<p>​    使用Tomcat的优雅停机mcat 9.0.33或更高版本.<br>   要启用优雅停机,配置server.shutdown属性,如以下示例所示:</p>
-</blockquote>
-   <figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">server.shutdown</span>=<span class="string">graceful</span></span><br></pre></td></tr></tbody></table></figure>
-<p>   配置超时时间,配置<code>spring.lifecycle.timeout-per-shutdown-phase</code>属性,如以下示例所示:</p>
-   <figure class="highlight properties"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.lifecycle.timeout-per-shutdown-phase</span>=<span class="string">20s</span></span><br></pre></td></tr></tbody></table></figure>
-<blockquote>
-<p>重要:</p>
-<p>​    如果IDE无法发送适当的<code>SIGTERM</code>信号,则IDE上,优雅停机可能无法正常工作. 有关更多详细信息,请参阅IDE的文档.</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">…</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">…</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>
@@ -1991,13 +1995,13 @@ Spring Data JPA 存储库支持三种不同的引导模式:默认,延迟和懒�
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-line"></i>
     </span>
-    <span title="站点总字数">305k</span>
+    <span title="站点总字数">337k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:37</span>
+    <span title="站点阅读时长">5:06</span>
   </span>
 </div>
 <div class="busuanzi-count">
